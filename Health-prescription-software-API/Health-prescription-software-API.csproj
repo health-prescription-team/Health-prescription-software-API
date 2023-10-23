@@ -5,6 +5,7 @@
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
     <RootNamespace>Health_prescription_software_API</RootNamespace>
+    <UserSecretsId>38d75d56-c397-4f08-b5ef-59e99971bc7e</UserSecretsId>
   </PropertyGroup>
 
   <ItemGroup>
