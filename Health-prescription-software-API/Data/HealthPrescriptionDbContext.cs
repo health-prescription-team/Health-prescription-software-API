@@ -5,9 +5,9 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Health_prescription_software_API.Data
 {
-    public class HealthPrescrtionDbContext:IdentityDbContext<IdentityUser>
+    public class HealthPrescriptionDbContext:IdentityDbContext<IdentityUser>
     {
-        public HealthPrescrtionDbContext(DbContextOptions options) : base(options) { } 
+        public HealthPrescriptionDbContext(DbContextOptions options) : base(options) { } 
         
         public DbSet<Medicine> Medicines { get; set; }
 
