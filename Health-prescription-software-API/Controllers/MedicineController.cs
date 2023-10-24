@@ -1,8 +1,6 @@
 
 using Health_prescription_software_API.Contracts;
-using Health_prescription_software_API.Data.Entities;
 using Health_prescription_software_API.Models.Medicine;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Health_prescription_software_API.Controllers
@@ -11,17 +9,17 @@ namespace Health_prescription_software_API.Controllers
     [ApiController]
     public class MedicineController : ControllerBase
     {
-        private readonly IMedicineService _mediicineService;
+        private readonly IMedicineService _medicineService;
 
         public MedicineController(IMedicineService mediicineService)
         {
-            _mediicineService = mediicineService;
+            _medicineService = mediicineService;
         }
 
         [HttpPost("Add")]
         public IActionResult Add([FromForm]AddMedicineDTO model)
         {
-            _mediicineService.Add(model);
+            _medicineService.Add(model);
 
             return Ok("Successfully added medicine");
         }
