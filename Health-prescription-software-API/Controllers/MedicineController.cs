@@ -1,22 +1,32 @@
-﻿namespace Health_prescription_software_API.Controllers;
 
 using Health_prescription_software_API.Contracts;
-using Health_prescription_software_API.Services;
+using Health_prescription_software_API.Data.Entities;
+using Health_prescription_software_API.Models.Medicine;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
-[Route("api/[controller]")]
-[ApiController]
-public class MedicineController : ControllerBase
+namespace Health_prescription_software_API.Controllers
 {
-    private IMedicineService _medicineService;
-
-    public MedicineController(MedicineService medicineService)
+    [Route("api/[controller]")]
+    [ApiController]
+    public class MedicineController : ControllerBase
     {
-        _medicineService = medicineService;
-    }
+        private readonly IMedicineService _mediicineService;
 
-    [HttpGet("api/[controller]/id")]
+        public MedicineController(IMedicineService mediicineService)
+        {
+            _mediicineService = mediicineService;
+        }
+
+        [HttpPost("Add")]
+        public IActionResult Add([FromForm]AddMedicineDTO model)
+        {
+            _mediicineService.Add(model);
+
+            return Ok("Successfully added medicine");
+        }
+        
+           [HttpGet("api/[controller]/id")]
     public async Task<IActionResult> Details(int id)
     {
         var medicine = await _medicineService.GetById(id);
@@ -27,5 +37,6 @@ public class MedicineController : ControllerBase
         }
 
         return Ok(medicine);
+
     }
 }
