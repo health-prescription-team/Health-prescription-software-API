@@ -11,8 +11,11 @@ namespace Health_prescription_software_API.Data.Entities
         public string Name { get; set; } = null!;
 
 
+
         [Required] 
+
         public byte[]? MedicineImageBytes { get; set; }
+
 
 
         [Required]
