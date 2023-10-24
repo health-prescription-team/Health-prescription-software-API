@@ -7,8 +7,23 @@ namespace Health_prescription_software_API.Data.Entities
         [Key]
         public int Id { get; set; }
 
+        [Required] 
+        public string Name { get; set; } = null!;
+
+
+        [Required] 
+        public byte[] Data { get; set; } = null!;
+
         [Required]
-        public string Name { get; set; }
+        public decimal Price { get; set; }
+
+        [Required] 
+        public string MedicineCompany { get; set; } = null!;
+
+        [Required] 
+        public string MedicineDetails { get; set; } = null!;
+
+
 
     }
 }
