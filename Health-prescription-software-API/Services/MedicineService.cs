@@ -1,7 +1,7 @@
 
-using System.IO;
-using Microsoft.AspNetCore.Http;
-using static System.Net.Mime.MediaTypeNames;
+using Health_prescription_software_API.Contracts;
+using Health_prescription_software_API.Data;
+using Health_prescription_software_API.Data.Entities;
 using Health_prescription_software_API.Models.Medicine;
 
 
@@ -9,14 +9,18 @@ namespace Health_prescription_software_API.Services
 {
     public class MedicineService : IMedicineService
     {
-        private readonly HealthPrescrtionDbContext _context;
+        private readonly HealthPrescriptionDbContext _context;
 
-        public MedicineService(HealthPrescrtionDbContext context)
+        public MedicineService(HealthPrescriptionDbContext context)
         {
             _context = context;
         }
 
 
+        public async Task<Medicine?> GetById(int id)
+        {
+            return await _context.Medicines.FindAsync(id);
+        }
 
         public async void Add(AddMedicineDTO model)
         {
@@ -47,14 +51,16 @@ namespace Health_prescription_software_API.Services
                 _context.Medicines.Add(modelDb);
                 _context.SaveChanges();
 
- public async Task<Medicine?> GetById(int id)
-        {
-            return await _context.Medicines.FindAsync(id);
-          }
+
+
+
 
 
 
             }
+
+          
+
 
         }
     }
