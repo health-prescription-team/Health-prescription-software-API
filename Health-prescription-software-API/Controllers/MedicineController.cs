@@ -17,24 +17,25 @@ namespace Health_prescription_software_API.Controllers
         }
 
         [HttpPost("Add")]
-        public IActionResult Add([FromForm]AddMedicineDTO model)
+        public IActionResult Add([FromForm] AddMedicineDTO model)
         {
             _medicineService.Add(model);
 
             return Ok("Successfully added medicine");
         }
-        
-           [HttpGet("api/[controller]/id")]
-    public async Task<IActionResult> Details(int id)
-    {
-        var medicine = await _medicineService.GetById(id);
 
-        if (medicine == null)
+        [HttpGet("api/[controller]/id")]
+        public async Task<IActionResult> Details(int id)
         {
-            return NotFound();
+            var medicine = await _medicineService.GetById(id);
+
+            if (medicine == null)
+            {
+                return NotFound();
+            }
+
+            return Ok(medicine);
+
         }
-
-        return Ok(medicine);
-
     }
 }
