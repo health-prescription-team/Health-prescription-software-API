@@ -1,29 +1,21 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace Health_prescription_software_API.Data.Entities
+namespace Health_prescription_software_API.Models.Medicine
 {
-    public class Medicine
+    public class AddMedicineDTO
     {
-        [Key]
-        public int Id { get; set; }
-
-        [Required] 
+        [Required]
         public string Name { get; set; } = null!;
 
-
-        [Required] 
-        public byte[] MedicineImage { get; set; } = null!;
+        [Required] public IFormFile MedicineFile { get; set; } = null!;
 
         [Required]
         public decimal Price { get; set; }
 
-        [Required] 
+        [Required]
         public string MedicineCompany { get; set; } = null!;
 
-        [Required] 
+        [Required]
         public string MedicineDetails { get; set; } = null!;
-
-
-
     }
 }
