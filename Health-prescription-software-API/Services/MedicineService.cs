@@ -9,9 +9,9 @@ namespace Health_prescription_software_API.Services
 {
     public class MedicineService : IMedicineService
     {
-        private readonly HealthPrescrtionDbContext _context;
+        private readonly HealthPrescriptionDbContext _context;
 
-        public MedicineService(HealthPrescrtionDbContext context)
+        public MedicineService(HealthPrescriptionDbContext context)
         {
             _context = context;
         }

@@ -11,9 +11,9 @@ namespace Health_prescription_software_API.Controllers
     {
         private readonly IMedicineService _medicineService;
 
-        public MedicineController(IMedicineService mediicineService)
+        public MedicineController(IMedicineService medicineService)
         {
-            _medicineService = mediicineService;
+            _medicineService = medicineService;
         }
 
         [HttpPost("Add")]

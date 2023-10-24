@@ -15,12 +15,14 @@ builder.Services.AddCors(p => p.AddPolicy("corspolicy", build =>
 {
     build.WithOrigins("http://localhost:3000").AllowAnyMethod().AllowAnyHeader();
 }));
-builder.Services.AddDbContext<HealthPrescrtionDbContext>(options =>
+
+builder.Services.AddDbContext<HealthPrescriptionDbContext>(options =>
 {
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));
 });
+
 builder.Services.AddIdentity<IdentityUser, IdentityRole>()
-    .AddEntityFrameworkStores<HealthPrescrtionDbContext>()
+    .AddEntityFrameworkStores<HealthPrescriptionDbContext>()
     .AddDefaultTokenProviders();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();

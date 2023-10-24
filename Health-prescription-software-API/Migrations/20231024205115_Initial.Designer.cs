@@ -11,9 +11,9 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace Health_prescription_software_API.Migrations
 {
-    [DbContext(typeof(HealthPrescrtionDbContext))]
-    [Migration("20231024185718_Created_Entity_Medicine")]
-    partial class Created_Entity_Medicine
+    [DbContext(typeof(HealthPrescriptionDbContext))]
+    [Migration("20231024205115_Initial")]
+    partial class Initial
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -41,7 +41,7 @@ namespace Health_prescription_software_API.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<byte[]>("MedicineImage")
+                    b.Property<byte[]>("MedicineImageBytes")
                         .IsRequired()
                         .HasColumnType("varbinary(max)");
 
