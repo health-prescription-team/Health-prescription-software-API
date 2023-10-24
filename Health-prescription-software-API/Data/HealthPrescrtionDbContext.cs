@@ -10,5 +10,7 @@ namespace Health_prescription_software_API.Data
         public HealthPrescrtionDbContext(DbContextOptions options) : base(options) { } 
         
         public DbSet<Medicine> Medicines { get; set; }
+
+
     }
 }
