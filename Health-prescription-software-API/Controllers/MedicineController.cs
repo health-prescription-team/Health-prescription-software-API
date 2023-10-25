@@ -24,14 +24,14 @@ namespace Health_prescription_software_API.Controllers
             return Ok("Successfully added medicine");
         }
 
-        [HttpGet("Details/id")]
+        [HttpGet("Details/{id}")]
         public async Task<IActionResult> Details(int id)
         {
             var medicine = await _medicineService.GetById(id);
 
             if (medicine == null)
             {
-                return NotFound();
+                return NotFound($"Item with id {id} not found.");
             }
 
             return Ok(medicine);
