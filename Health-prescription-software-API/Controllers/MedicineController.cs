@@ -24,7 +24,7 @@ namespace Health_prescription_software_API.Controllers
             return Ok("Successfully added medicine");
         }
 
-        [HttpGet("api/[controller]/id")]
+        [HttpGet("Details/id")]
         public async Task<IActionResult> Details(int id)
         {
             var medicine = await _medicineService.GetById(id);
@@ -35,7 +35,6 @@ namespace Health_prescription_software_API.Controllers
             }
 
             return Ok(medicine);
-
         }
     }
 }
