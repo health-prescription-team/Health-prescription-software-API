@@ -36,5 +36,18 @@ namespace Health_prescription_software_API.Controllers
 
             return Ok(medicine);
         }
+
+        [HttpDelete("Delete/{id}")]
+        public async Task<IActionResult> Delete(int id)
+        {
+            bool result = await _medicineService.Delete(id);
+
+            if (result)
+            {
+                return Ok("Successfully deleted medicine");
+            }
+
+            return NotFound($"Item with id {id} not found.");
+        }
     }
 }

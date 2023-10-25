@@ -12,5 +12,6 @@ namespace Health_prescription_software_API.Contracts
 
         void Add(AddMedicineDTO model);
 
+        Task<bool> Delete(int id);
     }
 }
