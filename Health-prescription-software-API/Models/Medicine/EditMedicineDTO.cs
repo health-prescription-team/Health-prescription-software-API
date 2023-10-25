@@ -1,35 +1,26 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace Health_prescription_software_API.Data.Entities
+namespace Health_prescription_software_API.Models.Medicine
 {
-    public class Medicine
+    public class EditMedicineDTO
     {
-        [Key]
-        public int Id { get; set; }
-
-        [Required] 
+        //to-do: validations
+        [Required]
         public string Name { get; set; } = null!;
 
-
-
-
-        [Required] 
+        [Required]
 
         public byte[]? MedicineImageBytes { get; set; }
 
-
-
-
         [Required]
+        [DataType(DataType.Currency)]
+        [DisplayFormat(DataFormatString = "{0:c}")]
         public decimal Price { get; set; }
 
-        [Required] 
+        [Required]
         public string MedicineCompany { get; set; } = null!;
 
-        [Required] 
+        [Required]
         public string MedicineDetails { get; set; } = null!;
-
-
-
     }
 }

@@ -5,7 +5,7 @@
 namespace Health_prescription_software_API.Migrations
 {
     /// <inheritdoc />
-    public partial class initial : Migration
+    public partial class CustomTables : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
