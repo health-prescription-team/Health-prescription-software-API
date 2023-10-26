@@ -8,7 +8,7 @@ namespace Health_prescription_software_API.Contracts
     public interface IMedicineService
     {
 
-        Task<Medicine?> GetById(int id);
+        Task<MedicineDetailsDTO?> GetById(int id);
 
         void Add(AddMedicineDTO model);
         
@@ -17,5 +17,6 @@ namespace Health_prescription_software_API.Contracts
         
 
 
+        Task<bool> Delete(int id);
     }
 }
