@@ -61,7 +61,7 @@ namespace Health_prescription_software_API.Controllers
         }
 
 
-        [HttpGet("All")]
+        [HttpGet]
         public async Task<IActionResult> All([FromQuery]QueryMedicineDTO? queryModel = null)
         {
             //todo: validate the queryModel

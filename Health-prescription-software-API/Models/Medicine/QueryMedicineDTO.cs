@@ -3,13 +3,13 @@
 	public class QueryMedicineDTO
 	{
 		//todo: validation attributes
-		public string SearchTerm { get; set; } = null!;
+		public string? SearchTerm { get; set; }
 
 
-        public int PageNumber { get; set; } //first page is 1
+        public int? PageNumber { get; set; } //first page is 1
 
 
-        public int EntriesPerPage { get; set; }
+        public int? EntriesPerPage { get; set; }
 
     }
 }
