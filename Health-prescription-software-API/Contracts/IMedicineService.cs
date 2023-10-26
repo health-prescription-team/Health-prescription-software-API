@@ -10,13 +10,13 @@ namespace Health_prescription_software_API.Contracts
 
         Task<MedicineDetailsDTO?> GetById(int id);
 
-        void Add(AddMedicineDTO model);
-        
-
+        Task Add(AddMedicineDTO model);
+      
         Task EditByIdAsync(int id, EditMedicineDTO editMedicineModel);
-        
-
 
         Task<bool> Delete(int id);
-    }
+    
+        Task<AllMedicineDTO[]> GetAllAsync(QueryMedicineDTO? query);
+	}
+
 }

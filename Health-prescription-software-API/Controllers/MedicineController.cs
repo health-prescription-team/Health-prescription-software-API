@@ -3,6 +3,7 @@ using Health_prescription_software_API.Contracts;
 using Health_prescription_software_API.Data.Entities;
 using Health_prescription_software_API.Models.Medicine;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.VisualBasic;
 
 namespace Health_prescription_software_API.Controllers
 {
@@ -10,25 +11,28 @@ namespace Health_prescription_software_API.Controllers
     [ApiController]
     public class MedicineController : ControllerBase
     {
-        private readonly IMedicineService _medicineService;
+        private readonly IMedicineService medicineService;
 
         public MedicineController(IMedicineService medicineService)
         {
-            _medicineService = medicineService;
+            this.medicineService = medicineService;
         }
 
-        [HttpPost("Add")]
-        public IActionResult Add([FromForm] AddMedicineDTO model)
+        [HttpPost]
+        public async Task<IActionResult> Add([FromForm] AddMedicineDTO model)
         {
-            _medicineService.Add(model);
+            await medicineService.Add(model);
 
             return Ok("Successfully added medicine");
         }
 
-        [HttpGet("Details/{id}")]
+
+     
+        [HttpGet("{id}")]
+
         public async Task<IActionResult> Details(int id)
         {
-            var medicine = await _medicineService.GetById(id);
+            var medicine = await medicineService.GetById(id);
 
             if (medicine == null)
             {
@@ -38,7 +42,7 @@ namespace Health_prescription_software_API.Controllers
             return Ok(medicine);
         }
 
-        [HttpDelete("Delete/{id}")]
+        [HttpDelete("{id}")]
         public async Task<IActionResult> Delete(int id)
         {
             bool result = await _medicineService.Delete(id);
@@ -52,8 +56,8 @@ namespace Health_prescription_software_API.Controllers
         }
        
         
-        [HttpPost]
-        public async Task<IActionResult> Edit(int id, EditMedicineDTO medicineToEdit)
+        [HttpPut("{id}")]
+        public async Task<IActionResult> Edit(int id, [FromForm]EditMedicineDTO medicineToEdit)
         {
             
             if (!ModelState.IsValid)
@@ -62,13 +66,32 @@ namespace Health_prescription_software_API.Controllers
             }
             try
             {
-                await this._medicineService.EditByIdAsync(id, medicineToEdit);
+                await this.medicineService.EditByIdAsync(id, medicineToEdit);
             }
             catch (Exception) 
             {
                 return NotFound();
             }
             return Ok();
+        }
+
+
+        [HttpGet]
+        public async Task<IActionResult> All([FromQuery]QueryMedicineDTO? queryModel = null)
+        {
+            //todo: validate the queryModel
+            try
+            {
+				AllMedicineDTO[] model = await medicineService.GetAllAsync(queryModel);
+                return Ok(model);
+			}
+			catch (Exception)
+            {
+                //todo: ask FE
+                return StatusCode(500);
+            }
+
+
         }
 
     }

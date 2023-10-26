@@ -30,4 +30,8 @@
     <Folder Include="Migrations\" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\Health-prescription-software-API.Common\Health-prescription-software-API.Common.csproj" />
+  </ItemGroup>
+
 </Project>
