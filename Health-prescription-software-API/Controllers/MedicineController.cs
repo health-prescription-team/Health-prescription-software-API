@@ -1,4 +1,3 @@
-
 using Health_prescription_software_API.Contracts;
 using Health_prescription_software_API.Data.Entities;
 using Health_prescription_software_API.Models.Medicine;
@@ -33,11 +32,23 @@ namespace Health_prescription_software_API.Controllers
 
             if (medicine == null)
             {
-                return NotFound();
+                return NotFound($"Item with id {id} not found.");
             }
 
             return Ok(medicine);
+        }
 
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> Delete(int id)
+        {
+            bool result = await _medicineService.Delete(id);
+
+            if (result)
+            {
+                return Ok("Successfully deleted medicine");
+            }
+
+            return NotFound($"Item with id {id} not found.");
         }
        
         
@@ -67,10 +78,10 @@ namespace Health_prescription_software_API.Controllers
             //todo: validate the queryModel
             try
             {
-				AllMedicineDTO[] model = await medicineService.GetAllAsync(queryModel);
+				        AllMedicineDTO[] model = await medicineService.GetAllAsync(queryModel);
                 return Ok(model);
-			}
-			catch (Exception)
+			      }
+			      catch (Exception)
             {
                 //todo: ask FE
                 return StatusCode(500);
