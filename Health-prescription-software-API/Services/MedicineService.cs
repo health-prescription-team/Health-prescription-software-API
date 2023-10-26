@@ -67,6 +67,28 @@ namespace Health_prescription_software_API.Services
 
 
 
+        public async Task<MedicineDetailsDTO?> GetById(int id)
+        {
+            var medicine = await _context.Medicines.FindAsync(id);
+
+            if (medicine != null)
+            {
+                var medicineDTO = new MedicineDetailsDTO
+                {
+                    Name = medicine.Name,
+                    MedicineImageBytes = medicine.MedicineImageBytes,
+                    Price = medicine.Price,
+                    MedicineCompany = medicine.MedicineCompany,
+                    MedicineDetails = medicine.MedicineDetails
+                };
+
+                return medicineDTO;
+            }
+
+            return null;
+        }
+
+
 
 		}
 

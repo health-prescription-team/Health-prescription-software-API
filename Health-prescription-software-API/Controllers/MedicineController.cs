@@ -26,18 +26,33 @@ namespace Health_prescription_software_API.Controllers
             return Ok("Successfully added medicine");
         }
 
+
+     
         [HttpGet("{id}")]
+
         public async Task<IActionResult> Details(int id)
         {
             var medicine = await medicineService.GetById(id);
 
             if (medicine == null)
             {
-                return NotFound();
+                return NotFound($"Item with id {id} not found.");
             }
 
             return Ok(medicine);
+        }
 
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> Delete(int id)
+        {
+            bool result = await _medicineService.Delete(id);
+
+            if (result)
+            {
+                return Ok("Successfully deleted medicine");
+            }
+
+            return NotFound($"Item with id {id} not found.");
         }
        
         
