@@ -1,11 +1,11 @@
-using Health_prescription_software_API.Contracts;
-using Health_prescription_software_API.Data.Entities;
-using Health_prescription_software_API.Models.Medicine;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.VisualBasic;
-
 namespace Health_prescription_software_API.Controllers
 {
+    using Contracts;
+    using Data.Entities;
+    using Models.Medicine;
+    using Microsoft.AspNetCore.Mvc;
+    using Microsoft.VisualBasic;
+
     [Route("api/[controller]")]
     [ApiController]
     public class MedicineController : ControllerBase
@@ -41,7 +41,7 @@ namespace Health_prescription_software_API.Controllers
         [HttpDelete("{id}")]
         public async Task<IActionResult> Delete(int id)
         {
-            bool result = await _medicineService.Delete(id);
+            bool result = await medicineService.Delete(id);
 
             if (result)
             {
@@ -50,12 +50,12 @@ namespace Health_prescription_software_API.Controllers
 
             return NotFound($"Item with id {id} not found.");
         }
-       
-        
+
+
         [HttpPut("{id}")]
-        public async Task<IActionResult> Edit(int id, [FromForm]EditMedicineDTO medicineToEdit)
+        public async Task<IActionResult> Edit(int id, [FromForm] EditMedicineDTO medicineToEdit)
         {
-            
+
             if (!ModelState.IsValid)
             {
                 return NotFound();
@@ -64,7 +64,7 @@ namespace Health_prescription_software_API.Controllers
             {
                 await this.medicineService.EditByIdAsync(id, medicineToEdit);
             }
-            catch (Exception) 
+            catch (Exception)
             {
                 return NotFound();
             }
@@ -73,15 +73,15 @@ namespace Health_prescription_software_API.Controllers
 
 
         [HttpGet]
-        public async Task<IActionResult> All([FromQuery]QueryMedicineDTO? queryModel = null)
+        public async Task<IActionResult> All([FromQuery] QueryMedicineDTO? queryModel = null)
         {
             //todo: validate the queryModel
             try
             {
-				        AllMedicineDTO[] model = await medicineService.GetAllAsync(queryModel);
+                AllMedicineDTO[] model = await medicineService.GetAllAsync(queryModel);
                 return Ok(model);
-			      }
-			      catch (Exception)
+            }
+            catch (Exception)
             {
                 //todo: ask FE
                 return StatusCode(500);

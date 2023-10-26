@@ -49,35 +49,34 @@ namespace Health_prescription_software_API.Services
 				await context.Medicines.AddAsync(modelDb);
 				await context.SaveChangesAsync();
 			}
+		}
       
-    public async Task<MedicineDetailsDTO?> GetById(int id)
-    {
-            var medicine = await context.Medicines.FindAsync(id);
+		public async Task<MedicineDetailsDTO?> GetById(int id)
+		{
+				var medicine = await context.Medicines.FirstOrDefaultAsync(m => m.Id == id && !m.IsDeleted);
 
-            if (medicine != null)
-            {
-                var medicineDTO = new MedicineDetailsDTO
-                {
-                    Name = medicine.Name,
-                    MedicineImageBytes = medicine.MedicineImageBytes,
-                    Price = medicine.Price,
-                    MedicineCompany = medicine.MedicineCompany,
-                    MedicineDetails = medicine.MedicineDetails
-                };
+				if (medicine != null)
+				{
+					var medicineDTO = new MedicineDetailsDTO
+					{
+						Name = medicine.Name,
+						MedicineImageBytes = medicine.MedicineImageBytes,
+						Price = medicine.Price,
+						MedicineCompany = medicine.MedicineCompany,
+						MedicineDetails = medicine.MedicineDetails
+					};
 
-                return medicineDTO;
-            }
+					return medicineDTO;
+				}
 
-            return null;
-     }
-
-
+				return null;
+		 }
 
 
 		public async Task EditByIdAsync(int id, EditMedicineDTO editMedicineModel)
 		{
 
-			Medicine medicineToEdit = await this.context.Medicines.FirstAsync(m => m.Id == id);
+			Medicine medicineToEdit = await this.context.Medicines.FirstAsync(m => m.Id == id && !m.IsDeleted);
 			medicineToEdit.Name = editMedicineModel.Name;
 			medicineToEdit.Price = editMedicineModel.Price;
 			medicineToEdit.MedicineCompany = editMedicineModel.MedicineCompany;
@@ -92,7 +91,7 @@ namespace Health_prescription_software_API.Services
 		{
 			IQueryable<Medicine> medicineQuery = context.Medicines
 				.AsQueryable()
-				//.Where(m => !m.Deleted)
+				.Where(m => !m.IsDeleted)
 				.AsNoTracking();
 
 
@@ -129,5 +128,21 @@ namespace Health_prescription_software_API.Services
 
 			return medicines;
 		}
-	}
+
+        public async Task<bool> Delete(int id)
+        {
+            var medicine = await context.Medicines.FirstOrDefaultAsync(m => m.Id == id && !m.IsDeleted);
+
+			if (medicine != null)
+			{
+				medicine.IsDeleted = true;
+
+				await context.SaveChangesAsync();
+
+				return true;
+			}
+
+			return false;
+        }
+    }
 }
