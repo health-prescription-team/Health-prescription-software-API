@@ -1,5 +1,6 @@
 
 using Health_prescription_software_API.Contracts;
+using Health_prescription_software_API.Data.Entities;
 using Health_prescription_software_API.Models.Medicine;
 using Microsoft.AspNetCore.Mvc;
 
@@ -37,5 +38,26 @@ namespace Health_prescription_software_API.Controllers
             return Ok(medicine);
 
         }
+       
+        
+        [HttpPost]
+        public async Task<IActionResult> Edit(int id, EditMedicineDTO medicineToEdit)
+        {
+            
+            if (!ModelState.IsValid)
+            {
+                return NotFound();
+            }
+            try
+            {
+                await this._medicineService.EditByIdAsync(id, medicineToEdit);
+            }
+            catch (Exception) 
+            {
+                return NotFound();
+            }
+            return Ok();
+        }
+
     }
 }

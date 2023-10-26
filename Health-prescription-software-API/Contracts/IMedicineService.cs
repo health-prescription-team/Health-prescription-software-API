@@ -11,6 +11,11 @@ namespace Health_prescription_software_API.Contracts
         Task<Medicine?> GetById(int id);
 
         void Add(AddMedicineDTO model);
+        
+
+        Task EditByIdAsync(int id, EditMedicineDTO editMedicineModel);
+        
+
 
     }
 }
