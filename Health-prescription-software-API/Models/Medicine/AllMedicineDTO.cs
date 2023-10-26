@@ -15,7 +15,7 @@
 
 
 		[Required]
-		[Precision(PricePrecision, PriceScale)]
+		[Range(PriceMinValue, PriceMaxValue)]
 		public decimal Price { get; set; }
 
 
