@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel;
+using System.ComponentModel.DataAnnotations;
 
 namespace Health_prescription_software_API.Data.Entities
 {
@@ -10,15 +11,9 @@ namespace Health_prescription_software_API.Data.Entities
         [Required] 
         public string Name { get; set; } = null!;
 
-
-
-
         [Required] 
 
         public byte[]? MedicineImageBytes { get; set; }
-
-
-
 
         [Required]
         public decimal Price { get; set; }
@@ -29,7 +24,8 @@ namespace Health_prescription_software_API.Data.Entities
         [Required] 
         public string MedicineDetails { get; set; } = null!;
 
-
-
+        [Required]
+        [DefaultValue(false)]
+        public bool IsDeleted { get; set; }
     }
 }
