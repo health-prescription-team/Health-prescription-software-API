@@ -21,6 +21,7 @@ builder.Services.AddDbContext<HealthPrescriptionDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));
 });
 
+
 builder.Services.AddIdentity<IdentityUser, IdentityRole>()
     .AddEntityFrameworkStores<HealthPrescriptionDbContext>()
     .AddDefaultTokenProviders();
