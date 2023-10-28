@@ -11,11 +11,11 @@ public class User:IdentityUser
    
    public int? Egn { get; set; }
    
-   public byte[] ProfilePicture { get; set; }
+   public byte[]? ProfilePicture { get; set; }
    
    public int? UinNumber { get; set; }
 
-   public string? HostpitalName { get; set; }
+   public string? HospitalName { get; set; }
    
    public string? PharmacyName { get; set; }
 
