@@ -1,5 +1,6 @@
 using Health_prescription_software_API.Contracts;
 using Health_prescription_software_API.Data;
+using Health_prescription_software_API.Data.Entities.User;
 using Health_prescription_software_API.Services;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -22,13 +23,14 @@ builder.Services.AddDbContext<HealthPrescriptionDbContext>(options =>
 });
 
 
-builder.Services.AddIdentity<IdentityUser, IdentityRole>()
+builder.Services.AddIdentity<User, IdentityRole>()
     .AddEntityFrameworkStores<HealthPrescriptionDbContext>()
     .AddDefaultTokenProviders();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 builder.Services.AddScoped<IMedicineService, MedicineService>();
+builder.Services.AddScoped<IAuthenticationService, AuthenticationService>();
 
 var app = builder.Build();
 

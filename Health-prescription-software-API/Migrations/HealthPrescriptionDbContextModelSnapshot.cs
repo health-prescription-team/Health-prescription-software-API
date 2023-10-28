@@ -30,6 +30,9 @@ namespace Health_prescription_software_API.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
                     b.Property<string>("MedicineCompany")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
