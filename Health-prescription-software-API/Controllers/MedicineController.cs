@@ -1,10 +1,9 @@
 namespace Health_prescription_software_API.Controllers
 {
     using Contracts;
-    using Data.Entities;
     using Models.Medicine;
     using Microsoft.AspNetCore.Mvc;
-    using Microsoft.VisualBasic;
+   
 
     [Route("api/[controller]")]
     [ApiController]

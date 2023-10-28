@@ -4,6 +4,7 @@ using Health_prescription_software_API.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Health_prescription_software_API.Migrations
 {
     [DbContext(typeof(HealthPrescriptionDbContext))]
-    partial class HealthPrescriptionDbContextModelSnapshot : ModelSnapshot
+    [Migration("20231028191425_extended_identity_user")]
+    partial class extended_identity_user
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -82,7 +85,7 @@ namespace Health_prescription_software_API.Migrations
                     b.Property<string>("FirstName")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("HospitalName")
+                    b.Property<string>("HostpitalName")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("LastName")
@@ -118,6 +121,7 @@ namespace Health_prescription_software_API.Migrations
                         .HasColumnType("bit");
 
                     b.Property<byte[]>("ProfilePicture")
+                        .IsRequired()
                         .HasColumnType("varbinary(max)");
 
                     b.Property<string>("SecurityStamp")
@@ -171,32 +175,6 @@ namespace Health_prescription_software_API.Migrations
                         .HasFilter("[NormalizedName] IS NOT NULL");
 
                     b.ToTable("AspNetRoles", (string)null);
-
-                    b.HasData(
-                        new
-                        {
-                            Id = "d4a622a5-0a7a-421a-a8ee-bb52305eb298",
-                            Name = "GP",
-                            NormalizedName = "GP"
-                        },
-                        new
-                        {
-                            Id = "6340aba9-073e-4117-a230-8cab740efd20",
-                            Name = "Patient",
-                            NormalizedName = "PATIENT"
-                        },
-                        new
-                        {
-                            Id = "027f66e9-83ed-4902-b1d7-53103ff49295",
-                            Name = "Pharmacist",
-                            NormalizedName = "PHARMACIST"
-                        },
-                        new
-                        {
-                            Id = "7072dfd3-a3d8-4bf6-ad08-e42e881aee02",
-                            Name = "Pharmacy",
-                            NormalizedName = "PHARMACY"
-                        });
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
