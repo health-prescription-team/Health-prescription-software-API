@@ -3,7 +3,9 @@ using Health_prescription_software_API.Contracts;
 using Health_prescription_software_API.Data;
 using Health_prescription_software_API.Data.Entities.User;
 using Health_prescription_software_API.Models.Authentification;
+using Health_prescription_software_API.Models.Authentification.GP;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
@@ -30,7 +32,7 @@ namespace Health_prescription_software_API.Services
             _signInManager = signInManager;
         }
 
-        public async Task<string> RegisterDoctor(GPDto model)
+        public async Task<string> RegisterGp(RegisterGpDto model)
         {
             if (model == null)
             {
@@ -42,9 +44,13 @@ namespace Health_prescription_software_API.Services
                 throw new NullReferenceException("ProfilePicture model cannot be null!");
             }
 
-            using (var memoryStream = new MemoryStream())
+            var egnCheckForDuplicate = await _context.Users.FirstOrDefaultAsync(x => x.Egn == model.Egn);
+
+            if (egnCheckForDuplicate is null)
             {
-                await model.ProfilePicture.CopyToAsync(memoryStream);
+                using (var memoryStream = new MemoryStream())
+                {
+                     await model.ProfilePicture.CopyToAsync(memoryStream);
 
                 var gpModel = new User
                 {
@@ -55,55 +61,54 @@ namespace Health_prescription_software_API.Services
                     ProfilePicture = memoryStream.ToArray(),
                     Egn = model.Egn,
                     HospitalName = model.HospitalName,
-                    Email = "test@abv.bg93",
-                    UserName = "TestGP93",
+                    Email = "test@abv.bg4",
+                    UserName = "TestGP4",
                     PhoneNumber = model.PhonrNumber
-
+                    
                 };
 
-                var result = await _userManager.CreateAsync(gpModel, model.Password);
+                    var result = await _userManager.CreateAsync(gpModel, model.Password);
 
                 if (result.Succeeded)
                 {
-                    await _signInManager.SignInAsync(gpModel, isPersistent: false);
+                    await _signInManager.SignInAsync(gpModel, isPersistent:false);
 
-                    var user = await GetUserByEgn(model.Egn);
+                        var user = await GetUserByEgn(model.Egn);
 
-                    await _userManager.AddToRoleAsync(user, RoleConstants.GP);
+                        await _userManager.AddToRoleAsync(user, RoleConstants.GP);
 
-                    var securityToken = await GenerateToken(user);
+                    var securityToken = await GeneratedTokenBasedOnRole(user);
 
-                    return securityToken;
+                        return securityToken;
+                    }
                 }
             }
+            else
+            {
+                throw new ArgumentException("There is already register Gp with this egn!");
+            }
+
+
+            
 
             return null;
 
         }
 
-        private async Task<string> GenerateToken(User user)
+        private async Task<string> GeneratedTokenBasedOnRole(User user) 
         {
-            try
-            {
-                var tokenHandler = new JwtSecurityTokenHandler();
-                var key = Encoding.UTF8.GetBytes(_config.GetValue<string>("Jwt:Key"));
+            var tokenHandler = new JwtSecurityTokenHandler();
+            var key = Encoding.ASCII.GetBytes(_config.GetValue<string>("Jwt:Key"));
 
                 var userRole = await GetUserRole(user);
 
-                if (string.IsNullOrEmpty(userRole))
-                {
-
-                    throw new Exception("User role not found");
-                }
-
-                var claims = new List<Claim>
-{
-                new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
+            var claims = new[]
+            {
+                new Claim(ClaimTypes.NameIdentifier,user.Id.ToString()),
                 new Claim(ClaimTypes.Name, $"{user.FirstName} {user.MiddleName} {user.LastName}"),
-                new Claim(ClaimTypes.MobilePhone, user.PhoneNumber!),
+                new Claim(ClaimTypes.MobilePhone, user.PhoneNumber),
                 new Claim(ClaimTypes.Role, userRole)
-
-};
+            };
 
                 var tokenDescriptor = new SecurityTokenDescriptor
                 {
@@ -112,17 +117,12 @@ namespace Health_prescription_software_API.Services
                     SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
                 };
 
-                var token = tokenHandler.CreateToken(tokenDescriptor);
-                var tokenString = tokenHandler.WriteToken(token);
+            var token = tokenHandler.CreateToken(tokenDescriptor);
+            var tokenToString = tokenHandler.WriteToken(token);
 
-                return tokenString;
-            }
-            catch (Exception ex)
-            {
-
-                return string.Empty;
-            }
+            return tokenToString;
         }
+
 
         private async Task<string> GetUserRole(User user)
         {
@@ -141,8 +141,32 @@ namespace Health_prescription_software_API.Services
 
         private async Task<User?> GetUserByEgn(int egn)
         {
+            if (egn == null)
+            {
+                throw new ArgumentException("Egn cannot be null!");
+            }
+
             return await _context.Users.FirstOrDefaultAsync(x => x.Egn == egn);
         }
+        public async Task<string> LoginGp(LoginGpDto model)
+        {
+            var user = await GetUserByEgn(model.Egn);
+
+            if (user != null)
+            {
+                var result = await _signInManager.PasswordSignInAsync(user, model.Password, false, false);
+
+                if (result.Succeeded)
+                {
+                    var token = await GenerateToken(user);
+                    return token;
+                }
+            }
+
+            return string.Empty;
+        }
+
+
 
     }
 }

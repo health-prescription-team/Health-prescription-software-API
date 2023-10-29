@@ -2,7 +2,7 @@
 namespace Health_prescription_software_API.Controllers
 {
     using Contracts;
-    using Health_prescription_software_API.Models.Authentification;
+    using Health_prescription_software_API.Models.Authentification.GP;
     using Microsoft.AspNetCore.Mvc;
 
     [ApiController]
@@ -16,19 +16,36 @@ namespace Health_prescription_software_API.Controllers
             _authenticationService = authenticationService;
         }
 
-        [HttpPost("Register/GP")]
-        public async Task<IActionResult> RegisterGP([FromForm] GPDto GpUser)
+        [HttpPost("Register/Gp")]
+        public async Task<IActionResult> RegisterGP([FromForm]RegisterGpDto GpUser)
         {
-            var token = await _authenticationService.RegisterDoctor(GpUser);
+            var token = await _authenticationService.RegisterGp(GpUser);
 
             if (token == null) 
             {
-                throw new ArgumentException("Failed to register a doctor");
+                throw new ArgumentException("Failed to register a GP");
 
                 
             }
 
             return Ok(new {Token = token});
+        }
+
+        [HttpPost("Login/Gp")]
+        public async Task<IActionResult> LoginGp([FromForm]LoginGpDto GpUser)
+        {
+
+            var token = await _authenticationService.LoginGp(GpUser);
+
+            if (token == string.Empty)
+            {
+                throw new ArgumentException("Failed to login a GP");
+
+
+            }
+
+            return Ok(new { Token = token });
+
         }
     }
 }
