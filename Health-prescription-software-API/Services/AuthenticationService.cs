@@ -2,6 +2,7 @@
 using Health_prescription_software_API.Contracts;
 using Health_prescription_software_API.Data;
 using Health_prescription_software_API.Data.Entities.User;
+using Health_prescription_software_API.Models.Authentification;
 using Health_prescription_software_API.Models.Authentification.GP;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -13,16 +14,16 @@ using System.Text;
 
 namespace Health_prescription_software_API.Services
 {
-    public class AuthenticationService:IAuthenticationService
+    public class AuthenticationService : IAuthenticationService
     {
         private readonly HealthPrescriptionDbContext _context;
         private readonly IConfiguration _config;
         private readonly UserManager<User> _userManager;
         private readonly SignInManager<User> _signInManager;
 
-        public AuthenticationService(HealthPrescriptionDbContext context, 
-            IConfiguration config, 
-            UserManager<User> userManager, 
+        public AuthenticationService(HealthPrescriptionDbContext context,
+            IConfiguration config,
+            UserManager<User> userManager,
             SignInManager<User> signInManager)
         {
             _context = context;
@@ -51,32 +52,32 @@ namespace Health_prescription_software_API.Services
                 {
                      await model.ProfilePicture.CopyToAsync(memoryStream);
 
-                    var gpModel = new User
-                    {
-                        FirstName = model.FirstName,
-                        MiddleName = model.LastName,
-                        LastName = model.LastName,
-                        UinNumber = model.UinNumber,
-                        ProfilePicture = memoryStream.ToArray(),
-                        Egn = model.Egn,
-                        HospitalName = model.HospitalName,
-                        Email = "none2123@abv.bg",// hardcode трябва да се обсъси с фе екипа
-                        UserName = $"{model.FirstName}{model.Egn}",
-                        PhoneNumber = model.PhonrNumber
-
-                    };
+                var gpModel = new User
+                {
+                    FirstName = model.FirstName,
+                    MiddleName = model.LastName,
+                    LastName = model.LastName,
+                    UinNumber = model.UinNumber,
+                    ProfilePicture = memoryStream.ToArray(),
+                    Egn = model.Egn,
+                    HospitalName = model.HospitalName,
+                    Email = "test@abv.bg4",
+                    UserName = "TestGP4",
+                    PhoneNumber = model.PhonrNumber
+                    
+                };
 
                     var result = await _userManager.CreateAsync(gpModel, model.Password);
 
-                    if (result.Succeeded)
-                    {
-                        await _signInManager.SignInAsync(gpModel, isPersistent: false);
+                if (result.Succeeded)
+                {
+                    await _signInManager.SignInAsync(gpModel, isPersistent:false);
 
                         var user = await GetUserByEgn(model.Egn);
 
                         await _userManager.AddToRoleAsync(user, RoleConstants.GP);
 
-                        var securityToken = await GenerateToken(user);
+                    var securityToken = await GeneratedTokenBasedOnRole(user);
 
                         return securityToken;
                     }
@@ -91,32 +92,23 @@ namespace Health_prescription_software_API.Services
             
 
             return null;
-              
+
         }
 
-        private async Task<string> GenerateToken(User user)
+        private async Task<string> GeneratedTokenBasedOnRole(User user) 
         {
-            try
-            {
-                var tokenHandler = new JwtSecurityTokenHandler();
-                var key = Encoding.UTF8.GetBytes(_config.GetValue<string>("Jwt:Key")); 
+            var tokenHandler = new JwtSecurityTokenHandler();
+            var key = Encoding.ASCII.GetBytes(_config.GetValue<string>("Jwt:Key"));
 
                 var userRole = await GetUserRole(user);
 
-                if (string.IsNullOrEmpty(userRole))
-                {
-                   
-                    throw new Exception("User role not found");
-                }
-
-                var claims = new List<Claim>
-        {
-            new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
-            new Claim(ClaimTypes.Name, $"{user.FirstName} {user.MiddleName} {user.LastName}"),
-            new Claim(ClaimTypes.MobilePhone, user.PhoneNumber),
-            new Claim(ClaimTypes.Role, userRole)
-         
-        };
+            var claims = new[]
+            {
+                new Claim(ClaimTypes.NameIdentifier,user.Id.ToString()),
+                new Claim(ClaimTypes.Name, $"{user.FirstName} {user.MiddleName} {user.LastName}"),
+                new Claim(ClaimTypes.MobilePhone, user.PhoneNumber),
+                new Claim(ClaimTypes.Role, userRole)
+            };
 
                 var tokenDescriptor = new SecurityTokenDescriptor
                 {
@@ -125,16 +117,10 @@ namespace Health_prescription_software_API.Services
                     SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
                 };
 
-                var token = tokenHandler.CreateToken(tokenDescriptor);
-                var tokenString = tokenHandler.WriteToken(token);
+            var token = tokenHandler.CreateToken(tokenDescriptor);
+            var tokenToString = tokenHandler.WriteToken(token);
 
-                return tokenString;
-            }
-            catch (Exception ex)
-            {
-              
-                return string.Empty; 
-            }
+            return tokenToString;
         }
 
 
@@ -142,18 +128,18 @@ namespace Health_prescription_software_API.Services
         {
             var userRole = await _context.Users.FirstOrDefaultAsync(x => x.Egn == user.Egn);
 
-            if (userRole == null) 
+            if (userRole == null)
             {
                 throw new ArgumentNullException("The given user was not found!");
             }
-            
-                var role =  await _userManager.GetRolesAsync(userRole);
 
-                return role.ToString();
-            
+            var role = await _userManager.GetRolesAsync(userRole);
+
+            return role[0].ToString();
+
         }
 
-        private async Task<User> GetUserByEgn(int egn)
+        private async Task<User?> GetUserByEgn(int egn)
         {
             if (egn == null)
             {
