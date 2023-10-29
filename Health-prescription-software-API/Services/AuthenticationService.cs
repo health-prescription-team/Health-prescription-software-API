@@ -77,7 +77,7 @@ namespace Health_prescription_software_API.Services
 
                         await _userManager.AddToRoleAsync(user, RoleConstants.GP);
 
-                    var securityToken = await GeneratedTokenBasedOnRole(user);
+                    var securityToken = await GenerateToken(user);
 
                         return securityToken;
                     }
@@ -95,7 +95,7 @@ namespace Health_prescription_software_API.Services
 
         }
 
-        private async Task<string> GeneratedTokenBasedOnRole(User user) 
+        private async Task<string> GenerateToken(User user) 
         {
             var tokenHandler = new JwtSecurityTokenHandler();
             var key = Encoding.ASCII.GetBytes(_config.GetValue<string>("Jwt:Key"));
