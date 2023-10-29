@@ -17,7 +17,7 @@ namespace Health_prescription_software_API.Controllers
         }
 
         [HttpPost("Register/GP")]
-        public async Task<IActionResult> RegisterGP([FromForm] GPDto GpUser)
+        public async Task<IActionResult> RegisterGP( GPDto GpUser)
         {
             var token = await _authenticationService.RegisterDoctor(GpUser);
 
