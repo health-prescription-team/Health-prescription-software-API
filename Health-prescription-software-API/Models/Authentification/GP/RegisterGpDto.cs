@@ -1,8 +1,8 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace Health_prescription_software_API.Models.Authentification
+namespace Health_prescription_software_API.Models.Authentification.GP
 {
-    public class GPDto
+    public class RegisterGpDto
     {
         [Required]
         public string FirstName { get; set; } = null!;

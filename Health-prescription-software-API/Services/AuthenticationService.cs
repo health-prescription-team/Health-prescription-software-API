@@ -2,7 +2,7 @@
 using Health_prescription_software_API.Contracts;
 using Health_prescription_software_API.Data;
 using Health_prescription_software_API.Data.Entities.User;
-using Health_prescription_software_API.Models.Authentification;
+using Health_prescription_software_API.Models.Authentification.GP;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -31,7 +31,7 @@ namespace Health_prescription_software_API.Services
             _signInManager = signInManager;
         }
 
-        public async Task<string> RegisterDoctor([FromForm]GPDto model)
+        public async Task<string> RegisterGp(RegisterGpDto model)
         {
             if (model == null)
             {
@@ -43,40 +43,52 @@ namespace Health_prescription_software_API.Services
                 throw new NullReferenceException("ProfilePicture model cannot be null!");
             }
 
-            using (var memoryStream = new MemoryStream())
+            var egnCheckForDuplicate = await _context.Users.FirstOrDefaultAsync(x => x.Egn == model.Egn);
+
+            if (egnCheckForDuplicate is null)
             {
-                await model.ProfilePicture.CopyToAsync(memoryStream);
-
-                var gpModel = new User
+                using (var memoryStream = new MemoryStream())
                 {
-                    FirstName = model.FirstName,
-                    MiddleName = model.LastName,
-                    LastName = model.LastName,
-                    UinNumber = model.UinNumber,
-                    ProfilePicture = memoryStream.ToArray(),
-                    Egn = model.Egn,
-                    HospitalName = model.HospitalName,
-                    Email = "test@abv.bg41222",
-                    UserName = "TestGP412",
-                    PhoneNumber = model.PhonrNumber
-                    
-                };
+                     await model.ProfilePicture.CopyToAsync(memoryStream);
 
-                var result = await _userManager.CreateAsync(gpModel, model.Password);
+                    var gpModel = new User
+                    {
+                        FirstName = model.FirstName,
+                        MiddleName = model.LastName,
+                        LastName = model.LastName,
+                        UinNumber = model.UinNumber,
+                        ProfilePicture = memoryStream.ToArray(),
+                        Egn = model.Egn,
+                        HospitalName = model.HospitalName,
+                        Email = "none2123@abv.bg",// hardcode трябва да се обсъси с фе екипа
+                        UserName = $"{model.FirstName}{model.Egn}",
+                        PhoneNumber = model.PhonrNumber
 
-                if (result.Succeeded)
-                {
-                    await _signInManager.SignInAsync(gpModel, isPersistent:false);
+                    };
 
-                    var user = await GetUserByEgn(model.Egn);
+                    var result = await _userManager.CreateAsync(gpModel, model.Password);
 
-                    await _userManager.AddToRoleAsync(user, RoleConstants.GP);
+                    if (result.Succeeded)
+                    {
+                        await _signInManager.SignInAsync(gpModel, isPersistent: false);
 
-                    var securityToken = await GenerateToken(user);
+                        var user = await GetUserByEgn(model.Egn);
 
-                    return securityToken;
+                        await _userManager.AddToRoleAsync(user, RoleConstants.GP);
+
+                        var securityToken = await GenerateToken(user);
+
+                        return securityToken;
+                    }
                 }
             }
+            else
+            {
+                throw new ArgumentException("There is already register Gp with this egn!");
+            }
+
+
+            
 
             return null;
               
@@ -143,8 +155,32 @@ namespace Health_prescription_software_API.Services
 
         private async Task<User> GetUserByEgn(int egn)
         {
+            if (egn == null)
+            {
+                throw new ArgumentException("Egn cannot be null!");
+            }
+
             return await _context.Users.FirstOrDefaultAsync(x => x.Egn == egn);
         }
+        public async Task<string> LoginGp(LoginGpDto model)
+        {
+            var user = await GetUserByEgn(model.Egn);
+
+            if (user != null)
+            {
+                var result = await _signInManager.PasswordSignInAsync(user, model.Password, false, false);
+
+                if (result.Succeeded)
+                {
+                    var token = await GenerateToken(user);
+                    return token;
+                }
+            }
+
+            return string.Empty;
+        }
+
+
 
     }
 }
