@@ -80,8 +80,48 @@ namespace Health_prescription_software_API.Services
             return null;
 
         }
+        public async Task<string> RegisterPatient(PatientDto model)
+        {
+            if (model == null)
+            {
+                throw new ArgumentNullException("Patient data cannot be null!");
+            }
+            if (model.ProfilePicture == null || model.ProfilePicture.Length == 0)
+            {
+                throw new NullReferenceException("ProfilePicture model cannot be null!");
+            }
+            using (var memoryStream = new MemoryStream())
+            {
+                await model.ProfilePicture.CopyToAsync(memoryStream);
 
-        private async Task<string> GenerateToken(User user)
+                var patientModel = new User
+                {
+                    FirstName = model.FirstName,
+                    MiddleName = model.LastName,
+                    LastName = model.LastName,
+                    PhoneNumber = model.PhoneNumber,
+                    UserName = $"{model.FirstName}{model.Egn}",
+                    ProfilePicture = memoryStream.ToArray(),
+                    Egn = model.Egn,
+                    Email = "test3@abv.bg"
+                };
+                var result = await _userManager.CreateAsync(patientModel, model.Password);
+                if (result.Succeeded)
+                {
+                    await _signInManager.SignInAsync(patientModel, isPersistent: false);
+
+                    var user = await GetUserByEgn(model.Egn);
+
+                    await _userManager.AddToRoleAsync(user, RoleConstants.Patient);
+
+                    var securityToken = await GenerateToken(user);
+
+                    return securityToken;
+                }
+            }
+            return null;
+        }
+            private async Task<string> GenerateToken(User user)
         {
             try
             {

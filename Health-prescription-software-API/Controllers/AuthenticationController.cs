@@ -30,5 +30,20 @@ namespace Health_prescription_software_API.Controllers
 
             return Ok(new {Token = token});
         }
+
+        [HttpPost("Register/Patient")]
+        public async Task<IActionResult> RegisterPatient([FromForm] PatientDto PatientUser)
+        {
+            var token = await _authenticationService.RegisterPatient(PatientUser);
+
+            if (token == null)
+            {
+                throw new ArgumentException("Failed to register a patient");
+
+
+            }
+
+            return Ok(new { Token = token });
+        }
     }
 }
