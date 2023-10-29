@@ -1,8 +1,8 @@
-﻿
-namespace Health_prescription_software_API.Controllers
+﻿namespace Health_prescription_software_API.Controllers
 {
     using Contracts;
-    using Health_prescription_software_API.Models.Authentification.GP;
+    using Models.Authentification.GP;
+    using Models.Authentification.Pharmacist;
     using Microsoft.AspNetCore.Mvc;
 
     [ApiController]
@@ -46,6 +46,58 @@ namespace Health_prescription_software_API.Controllers
 
             return Ok(new { Token = token });
 
+        }
+
+        [HttpPost("Register/Pharmacist")]
+        public async Task<IActionResult> RegisterPharmacist([FromForm] RegisterPharmacistDto formModel)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            try
+            {
+                var token = await _authenticationService.RegisterPharmacist(formModel);
+
+                if (token == null)
+                {
+                    throw new ArgumentException("Failed to register a pharmacist");
+                }
+
+                return Ok(new { Token = token });
+            }
+            catch (Exception ex)
+            {
+                // TODO How to handle this?
+                return StatusCode(500, ex.Message);
+            }
+        }
+
+        [HttpPost("Login/Pharmacist")]
+        public async Task<IActionResult> LoginPharmacist([FromForm] LoginPharmacistDto formModel)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            try
+            {
+                var token = await _authenticationService.LoginPharmacist(formModel);
+
+                if (token == string.Empty)
+                {
+                    throw new ArgumentException("Failed to login a pharmacist");
+                }
+
+                return Ok(new { Token = token });
+            }
+            catch (Exception ex)
+            {
+                // TODO How to handle this?
+                return StatusCode(500, ex.Message);
+            }
         }
     }
 }
