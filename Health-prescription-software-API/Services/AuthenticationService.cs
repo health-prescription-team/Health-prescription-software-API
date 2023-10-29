@@ -2,10 +2,9 @@
 using Health_prescription_software_API.Contracts;
 using Health_prescription_software_API.Data;
 using Health_prescription_software_API.Data.Entities.User;
-using Health_prescription_software_API.Models.Authentification;
 using Health_prescription_software_API.Models.Authentification.GP;
+using Health_prescription_software_API.Models.Authentification.Pharmacist;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
@@ -50,34 +49,34 @@ namespace Health_prescription_software_API.Services
             {
                 using (var memoryStream = new MemoryStream())
                 {
-                     await model.ProfilePicture.CopyToAsync(memoryStream);
+                    await model.ProfilePicture.CopyToAsync(memoryStream);
 
-                var gpModel = new User
-                {
-                    FirstName = model.FirstName,
-                    MiddleName = model.LastName,
-                    LastName = model.LastName,
-                    UinNumber = model.UinNumber,
-                    ProfilePicture = memoryStream.ToArray(),
-                    Egn = model.Egn,
-                    HospitalName = model.HospitalName,
-                    Email = "test@abv.bg4",
-                    UserName = "TestGP4",
-                    PhoneNumber = model.PhonrNumber
-                    
-                };
+                    var gpModel = new User
+                    {
+                        FirstName = model.FirstName,
+                        MiddleName = model.LastName,
+                        LastName = model.LastName,
+                        UinNumber = model.UinNumber,
+                        ProfilePicture = memoryStream.ToArray(),
+                        Egn = model.Egn,
+                        HospitalName = model.HospitalName,
+                        Email = "test@abv.bg4",
+                        UserName = "TestGP4",
+                        PhoneNumber = model.PhonrNumber
+
+                    };
 
                     var result = await _userManager.CreateAsync(gpModel, model.Password);
 
-                if (result.Succeeded)
-                {
-                    await _signInManager.SignInAsync(gpModel, isPersistent:false);
+                    if (result.Succeeded)
+                    {
+                        await _signInManager.SignInAsync(gpModel, isPersistent: false);
 
                         var user = await GetUserByEgn(model.Egn);
 
                         await _userManager.AddToRoleAsync(user, RoleConstants.GP);
 
-                    var securityToken = await GenerateToken(user);
+                        var securityToken = await GenerateToken(user);
 
                         return securityToken;
                     }
@@ -89,18 +88,85 @@ namespace Health_prescription_software_API.Services
             }
 
 
-            
+
 
             return null;
 
         }
 
-        private async Task<string> GenerateToken(User user) 
+        public async Task<string?> RegisterPharmacist(RegisterPharmacistDto model)
+        {
+            if (model == null)
+            {
+                throw new ArgumentNullException("Pharmacist data cannot be null!");
+            }
+
+            if (model.ProfilePicture == null || model.ProfilePicture.Length == 0)
+            {
+                throw new NullReferenceException("ProfilePicture model cannot be null!");
+            }
+
+            using (var memoryStream = new MemoryStream())
+            {
+                await model.ProfilePicture.CopyToAsync(memoryStream);
+
+                var user = new User
+                {
+                    FirstName = model.FirstName,
+                    MiddleName = model.LastName,
+                    LastName = model.LastName,
+                    UinNumber = model.UinNumber,
+                    ProfilePicture = memoryStream.ToArray(),
+                    Egn = model.Egn,
+                    Email = model.Email,
+                    UserName = $"{model.FirstName}{model.Egn}",
+                    PhoneNumber = model.PhoneNumber
+
+                };
+
+                var result = await _userManager.CreateAsync(user, model.Password);
+
+                if (result.Succeeded)
+                {
+                    await _signInManager.SignInAsync(user, isPersistent: false);
+
+                    var userEntity = await this.GetUserByEgn(model.Egn);
+
+                    await _userManager.AddToRoleAsync(userEntity!, RoleConstants.Pharmacist);
+
+                    var securityToken = await this.GenerateToken(userEntity!);
+
+                    return securityToken;
+                }
+            }
+
+            return null;
+        }
+
+        public async Task<string> LoginPharmacist(LoginPharmacistDto model)
+        {
+            var user = await GetUserByEgn(model.Egn);
+
+            if (user != null)
+            {
+                var result = await _signInManager.PasswordSignInAsync(user, model.Password, false, false);
+
+                if (result.Succeeded)
+                {
+                    var token = await this.GenerateToken(user);
+                    return token;
+                }
+            }
+
+            return string.Empty;
+        }
+
+        private async Task<string> GenerateToken(User user)
         {
             var tokenHandler = new JwtSecurityTokenHandler();
             var key = Encoding.ASCII.GetBytes(_config.GetValue<string>("Jwt:Key"));
 
-                var userRole = await GetUserRole(user);
+            var userRole = await GetUserRole(user);
 
             var claims = new[]
             {
@@ -110,12 +176,12 @@ namespace Health_prescription_software_API.Services
                 new Claim(ClaimTypes.Role, userRole)
             };
 
-                var tokenDescriptor = new SecurityTokenDescriptor
-                {
-                    Subject = new ClaimsIdentity(claims),
-                    Expires = DateTime.UtcNow.AddHours(1),
-                    SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
-                };
+            var tokenDescriptor = new SecurityTokenDescriptor
+            {
+                Subject = new ClaimsIdentity(claims),
+                Expires = DateTime.UtcNow.AddHours(1),
+                SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
+            };
 
             var token = tokenHandler.CreateToken(tokenDescriptor);
             var tokenToString = tokenHandler.WriteToken(token);
@@ -148,6 +214,7 @@ namespace Health_prescription_software_API.Services
 
             return await _context.Users.FirstOrDefaultAsync(x => x.Egn == egn);
         }
+
         public async Task<string> LoginGp(LoginGpDto model)
         {
             var user = await GetUserByEgn(model.Egn);
@@ -165,8 +232,5 @@ namespace Health_prescription_software_API.Services
 
             return string.Empty;
         }
-
-
-
     }
 }

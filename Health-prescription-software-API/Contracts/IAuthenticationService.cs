@@ -1,5 +1,5 @@
 ﻿using Health_prescription_software_API.Models.Authentification.GP;
-using Microsoft.IdentityModel.Tokens;
+using Health_prescription_software_API.Models.Authentification.Pharmacist;
 
 namespace Health_prescription_software_API.Contracts
 {
@@ -9,6 +9,8 @@ namespace Health_prescription_software_API.Contracts
 
         public Task<string> LoginGp(LoginGpDto model);
 
+        public Task<string?> RegisterPharmacist(RegisterPharmacistDto model);
 
+        public Task<string> LoginPharmacist(LoginPharmacistDto model);
     }
 }
