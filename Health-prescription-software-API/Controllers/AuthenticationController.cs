@@ -2,7 +2,7 @@
 namespace Health_prescription_software_API.Controllers
 {
     using Contracts;
-    using Health_prescription_software_API.Models.Authentification.GP;
+    using Health_prescription_software_API.Models.Authentication.GP;
     using Microsoft.AspNetCore.Mvc;
 
     [ApiController]
@@ -47,5 +47,7 @@ namespace Health_prescription_software_API.Controllers
             return Ok(new { Token = token });
 
         }
+
+
     }
 }

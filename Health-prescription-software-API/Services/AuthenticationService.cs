@@ -2,8 +2,8 @@
 using Health_prescription_software_API.Contracts;
 using Health_prescription_software_API.Data;
 using Health_prescription_software_API.Data.Entities.User;
-using Health_prescription_software_API.Models.Authentification;
-using Health_prescription_software_API.Models.Authentification.GP;
+using Health_prescription_software_API.Models.Authentication;
+using Health_prescription_software_API.Models.Authentication.GP;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -63,7 +63,7 @@ namespace Health_prescription_software_API.Services
                     HospitalName = model.HospitalName,
                     Email = "test@abv.bg4",
                     UserName = "TestGP4",
-                    PhoneNumber = model.PhonrNumber
+                    PhoneNumber = model.PhoneNumber
                     
                 };
 
@@ -95,7 +95,29 @@ namespace Health_prescription_software_API.Services
 
         }
 
-        private async Task<string> GenerateToken(User user) 
+		public async Task<string> LoginGp(LoginGpDto model)
+		{
+			var user = await GetUserByEgn(model.Egn);
+
+			if (user != null)
+			{
+				var result = await _signInManager.PasswordSignInAsync(user, model.Password, false, false);
+
+				if (result.Succeeded)
+				{
+					var token = await GenerateToken(user);
+					return token;
+				}
+			}
+
+			return string.Empty;
+		}
+
+
+
+
+
+		private async Task<string> GenerateToken(User user) 
         {
             var tokenHandler = new JwtSecurityTokenHandler();
             var key = Encoding.ASCII.GetBytes(_config.GetValue<string>("Jwt:Key"));
@@ -123,7 +145,6 @@ namespace Health_prescription_software_API.Services
             return tokenToString;
         }
 
-
         private async Task<string> GetUserRole(User user)
         {
             var userRole = await _context.Users.FirstOrDefaultAsync(x => x.Egn == user.Egn);
@@ -148,23 +169,7 @@ namespace Health_prescription_software_API.Services
 
             return await _context.Users.FirstOrDefaultAsync(x => x.Egn == egn);
         }
-        public async Task<string> LoginGp(LoginGpDto model)
-        {
-            var user = await GetUserByEgn(model.Egn);
-
-            if (user != null)
-            {
-                var result = await _signInManager.PasswordSignInAsync(user, model.Password, false, false);
-
-                if (result.Succeeded)
-                {
-                    var token = await GenerateToken(user);
-                    return token;
-                }
-            }
-
-            return string.Empty;
-        }
+        
 
 
 
