@@ -42,7 +42,8 @@ namespace Health_prescription_software_API.Services
 					Name = model.Name,
 					Price = model.Price,
 					MedicineImageBytes = memoryStream.ToArray(),
-					MedicineDetails = model.MedicineDetails
+					MedicineDetails = model.MedicineDetails,
+					IsDeleted = false
 
 				};
 
