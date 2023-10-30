@@ -120,6 +120,12 @@ namespace Health_prescription_software_API.Services
 			throw new NotImplementedException();
 		}
 
+		public Task<string?> LoginPharmacy(LoginPharmacyDto pharmacyUser)
+		{
+			throw new NotImplementedException();
+		}
+
+
 
 		private async Task<string> GenerateToken(User user) 
         {
@@ -173,7 +179,5 @@ namespace Health_prescription_software_API.Services
 
             return await _context.Users.FirstOrDefaultAsync(x => x.Egn == egn);
         }
-
-		
 	}
 }

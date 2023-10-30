@@ -41,6 +41,7 @@ namespace Health_prescription_software_API.Controllers
 
             if (token == string.Empty)
             {
+                //it's controller. instead return bad request
                 throw new ArgumentException("Failed to login a GP");
 
 
@@ -56,12 +57,27 @@ namespace Health_prescription_software_API.Controllers
         {
             //todo: check model state and async. validate
 
-            var token = await _authenticationService.RegisterPharmacy(PharmacyUser);
+            string? token = await _authenticationService.RegisterPharmacy(PharmacyUser);
 
-            if (token == null)
+            if (string.IsNullOrEmpty(token))
             {
                 return BadRequest();//todo: return more info.
             }
+
+			return Ok(new { Token = token });
+		}
+
+
+        [HttpPost("Login/Pharmacy")]
+        public async Task<IActionResult> LoginPharmacy([FromForm] LoginPharmacyDto PharmacyUser)
+        {
+            //todo: check model state. Async validate if needed.
+            string? token = await _authenticationService.LoginPharmacy(PharmacyUser);
+
+            if (string.IsNullOrEmpty(token))
+            {
+				return BadRequest();//todo: return more info.
+			}
 
 			return Ok(new { Token = token });
 		}
