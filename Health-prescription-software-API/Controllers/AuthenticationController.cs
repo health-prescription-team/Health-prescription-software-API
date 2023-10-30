@@ -3,7 +3,8 @@ namespace Health_prescription_software_API.Controllers
 {
     using Contracts;
     using Health_prescription_software_API.Models.Authentication.GP;
-    using Microsoft.AspNetCore.Mvc;
+	using Health_prescription_software_API.Models.Authentication.Pharmacy;
+	using Microsoft.AspNetCore.Mvc;
 
     [ApiController]
     [Route("api/[controller]")]
@@ -23,6 +24,7 @@ namespace Health_prescription_software_API.Controllers
 
             if (token == null) 
             {
+                //todo: no need to fail. return 
                 throw new ArgumentException("Failed to register a GP");
 
                 
@@ -49,5 +51,19 @@ namespace Health_prescription_software_API.Controllers
         }
 
 
+        [HttpPost("Register/Pharmacy")]
+        public async Task<IActionResult> RegisterPharmacy([FromForm] RegisterPharmacyDto PharmacyUser)
+        {
+            //todo: check model state and async. validate
+
+            var token = await _authenticationService.RegisterPharmacy(PharmacyUser);
+
+            if (token == null)
+            {
+                return BadRequest();//todo: return more info.
+            }
+
+			return Ok(new { Token = token });
+		}
     }
 }

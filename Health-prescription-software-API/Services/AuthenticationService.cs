@@ -4,6 +4,7 @@ using Health_prescription_software_API.Data;
 using Health_prescription_software_API.Data.Entities.User;
 using Health_prescription_software_API.Models.Authentication;
 using Health_prescription_software_API.Models.Authentication.GP;
+using Health_prescription_software_API.Models.Authentication.Pharmacy;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -114,7 +115,10 @@ namespace Health_prescription_software_API.Services
 		}
 
 
-
+		public Task<string> RegisterPharmacy(RegisterPharmacyDto pharmacyUser)
+		{
+			throw new NotImplementedException();
+		}
 
 
 		private async Task<string> GenerateToken(User user) 
@@ -169,9 +173,7 @@ namespace Health_prescription_software_API.Services
 
             return await _context.Users.FirstOrDefaultAsync(x => x.Egn == egn);
         }
-        
 
-
-
-    }
+		
+	}
 }
