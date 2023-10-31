@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace Health_prescription_software_API.Models.Authentication.GP
+namespace Health_prescription_software_API.Models.Authentification.GP
 {
     public class LoginGpDto
     {
