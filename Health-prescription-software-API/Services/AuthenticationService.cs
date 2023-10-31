@@ -5,6 +5,7 @@ using Health_prescription_software_API.Data.Entities.User;
 using Health_prescription_software_API.Models.Authentication;
 using Health_prescription_software_API.Models.Authentication.GP;
 using Health_prescription_software_API.Models.Authentication.Pharmacy;
+using Health_prescription_software_API.Models.Authentification.Patient;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -17,9 +18,9 @@ using System.Text;
 namespace Health_prescription_software_API.Services
 {
 
-       
 
-	public class AuthenticationService : IAuthenticationService
+
+    public class AuthenticationService : IAuthenticationService
 	{
 		private readonly HealthPrescriptionDbContext _context;
 		private readonly IConfiguration _config;
@@ -36,8 +37,25 @@ namespace Health_prescription_software_API.Services
 			_userManager = userManager;
 			_signInManager = signInManager;
 		}
+       
+		public async Task<string> LoginPatient(LoginPatientDto model)
+        {
+            var user = await GetUserByEgn(model.Egn);
 
-     public async Task<string> RegisterPatient(PatientDto model)
+            if (user != null)
+            {
+                var result = await _signInManager.PasswordSignInAsync(user, model.Password, false, false);
+
+                if (result.Succeeded)
+                {
+                    var token = await GenerateToken(user);
+                    return token;
+                }
+            }
+
+            return string.Empty;
+        }
+        public async Task<string> RegisterPatient(PatientDto model)
         {
             if (model == null)
             {
