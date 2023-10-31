@@ -6,6 +6,9 @@ namespace Health_prescription_software_API.Contracts
 {
     public interface IAuthenticationService
     {
+
+        public Task<string> RegisterPatient(PatientDto model);
+
         public Task<string?> RegisterGp(RegisterGpDto model);
 
         public Task<string?> LoginGp(LoginGpDto model);
@@ -15,4 +18,5 @@ namespace Health_prescription_software_API.Contracts
 
 		public Task<string?> LoginPharmacy(LoginPharmacyDto pharmacyUser);
 	}
+
 }

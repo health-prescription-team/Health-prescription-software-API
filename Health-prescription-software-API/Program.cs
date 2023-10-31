@@ -32,7 +32,7 @@ builder.Services.AddIdentity<User, IdentityRole>(options =>
     options.Password.RequireDigit = true;
     options.Password.RequireLowercase = true;
     options.SignIn.RequireConfirmedPhoneNumber = false;
-   
+
 })
     .AddEntityFrameworkStores<HealthPrescriptionDbContext>()
     .AddDefaultTokenProviders();

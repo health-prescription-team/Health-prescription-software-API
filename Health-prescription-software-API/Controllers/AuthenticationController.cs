@@ -33,6 +33,19 @@ namespace Health_prescription_software_API.Controllers
             return Ok(new {Token = token});
         }
 
+
+        [HttpPost("Register/Patient")]
+        public async Task<IActionResult> RegisterPatient([FromForm] PatientDto PatientUser)
+        {
+            var token = await _authenticationService.RegisterPatient(PatientUser);
+
+            if (token == null)
+            {
+                throw new ArgumentException("Failed to register a patient");
+            }
+             return Ok(new { Token = token });
+        }   
+            
         [HttpPost("Login/Gp")]
         public async Task<IActionResult> LoginGp([FromForm]LoginGpDto GpUser)
         {
@@ -43,13 +56,13 @@ namespace Health_prescription_software_API.Controllers
             {
                 //it's controller. instead return bad request
                 throw new ArgumentException("Failed to login a GP");
-
-
             }
 
             return Ok(new { Token = token });
-
         }
+
+
+        
 
 
         [HttpPost("Register/Pharmacy")]
@@ -64,8 +77,8 @@ namespace Health_prescription_software_API.Controllers
                 return BadRequest();//todo: return more info.
             }
 
-			return Ok(new { Token = token });
-		}
+			      return Ok(new { Token = token });
+		    }
 
 
         [HttpPost("Login/Pharmacy")]
@@ -76,10 +89,11 @@ namespace Health_prescription_software_API.Controllers
 
             if (string.IsNullOrEmpty(token))
             {
-				return BadRequest();//todo: return more info.
-			}
+				       return BadRequest();//todo: return more info.
+			      }
 
-			return Ok(new { Token = token });
-		}
+			      return Ok(new { Token = token });
+		    }
+
     }
 }
