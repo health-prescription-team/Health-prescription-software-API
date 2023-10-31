@@ -4,6 +4,7 @@ namespace Health_prescription_software_API.Controllers
     using Contracts;
     using Health_prescription_software_API.Models.Authentication.GP;
 	using Health_prescription_software_API.Models.Authentication.Pharmacy;
+	using Health_prescription_software_API.Models.Authentification;
 	using Microsoft.AspNetCore.Mvc;
 
     [ApiController]

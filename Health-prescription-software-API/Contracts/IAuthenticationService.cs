@@ -1,5 +1,6 @@
 ﻿using Health_prescription_software_API.Models.Authentication.GP;
 using Health_prescription_software_API.Models.Authentication.Pharmacy;
+using Health_prescription_software_API.Models.Authentification;
 using Microsoft.IdentityModel.Tokens;
 
 namespace Health_prescription_software_API.Contracts
