@@ -34,7 +34,7 @@ namespace Health_prescription_software_API.Services
 			_signInManager = signInManager;
 		}
 
-		public async Task<string> RegisterGp(RegisterGpDto model)
+		public async Task<string?> RegisterGp(RegisterGpDto model)
 		{
 			//todo: checking the model is in controller or external class
 			if (model == null)
@@ -101,7 +101,7 @@ namespace Health_prescription_software_API.Services
 
 		}
 
-		public async Task<string> LoginGp(LoginGpDto model)
+		public async Task<string?> LoginGp(LoginGpDto model)
 		{
 			var user = await GetUserByEgn(model.Egn);
 
@@ -143,8 +143,7 @@ namespace Health_prescription_software_API.Services
 			{
 				await _signInManager.SignInAsync(pharmacyUser, isPersistent: false);
 
-				//todo: to go in external method
-				var user = _context.Users.First(u => u.Email == model.Email);
+				User? user = await GetUserByEmailAsync(pharmacyUser.Email);
 
 				await _userManager.AddToRoleAsync(user, RoleConstants.Pharmacy);
 
@@ -157,9 +156,21 @@ namespace Health_prescription_software_API.Services
 
 		}
 
-		public Task<string?> LoginPharmacy(LoginPharmacyDto pharmacyUser)
+		public async Task<string?> LoginPharmacy(LoginPharmacyDto model)
 		{
-			throw new NotImplementedException();
+			User? pharmacyUser = await GetUserByEmailAsync(model.Email);
+			if (pharmacyUser != null)
+			{
+				var result = await _signInManager.PasswordSignInAsync(pharmacyUser, model.Password, false, false);
+
+				if (result.Succeeded)
+				{
+					var token = await GenerateToken(pharmacyUser);
+					return token;
+				}
+			}
+
+			return null;
 		}
 
 
@@ -215,6 +226,13 @@ namespace Health_prescription_software_API.Services
 			}
 
 			return await _context.Users.FirstOrDefaultAsync(x => x.Egn == egn);
+		}
+
+		private async Task<User?> GetUserByEmailAsync(string email)
+		{
+			User? user = await _context.Users.FirstOrDefaultAsync(u => u.Email == email);
+
+			return user;
 		}
 	}
 }
