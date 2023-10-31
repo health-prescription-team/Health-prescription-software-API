@@ -306,7 +306,7 @@ namespace Health_prescription_software_API.Services
         private async Task<string> GenerateToken(User user)
 		{
 			var tokenHandler = new JwtSecurityTokenHandler();
-			var key = Encoding.ASCII.GetBytes(_config.GetValue<string>("Jwt:Key"));
+			var key = Encoding.UTF8.GetBytes(_config["Jwt:Key"]!);
 
 			var userRole = await GetUserRole(user);
 
@@ -322,7 +322,9 @@ namespace Health_prescription_software_API.Services
 			{
 				Subject = new ClaimsIdentity(claims),
 				Expires = DateTime.UtcNow.AddHours(1),
-				SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
+				SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256),
+				Issuer = _config["Jwt:Issuer"],
+				Audience =  _config["Jwt:Audience"],
 			};
 
 			var token = tokenHandler.CreateToken(tokenDescriptor);
