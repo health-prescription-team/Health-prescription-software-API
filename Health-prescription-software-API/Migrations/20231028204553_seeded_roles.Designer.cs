@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Health_prescription_software_API.Migrations
 {
     [DbContext(typeof(HealthPrescriptionDbContext))]
-    [Migration("20231030154639_ExtendUserAndAddSeedRoles")]
-    partial class ExtendUserAndAddSeedRoles
+    [Migration("20231028204553_seeded_roles")]
+    partial class seeded_roles
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -178,25 +178,25 @@ namespace Health_prescription_software_API.Migrations
                     b.HasData(
                         new
                         {
-                            Id = "bc796597-e981-4710-a43e-7849d93cc9bb",
+                            Id = "d4a622a5-0a7a-421a-a8ee-bb52305eb298",
                             Name = "GP",
                             NormalizedName = "GP"
                         },
                         new
                         {
-                            Id = "d7e10219-3f55-4a2b-b620-400ee8ed42d8",
+                            Id = "6340aba9-073e-4117-a230-8cab740efd20",
                             Name = "Patient",
                             NormalizedName = "PATIENT"
                         },
                         new
                         {
-                            Id = "2160616b-e223-42f3-a0b6-5bab01958a6c",
+                            Id = "027f66e9-83ed-4902-b1d7-53103ff49295",
                             Name = "Pharmacist",
                             NormalizedName = "PHARMACIST"
                         },
                         new
                         {
-                            Id = "67d47fbc-fbbf-4ae2-b448-5dfb519a9242",
+                            Id = "7072dfd3-a3d8-4bf6-ad08-e42e881aee02",
                             Name = "Pharmacy",
                             NormalizedName = "PHARMACY"
                         });

@@ -5,9 +5,9 @@ using Health_prescription_software_API.Data.Entities.User;
 using Health_prescription_software_API.Models.Authentication;
 using Health_prescription_software_API.Models.Authentication.GP;
 using Health_prescription_software_API.Models.Authentication.Pharmacy;
-using Health_prescription_software_API.Models.Authentification.Patient;
+using Health_prescription_software_API.Models.Authentication.Patient;
+using Health_prescription_software_API.Models.Authentication.Pharmacist;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
@@ -236,9 +236,74 @@ namespace Health_prescription_software_API.Services
 			return null;
 		}
 
+        public async Task<string?> RegisterPharmacist(RegisterPharmacistDto model)
+        {
+            if (model == null)
+            {
+                throw new ArgumentNullException("Pharmacist data cannot be null!");
+            }
 
+            if (model.ProfilePicture == null || model.ProfilePicture.Length == 0)
+            {
+                throw new NullReferenceException("ProfilePicture model cannot be null!");
+            }
 
-		private async Task<string> GenerateToken(User user)
+            using (var memoryStream = new MemoryStream())
+            {
+                await model.ProfilePicture.CopyToAsync(memoryStream);
+
+                var user = new User
+                {
+                    FirstName = model.FirstName,
+                    MiddleName = model.LastName,
+                    LastName = model.LastName,
+                    UinNumber = model.UinNumber,
+                    ProfilePicture = memoryStream.ToArray(),
+                    Egn = model.Egn,
+                    Email = model.Email,
+                    UserName = $"{model.FirstName}{model.Egn}",
+                    PhoneNumber = model.PhoneNumber
+
+                };
+
+                var result = await _userManager.CreateAsync(user, model.Password);
+
+                if (result.Succeeded)
+                {
+                    await _signInManager.SignInAsync(user, isPersistent: false);
+
+                    var userEntity = await this.GetUserByEgn(model.Egn);
+
+                    await _userManager.AddToRoleAsync(userEntity!, RoleConstants.Pharmacist);
+
+                    var securityToken = await this.GenerateToken(userEntity!);
+
+                    return securityToken;
+                }
+            }
+
+            return null;
+        }
+
+        public async Task<string> LoginPharmacist(LoginPharmacistDto model)
+        {
+            var user = await GetUserByEgn(model.Egn);
+
+            if (user != null)
+            {
+                var result = await _signInManager.PasswordSignInAsync(user, model.Password, false, false);
+
+                if (result.Succeeded)
+                {
+                    var token = await this.GenerateToken(user);
+                    return token;
+                }
+            }
+
+            return string.Empty;
+        }
+
+        private async Task<string> GenerateToken(User user)
 		{
 			var tokenHandler = new JwtSecurityTokenHandler();
 			var key = Encoding.ASCII.GetBytes(_config.GetValue<string>("Jwt:Key"));

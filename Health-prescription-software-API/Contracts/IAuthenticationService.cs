@@ -1,5 +1,7 @@
-﻿using Health_prescription_software_API.Models.Authentication.GP;
+using Health_prescription_software_API.Models.Authentication.GP;
 using Health_prescription_software_API.Models.Authentication.Pharmacy;
+using Health_prescription_software_API.Models.Authentification.Pharmacist;
+using Health_prescription_software_API.Models.Authentification;
 using Health_prescription_software_API.Models.Authentication;
 using Microsoft.IdentityModel.Tokens;
 using Health_prescription_software_API.Models.Authentification.Patient;

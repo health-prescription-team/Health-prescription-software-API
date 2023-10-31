@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Health_prescription_software_API.Migrations
 {
     [DbContext(typeof(HealthPrescriptionDbContext))]
-    [Migration("20231029205807_CreateAndSeedDatabase")]
-    partial class CreateAndSeedDatabase
+    [Migration("20231028191425_extended_identity_user")]
+    partial class extended_identity_user
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -85,7 +85,7 @@ namespace Health_prescription_software_API.Migrations
                     b.Property<string>("FirstName")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("HospitalName")
+                    b.Property<string>("HostpitalName")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("LastName")
@@ -121,6 +121,7 @@ namespace Health_prescription_software_API.Migrations
                         .HasColumnType("bit");
 
                     b.Property<byte[]>("ProfilePicture")
+                        .IsRequired()
                         .HasColumnType("varbinary(max)");
 
                     b.Property<string>("SecurityStamp")
@@ -174,32 +175,6 @@ namespace Health_prescription_software_API.Migrations
                         .HasFilter("[NormalizedName] IS NOT NULL");
 
                     b.ToTable("AspNetRoles", (string)null);
-
-                    b.HasData(
-                        new
-                        {
-                            Id = "e24f6255-8353-45fb-90af-736bc8bbaa2a",
-                            Name = "GP",
-                            NormalizedName = "GP"
-                        },
-                        new
-                        {
-                            Id = "92a31397-8221-4aaa-bdf5-811ec5d46a9b",
-                            Name = "Patient",
-                            NormalizedName = "PATIENT"
-                        },
-                        new
-                        {
-                            Id = "00be8d84-3cd6-4224-b218-69523a8a94fd",
-                            Name = "Pharmacist",
-                            NormalizedName = "PHARMACIST"
-                        },
-                        new
-                        {
-                            Id = "3f2a1a8c-2b58-46c3-ae66-e7daea1297f0",
-                            Name = "Pharmacy",
-                            NormalizedName = "PHARMACY"
-                        });
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
