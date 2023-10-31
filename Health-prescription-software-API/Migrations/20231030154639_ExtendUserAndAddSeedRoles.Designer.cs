@@ -4,6 +4,7 @@ using Health_prescription_software_API.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Health_prescription_software_API.Migrations
 {
     [DbContext(typeof(HealthPrescriptionDbContext))]
-    partial class HealthPrescriptionDbContextModelSnapshot : ModelSnapshot
+    [Migration("20231030154639_ExtendUserAndAddSeedRoles")]
+    partial class ExtendUserAndAddSeedRoles
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -175,33 +178,25 @@ namespace Health_prescription_software_API.Migrations
                     b.HasData(
                         new
                         {
-
                             Id = "bc796597-e981-4710-a43e-7849d93cc9bb",
-
                             Name = "GP",
                             NormalizedName = "GP"
                         },
                         new
                         {
-
                             Id = "d7e10219-3f55-4a2b-b620-400ee8ed42d8",
-
                             Name = "Patient",
                             NormalizedName = "PATIENT"
                         },
                         new
                         {
-
                             Id = "2160616b-e223-42f3-a0b6-5bab01958a6c",
-
                             Name = "Pharmacist",
                             NormalizedName = "PHARMACIST"
                         },
                         new
                         {
-
                             Id = "67d47fbc-fbbf-4ae2-b448-5dfb519a9242",
-
                             Name = "Pharmacy",
                             NormalizedName = "PHARMACY"
                         });
