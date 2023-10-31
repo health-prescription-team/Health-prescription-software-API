@@ -3,10 +3,12 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
+#pragma warning disable CA1814 // Prefer jagged arrays over multidimensional
+
 namespace Health_prescription_software_API.Migrations
 {
     /// <inheritdoc />
-    public partial class initial_set_up : Migration
+    public partial class ExtendUserAndAddSeedRoles : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -30,6 +32,14 @@ namespace Health_prescription_software_API.Migrations
                 columns: table => new
                 {
                     Id = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    FirstName = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    MiddleName = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    LastName = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Egn = table.Column<int>(type: "int", nullable: true),
+                    ProfilePicture = table.Column<byte[]>(type: "varbinary(max)", nullable: true),
+                    UinNumber = table.Column<int>(type: "int", nullable: true),
+                    HospitalName = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    PharmacyName = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     UserName = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
                     NormalizedUserName = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
                     Email = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
@@ -172,6 +182,17 @@ namespace Health_prescription_software_API.Migrations
                         principalTable: "AspNetUsers",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.InsertData(
+                table: "AspNetRoles",
+                columns: new[] { "Id", "ConcurrencyStamp", "Name", "NormalizedName" },
+                values: new object[,]
+                {
+                    { "2160616b-e223-42f3-a0b6-5bab01958a6c", null, "Pharmacist", "PHARMACIST" },
+                    { "67d47fbc-fbbf-4ae2-b448-5dfb519a9242", null, "Pharmacy", "PHARMACY" },
+                    { "bc796597-e981-4710-a43e-7849d93cc9bb", null, "GP", "GP" },
+                    { "d7e10219-3f55-4a2b-b620-400ee8ed42d8", null, "Patient", "PATIENT" }
                 });
 
             migrationBuilder.CreateIndex(
