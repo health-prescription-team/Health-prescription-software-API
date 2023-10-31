@@ -1,10 +1,10 @@
-﻿namespace Health_prescription_software_API.Controllers
+namespace Health_prescription_software_API.Controllers
 {
     using Contracts;
     using Health_prescription_software_API.Models.Authentication.GP;
     using Health_prescription_software_API.Models.Authentication.Pharmacy;
-    using Health_prescription_software_API.Models.Authentification;
-    using Health_prescription_software_API.Models.Authentification.Pharmacist;
+    using Health_prescription_software_API.Models.Authentication.Patient;
+    using Health_prescription_software_API.Models.Authentication.Pharmacist;
     using Microsoft.AspNetCore.Mvc;
 
     [ApiController]
@@ -33,7 +33,22 @@
 
             return Ok(new { Token = token });
         }
+        [HttpPost("Login/Patient")]
+        public async Task<IActionResult> LoginPatient([FromForm] LoginPatientDto PatientUser)
+        {
 
+            var token = await _authenticationService.LoginPatient(PatientUser);
+
+            if (token == string.Empty)
+            {
+                throw new ArgumentException("Failed to login a Patient");
+
+
+            }
+
+            return Ok(new { Token = token });
+
+        }
 
         [HttpPost("Register/Patient")]
         public async Task<IActionResult> RegisterPatient([FromForm] PatientDto PatientUser)
