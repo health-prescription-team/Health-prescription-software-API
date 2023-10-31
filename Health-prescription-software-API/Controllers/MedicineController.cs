@@ -73,7 +73,8 @@ namespace Health_prescription_software_API.Controllers
 
 
         [HttpGet]
-        [Authorize(Roles = Pharmacy)]
+        //[Authorize(Roles = Pharmacy)]
+        [Authorize]
         public async Task<IActionResult> All([FromQuery] QueryMedicineDTO? queryModel = null)
         {
             //todo: validate the queryModel
