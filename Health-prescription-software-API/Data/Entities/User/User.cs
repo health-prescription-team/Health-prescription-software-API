@@ -9,6 +9,7 @@ public class User:IdentityUser
    public string? MiddleName { get; set; }
    public  string? LastName { get; set; }
    
+	//todo: change to string or guid
    public int? Egn { get; set; }
    
    public byte[]? ProfilePicture { get; set; }
