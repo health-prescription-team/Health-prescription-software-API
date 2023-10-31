@@ -1,10 +1,8 @@
 using Health_prescription_software_API.Models.Authentication.GP;
 using Health_prescription_software_API.Models.Authentication.Pharmacy;
-using Health_prescription_software_API.Models.Authentification.Pharmacist;
-using Health_prescription_software_API.Models.Authentification;
-using Health_prescription_software_API.Models.Authentication;
+using Health_prescription_software_API.Models.Authentication.Pharmacist;
 using Microsoft.IdentityModel.Tokens;
-using Health_prescription_software_API.Models.Authentification.Patient;
+using Health_prescription_software_API.Models.Authentication.Patient;
 
 namespace Health_prescription_software_API.Contracts
 {
@@ -21,6 +19,11 @@ namespace Health_prescription_software_API.Contracts
 		public Task<string?> RegisterPharmacy(RegisterPharmacyDto pharmacyUser);
 
 		public Task<string?> LoginPharmacy(LoginPharmacyDto pharmacyUser);
-	}
+
+        public Task<string?> RegisterPharmacist(RegisterPharmacistDto model);
+
+        public Task<string> LoginPharmacist(LoginPharmacistDto model);
+
+    }
 
 }

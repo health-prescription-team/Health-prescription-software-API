@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace Health_prescription_software_API.Models.Authentification.Patient
+namespace Health_prescription_software_API.Models.Authentication.Patient
 {
     public class PatientDto
     {

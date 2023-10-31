@@ -1,4 +1,4 @@
-﻿namespace Health_prescription_software_API.Models.Authentification.Pharmacist
+﻿namespace Health_prescription_software_API.Models.Authentication.Pharmacist
 {
     using System.ComponentModel.DataAnnotations;
 
