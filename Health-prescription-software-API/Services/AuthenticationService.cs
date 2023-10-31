@@ -5,6 +5,7 @@ using Health_prescription_software_API.Data.Entities.User;
 using Health_prescription_software_API.Models.Authentication;
 using Health_prescription_software_API.Models.Authentication.GP;
 using Health_prescription_software_API.Models.Authentication.Pharmacy;
+using Health_prescription_software_API.Models.Authentification;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
