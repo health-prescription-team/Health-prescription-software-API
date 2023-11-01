@@ -19,6 +19,11 @@ namespace Health_prescription_software_API.Contracts
 		public Task<string?> RegisterPharmacy(RegisterPharmacyDto pharmacyUser);
 
 		public Task<string?> LoginPharmacy(LoginPharmacyDto pharmacyUser);
-	}
+
+        public Task<string?> RegisterPharmacist(RegisterPharmacistDto model);
+
+        public Task<string> LoginPharmacist(LoginPharmacistDto model);
+
+    }
 
 }
