@@ -348,7 +348,7 @@ namespace Health_prescription_software_API.Services
 
 		}
 
-		private async Task<User?> GetUserByEgn(int egn)
+		private async Task<User?> GetUserByEgn(string egn)
 		{
 			if (egn == null)
 			{
