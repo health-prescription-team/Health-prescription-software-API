@@ -12,7 +12,7 @@ namespace Health_prescription_software_API.Models.Authentication.Patient
         [Required]
         public string PhoneNumber { get; set; }
         [Required]
-        public int Egn { get; set; }
+        public string Egn { get; set; }
         [Required]
         public IFormFile ProfilePicture { get; set; }
         [Required]

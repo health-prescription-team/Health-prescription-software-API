@@ -13,7 +13,7 @@
         public string LastName { get; set; } = null!;
 
         [Required]
-        public int Egn { get; set; }
+        public string Egn { get; set; }
 
         [Required]
         [EmailAddress]
