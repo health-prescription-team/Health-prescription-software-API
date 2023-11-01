@@ -3,9 +3,10 @@ namespace Health_prescription_software_API.Controllers
     using Contracts;
     using Models.Medicine;
     using Microsoft.AspNetCore.Mvc;
-   
+	using Microsoft.AspNetCore.Authorization;
+    using static Common.Roles.RoleConstants;
 
-    [Route("api/[controller]")]
+	[Route("api/[controller]")]
     [ApiController]
     public class MedicineController : ControllerBase
     {
@@ -72,6 +73,8 @@ namespace Health_prescription_software_API.Controllers
 
 
         [HttpGet]
+        //[Authorize(Roles = Pharmacy)]
+        [Authorize]
         public async Task<IActionResult> All([FromQuery] QueryMedicineDTO? queryModel = null)
         {
             //todo: validate the queryModel
