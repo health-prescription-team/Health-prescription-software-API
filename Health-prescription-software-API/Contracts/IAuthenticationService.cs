@@ -1,17 +1,17 @@
 using Health_prescription_software_API.Models.Authentication.GP;
 using Health_prescription_software_API.Models.Authentication.Pharmacy;
-using Health_prescription_software_API.Models.Authentification.Pharmacist;
-using Health_prescription_software_API.Models.Authentification;
+using Health_prescription_software_API.Models.Authentication.Pharmacist;
+using Health_prescription_software_API.Models.Authentication;
 using Health_prescription_software_API.Models.Authentication;
 using Microsoft.IdentityModel.Tokens;
-using Health_prescription_software_API.Models.Authentification.Patient;
+using Health_prescription_software_API.Models.Authentication.Patient;
 
 namespace Health_prescription_software_API.Contracts
 {
     public interface IAuthenticationService
     {
-        public Task<string> LoginPatient(LoginPatientDto model);
-        public Task<string> RegisterPatient(PatientDto model);
+        public Task<string?> LoginPatient(LoginPatientDto model);
+        public Task<string?> RegisterPatient(PatientDto model);
 
         public Task<string?> RegisterGp(RegisterGpDto model);
 

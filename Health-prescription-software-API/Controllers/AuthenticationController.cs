@@ -53,6 +53,7 @@ namespace Health_prescription_software_API.Controllers
         [HttpPost("Register/Patient")]
         public async Task<IActionResult> RegisterPatient([FromForm] PatientDto PatientUser)
         {
+
             var token = await _authenticationService.RegisterPatient(PatientUser);
 
             if (token == null)
