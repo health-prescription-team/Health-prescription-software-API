@@ -8,8 +8,8 @@ namespace Health_prescription_software_API.Contracts
 {
     public interface IAuthenticationService
     {
-        public Task<string> LoginPatient(LoginPatientDto model);
-        public Task<string> RegisterPatient(PatientDto model);
+        public Task<string?> LoginPatient(LoginPatientDto model);
+        public Task<string?> RegisterPatient(PatientDto model);
 
         public Task<string?> RegisterGp(RegisterGpDto model);
 

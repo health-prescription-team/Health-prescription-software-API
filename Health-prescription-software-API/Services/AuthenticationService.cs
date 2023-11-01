@@ -38,9 +38,9 @@ namespace Health_prescription_software_API.Services
 			_signInManager = signInManager;
 		}
        
-		public async Task<string> LoginPatient(LoginPatientDto model)
+		public async Task<string?> LoginPatient(LoginPatientDto model)
         {
-            var user = await GetUserByEgn(model.Egn);
+            User? user = await GetUserByEgn(model.Egn);
 
             if (user != null)
             {
@@ -55,45 +55,58 @@ namespace Health_prescription_software_API.Services
 
             return string.Empty;
         }
-        public async Task<string> RegisterPatient(PatientDto model)
-        {
-            if (model == null)
-            {
-                throw new ArgumentNullException("Patient data cannot be null!");
-            }
-            if (model.ProfilePicture == null || model.ProfilePicture.Length == 0)
-            {
-                throw new NullReferenceException("ProfilePicture model cannot be null!");
-            }
-            using (var memoryStream = new MemoryStream())
-            {
-                await model.ProfilePicture.CopyToAsync(memoryStream);
+		public async Task<string?> RegisterPatient(PatientDto model)
+		{
+			if (model == null)
+			{
+				throw new ArgumentNullException("Patient data cannot be null!");
+			}
+			if (model.ProfilePicture == null || model.ProfilePicture.Length == 0)
+			{
+				throw new NullReferenceException("ProfilePicture model cannot be null!");
+			}
+            var egnCheckForDuplicate = await _context.Users.FirstOrDefaultAsync(x => x.Egn == model.Egn);
 
-                var patientModel = new User
-                {
-                    FirstName = model.FirstName,
-                    MiddleName = model.LastName,
-                    LastName = model.LastName,
-                    PhoneNumber = model.PhoneNumber,
-                    UserName = $"{model.FirstName}{model.Egn}",
-                    ProfilePicture = memoryStream.ToArray(),
-                    Egn = model.Egn,
-                    Email = "test3@abv.bg"
-                };
-                var result = await _userManager.CreateAsync(patientModel, model.Password);
-                if (result.Succeeded)
-                {
-                    await _signInManager.SignInAsync(patientModel, isPersistent: false);
+			if (egnCheckForDuplicate is null)
+			{
+				using (var memoryStream = new MemoryStream())
+				{
+					await model.ProfilePicture.CopyToAsync(memoryStream);
 
-                    var user = await GetUserByEgn(model.Egn);
+					var patientModel = new User
+					{
+						FirstName = model.FirstName,
+						MiddleName = model.LastName,
+						LastName = model.LastName,
+						PhoneNumber = model.PhoneNumber,
+						UserName = $"{model.FirstName}{model.Egn}",
+						ProfilePicture = memoryStream.ToArray(),
+						Egn = model.Egn,
+						Email = "test3@abv.bg"
+					};
+					var result = await _userManager.CreateAsync(patientModel, model.Password);
+					if (result.Succeeded)
+					{
+						await _signInManager.SignInAsync(patientModel, isPersistent: false);
 
-                    await _userManager.AddToRoleAsync(user, RoleConstants.Patient);
+						var user = await GetUserByEgn(model.Egn);
 
-                    var securityToken = await GenerateToken(user);
+						await _userManager.AddToRoleAsync(user, RoleConstants.Patient);
 
-                    return securityToken;
-                }
-            }
+						var securityToken = await GenerateToken(user);
+
+						return securityToken;
+					}
+				}
+			}
+			else
+			{
+				//todo: catch it in the controller
+				throw new ArgumentException("There is already register Patient with this egn!");
+			}
+            
+		
+            
             return null;
         }
 
