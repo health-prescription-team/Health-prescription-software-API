@@ -17,40 +17,40 @@ builder.Services.AddControllers();
 
 builder.Services.AddCors(p => p.AddPolicy("corspolicy", build =>
 {
-    build.WithOrigins("http://localhost:3000").AllowAnyMethod().AllowAnyHeader();
+	build.WithOrigins("http://localhost:3000").AllowAnyMethod().AllowAnyHeader();
 }));
 
 builder.Services.AddDbContext<HealthPrescriptionDbContext>(options =>
 {
-    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));
+	options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));
 });
 
 
 builder.Services.AddIdentity<User, IdentityRole>(options =>
 {
-    options.SignIn.RequireConfirmedAccount = false;
-    options.Password.RequireNonAlphanumeric = true;
-    options.Password.RequiredLength = 6;
-    options.User.RequireUniqueEmail = false;
-    options.Password.RequireDigit = true;
-    options.Password.RequireLowercase = true;
-    options.SignIn.RequireConfirmedPhoneNumber = false;
-   
+	options.SignIn.RequireConfirmedAccount = false;
+	options.Password.RequireNonAlphanumeric = true;
+	options.Password.RequiredLength = 6;
+	options.User.RequireUniqueEmail = false;
+	options.Password.RequireDigit = true;
+	options.Password.RequireLowercase = true;
+	options.SignIn.RequireConfirmedPhoneNumber = false;
+
 })
-    .AddEntityFrameworkStores<HealthPrescriptionDbContext>()
-    .AddDefaultTokenProviders();
+	.AddEntityFrameworkStores<HealthPrescriptionDbContext>()
+	.AddDefaultTokenProviders();
 
 builder.Services
-    .AddAuthentication(options =>
+	.AddAuthentication(options =>
 {
-    options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-    options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-    options.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
+	options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+	options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+	options.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
 })
-    .AddJwtBearer(options =>
-    {
-        options.SaveToken = true;
-        options.RequireHttpsMetadata = false;
+	.AddJwtBearer(options =>
+	{
+		options.SaveToken = true;
+		options.RequireHttpsMetadata = false;
 		options.TokenValidationParameters = new TokenValidationParameters()
 		{
 			ValidateIssuer = true,
@@ -73,8 +73,8 @@ var app = builder.Build();
 
 
 
-    app.UseSwagger();
-    app.UseSwaggerUI();
+app.UseSwagger();
+app.UseSwaggerUI();
 
 app.UseHttpsRedirection();
 app.UseCors("corspolicy");
