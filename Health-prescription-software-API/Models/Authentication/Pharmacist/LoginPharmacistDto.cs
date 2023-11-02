@@ -2,10 +2,13 @@
 {
     using System.ComponentModel.DataAnnotations;
 
+    using static Common.EntityValidationConstants.User;
+
     public class LoginPharmacistDto
     {
         [Required]
-        public string Egn { get; set; }
+        [RegularExpression(EgnRegexPattern, ErrorMessage = InvalidEgnErrorMessage)]
+        public string Egn { get; set; } = null!;
 
         [Required]
         public string Password { get; set; } = null!;
