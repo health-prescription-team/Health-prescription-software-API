@@ -1,23 +1,40 @@
-﻿using Microsoft.AspNetCore.Identity;
-
-namespace Health_prescription_software_API.Data.Entities.User;
-
-public class User:IdentityUser
+﻿namespace Health_prescription_software_API.Data.Entities.User
 {
+    using Microsoft.AspNetCore.Identity;
+    using Microsoft.EntityFrameworkCore;
+    using System.ComponentModel.DataAnnotations;
 
-   public string? FirstName { get; set; } = null!;
-   public string? MiddleName { get; set; }
-   public  string? LastName { get; set; }
-   
-	//todo: change to string or guid
-   public string? Egn { get; set; }
-   
-   public byte[]? ProfilePicture { get; set; }
-   
-   public int? UinNumber { get; set; }
+    using static Common.EntityValidationConstants.User;
 
-   public string? HospitalName { get; set; }
-   
-   public string? PharmacyName { get; set; }
+    [Index(nameof(Egn), IsUnique = true)]
+    [Index(nameof(UinNumber), IsUnique = true)]
+    public class User : IdentityUser
+    {
+        [MaxLength(NameMaxLength)]
+        public string? FirstName { get; set; } = null!;
 
+        [MaxLength(NameMaxLength)]
+        public string? MiddleName { get; set; }
+
+        [MaxLength(NameMaxLength)]
+        public string? LastName { get; set; }
+
+        [RegularExpression(EgnRegexPattern, ErrorMessage = InvalidEgnErrorMessage)]
+        public string? Egn { get; set; }
+
+        public byte[]? ProfilePicture { get; set; }
+
+        [RegularExpression(UinRegexPattern, ErrorMessage = InvalidUniErrorMessage)]
+        public string? UinNumber { get; set; }
+
+        [MaxLength(HospitalNameMaxLength)]
+        public string? HospitalName { get; set; }
+
+        [MaxLength(PharmacyNameMaxLength)]
+        public string? PharmacyName { get; set; }
+
+        [Phone]
+        [RegularExpression(PhoneNumberRegexPattern, ErrorMessage = InvalidPhoneNumberErrorMessage)]
+        public override string? PhoneNumber { get => base.PhoneNumber; set => base.PhoneNumber = value; }
+    }
 }
