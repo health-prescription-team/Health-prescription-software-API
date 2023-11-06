@@ -1,34 +1,45 @@
-﻿using System.ComponentModel.DataAnnotations;
-
-namespace Health_prescription_software_API.Models.Authentication.GP
+﻿namespace Health_prescription_software_API.Models.Authentication.GP
 {
+    using System.ComponentModel.DataAnnotations;
+
+    using static Common.EntityValidationConstants.User;
+
     public class RegisterGpDto
     {
         [Required]
+        [StringLength(NameMaxLength, MinimumLength = NameMinLength)]
         public string FirstName { get; set; } = null!;
 
         [Required]
+        [StringLength(NameMaxLength, MinimumLength = NameMinLength)]
         public string MiddleName { get; set; } = null!;
 
         [Required]
+        [StringLength(NameMaxLength, MinimumLength = NameMinLength)]
         public string LastName { get; set; } = null!;
 
         [Required]
-        public string Egn { get; set; }
+        [RegularExpression(EgnRegexPattern, ErrorMessage = InvalidEgnErrorMessage)]
+        public string Egn { get; set; } = null!;
 
         [Required]
         public IFormFile ProfilePicture { get; set; } = null!;
 
         [Required]
-        public int UinNumber { get; set; }
+        [RegularExpression(UinRegexPattern, ErrorMessage = InvalidUniErrorMessage)]
+        public string UinNumber { get; set; } = null!;
 
         [Required]
+        [StringLength(HospitalNameMaxLength, MinimumLength = HospitalNameMinLength)]
         public string HospitalName { get; set; } = null!;
 
-		[Required]
+        [Required]
+        [StringLength(PharmacyNameMaxLength, MinimumLength = PharmacyNameMinLength)]
         public string Password { get; set; } = null!;
 
-		[Required]
+        [Required]
+        [Phone]
+        [RegularExpression(PhoneNumberRegexPattern, ErrorMessage = InvalidPhoneNumberErrorMessage)]
         public string PhoneNumber { get; set; } = null!;
-	}
+    }
 }

@@ -4,9 +4,8 @@
 
 	public class LoginPharmacyDto
 	{
-		//todo: validation attributes
-
 		[Required]
+		[EmailAddress]
 		public string Email { get; set; } = null!;
 
 		[Required]
