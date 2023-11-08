@@ -17,7 +17,7 @@ builder.Services.AddControllers();
 
 builder.Services.AddCors(p => p.AddPolicy("corspolicy", build =>
 {
-	build.WithOrigins("http://localhost:3000").AllowAnyMethod().AllowAnyHeader();
+	build.WithOrigins("https://localhost:3000").AllowAnyMethod().AllowAnyHeader();
 }));
 
 builder.Services.AddDbContext<HealthPrescriptionDbContext>(options =>
@@ -66,6 +66,7 @@ builder.Services.AddSwaggerGen();
 
 builder.Services.AddScoped<IMedicineService, MedicineService>();
 builder.Services.AddScoped<IAuthenticationService, AuthenticationService>();
+builder.Services.AddScoped<IValidationMedicine, ValidationMedicine>();
 
 
 
