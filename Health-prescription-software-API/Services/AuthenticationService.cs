@@ -143,7 +143,7 @@ namespace Health_prescription_software_API.Services
 						Egn = model.Egn,
 						HospitalName = model.HospitalName,
 						Email = "test@abv.bg4",
-						UserName = "TestGP4",
+						UserName = $"{model.FirstName}{model.UinNumber}",
 						PhoneNumber = model.PhoneNumber
 
 					};
