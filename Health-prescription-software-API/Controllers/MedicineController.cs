@@ -7,6 +7,7 @@ namespace Health_prescription_software_API.Controllers
 
     using Microsoft.AspNetCore.Mvc;
 	using Microsoft.AspNetCore.Authorization;
+	using Microsoft.Extensions.Options;
 
 	[Route("api/[controller]")]
     [ApiController]
@@ -15,12 +16,16 @@ namespace Health_prescription_software_API.Controllers
         private readonly IMedicineService medicineService;
         private readonly IValidationMedicine validationMedicine;
 
+        private readonly IOptions<ApiBehaviorOptions> apiBehaviorOptions;
+
 		public MedicineController(
-            IMedicineService medicineService, 
-            IValidationMedicine validationMedicine)
+			IMedicineService medicineService,
+			IValidationMedicine validationMedicine,
+			IOptions<ApiBehaviorOptions> apiBehaviorOptions)
 		{
 			this.medicineService = medicineService;
 			this.validationMedicine = validationMedicine;
+			this.apiBehaviorOptions = apiBehaviorOptions;
 		}
 
 		[HttpPost]
@@ -87,8 +92,9 @@ namespace Health_prescription_software_API.Controllers
             if (true)//!validationMedicine.IsQueryValide(queryModel))
             {
                 ModelState.AddModelError(string.Empty, InvalidQueryString);
-                return BadRequest(new BadRequestObjectResult(ModelState.Values));
-            }
+                return apiBehaviorOptions
+                    .Value.InvalidModelStateResponseFactory(ControllerContext);
+			}
             try
             {
                 AllMedicineServiceModel model = await medicineService.GetAllAsync(queryModel);
