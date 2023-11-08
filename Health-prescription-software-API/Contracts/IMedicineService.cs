@@ -13,7 +13,7 @@ namespace Health_prescription_software_API.Contracts
      
         Task EditByIdAsync(int id, EditMedicineDTO editMedicineModel);
       
-        Task<AllMedicineDTO[]> GetAllAsync(QueryMedicineDTO? query);
+        Task<AllMedicineServiceModel> GetAllAsync(QueryMedicineDTO? query);
       
         Task<bool> Delete(int id);
     }

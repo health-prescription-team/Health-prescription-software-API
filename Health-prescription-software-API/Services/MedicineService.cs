@@ -5,7 +5,6 @@ namespace Health_prescription_software_API.Services
 	using Health_prescription_software_API.Data.Entities;
 	using Health_prescription_software_API.Models.Medicine;
 	using Microsoft.EntityFrameworkCore;
-	using System.Collections.Generic;
 	using System.Linq;
 
 	using static Common.GeneralConstants;
@@ -88,7 +87,7 @@ namespace Health_prescription_software_API.Services
 
 
 
-		public async Task<AllMedicineDTO[]> GetAllAsync(QueryMedicineDTO? query)
+		public async Task<AllMedicineServiceModel> GetAllAsync(QueryMedicineDTO? query)
 		{
 			IQueryable<Medicine> medicineQuery = context.Medicines
 				.AsQueryable()
@@ -106,6 +105,8 @@ namespace Health_prescription_software_API.Services
 					.ThenBy(m => m.MedicineCompany)
 					.ThenByDescending(m => m.Price);
 			}
+
+			int medicinesCount = medicineQuery.Count();
 
 			if (query?.PageNumber != null && query?.PageNumber != 0)
 			{
@@ -127,7 +128,13 @@ namespace Health_prescription_software_API.Services
 				})
 				.ToArrayAsync();
 
-			return medicines;
+			AllMedicineServiceModel model = new AllMedicineServiceModel()
+			{
+				Medicines = medicines,
+				MedicinesCount = medicinesCount
+			};
+
+			return model;
 		}
 
         public async Task<bool> Delete(int id)
