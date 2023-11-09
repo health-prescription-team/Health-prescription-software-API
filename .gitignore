@@ -397,3 +397,5 @@ FodyWeavers.xsd
 # JetBrains Rider
 *.sln.iml
 /Health-prescription-software-API/appsettings.json
+/Health-prescription-software-API/appsettings.json
+/Health-prescription-software-API/appsettings.Development.json
