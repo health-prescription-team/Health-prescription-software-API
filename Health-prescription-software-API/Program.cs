@@ -15,10 +15,14 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllers();
 
 
-builder.Services.AddCors(p => p.AddPolicy("corspolicy", build =>
+builder.Services.AddCors(options =>
 {
-	build.WithOrigins("http://localhost:3000").AllowAnyMethod().AllowAnyHeader();
-}));
+	options.AddPolicy(name: "CORSPolicy", p =>
+	{
+		p.WithOrigins("http://localhost:3000"
+						, "https://localhost:3000");
+	});
+});
 
 builder.Services.AddDbContext<HealthPrescriptionDbContext>(options =>
 {
@@ -66,6 +70,7 @@ builder.Services.AddSwaggerGen();
 
 builder.Services.AddScoped<IMedicineService, MedicineService>();
 builder.Services.AddScoped<IAuthenticationService, AuthenticationService>();
+builder.Services.AddScoped<IValidationMedicine, ValidationMedicine>();
 
 
 
@@ -77,8 +82,8 @@ app.UseSwagger();
 app.UseSwaggerUI();
 
 app.UseHttpsRedirection();
-app.UseCors("corspolicy");
 app.UseRouting();
+app.UseCors("CORSPolicy");
 app.UseAuthentication();
 app.UseAuthorization();
 

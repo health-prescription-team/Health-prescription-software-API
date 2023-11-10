@@ -2,22 +2,33 @@ namespace Health_prescription_software_API.Controllers
 {
     using Contracts;
     using Models.Medicine;
+    using static Common.Roles.RoleConstants;
+    using static Common.EntityValidationErrorMessages.Medicine;
+
     using Microsoft.AspNetCore.Mvc;
 	using Microsoft.AspNetCore.Authorization;
-    using static Common.Roles.RoleConstants;
+	using Microsoft.Extensions.Options;
 
 	[Route("api/[controller]")]
     [ApiController]
     public class MedicineController : ControllerBase
     {
         private readonly IMedicineService medicineService;
+        private readonly IValidationMedicine validationMedicine;
 
-        public MedicineController(IMedicineService medicineService)
-        {
-            this.medicineService = medicineService;
-        }
+        private readonly IOptions<ApiBehaviorOptions> apiBehaviorOptions;
 
-        [HttpPost]
+		public MedicineController(
+			IMedicineService medicineService,
+			IValidationMedicine validationMedicine,
+			IOptions<ApiBehaviorOptions> apiBehaviorOptions)
+		{
+			this.medicineService = medicineService;
+			this.validationMedicine = validationMedicine;
+			this.apiBehaviorOptions = apiBehaviorOptions;
+		}
+
+		[HttpPost]
         public async Task<IActionResult> Add([FromForm] AddMedicineDTO model)
         {
             await medicineService.Add(model);
@@ -74,13 +85,19 @@ namespace Health_prescription_software_API.Controllers
 
         [HttpGet]
         //[Authorize(Roles = Pharmacy)]
-        [Authorize]
+        //[Authorize]
         public async Task<IActionResult> All([FromQuery] QueryMedicineDTO? queryModel = null)
         {
             //todo: validate the queryModel
+            if (false)//validationMedicine.IsQueryValide(queryModel))
+            {
+                ModelState.AddModelError(string.Empty, InvalidQueryString);
+                return apiBehaviorOptions
+                    .Value.InvalidModelStateResponseFactory(ControllerContext);
+			}
             try
             {
-                AllMedicineDTO[] model = await medicineService.GetAllAsync(queryModel);
+                AllMedicineServiceModel model = await medicineService.GetAllAsync(queryModel);
                 return Ok(model);
             }
             catch (Exception)
