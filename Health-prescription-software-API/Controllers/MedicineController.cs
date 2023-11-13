@@ -6,10 +6,11 @@ namespace Health_prescription_software_API.Controllers
     using static Common.EntityValidationErrorMessages.Medicine;
 
     using Microsoft.AspNetCore.Mvc;
-	using Microsoft.AspNetCore.Authorization;
-	using Microsoft.Extensions.Options;
+    using Microsoft.AspNetCore.Authorization;
+    using Microsoft.Extensions.Options;
+    using Health_prescription_software_API.Contracts.Validations;
 
-	[Route("api/[controller]")]
+    [Route("api/[controller]")]
     [ApiController]
     public class MedicineController : ControllerBase
     {

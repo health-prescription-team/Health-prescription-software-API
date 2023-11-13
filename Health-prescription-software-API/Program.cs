@@ -1,7 +1,9 @@
 using Health_prescription_software_API.Contracts;
+using Health_prescription_software_API.Contracts.Validations;
 using Health_prescription_software_API.Data;
 using Health_prescription_software_API.Data.Entities.User;
 using Health_prescription_software_API.Services;
+using Health_prescription_software_API.Services.ValidationServices;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
