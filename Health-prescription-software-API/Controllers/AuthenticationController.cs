@@ -82,7 +82,7 @@ namespace Health_prescription_software_API.Controllers
         [HttpPost("Register/Pharmacy")]
         public async Task<IActionResult> RegisterPharmacy([FromForm] RegisterPharmacyDto PharmacyUser)
         {
-            //todo: check model state and async. validate
+            //todo: async. validate
 
             string? token = await _authenticationService.RegisterPharmacy(PharmacyUser);
 

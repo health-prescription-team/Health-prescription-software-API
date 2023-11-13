@@ -26,5 +26,14 @@
 			public const int EntriesPerPageMax = 100;
 		}
 
+		public static class Pharmacy
+		{
+			public const int EmailMin = 5;
+			public const int EmailMax = 100;
+			
+			public const int NameMin = 2;
+			public const int NameMax = 100;
+		}
+
 	}
 }
