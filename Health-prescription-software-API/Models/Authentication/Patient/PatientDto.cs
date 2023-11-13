@@ -1,22 +1,36 @@
-﻿using System.ComponentModel.DataAnnotations;
-
-namespace Health_prescription_software_API.Models.Authentication.Patient
+﻿namespace Health_prescription_software_API.Models.Authentication.Patient
 {
+    using System.ComponentModel.DataAnnotations;
+
+    using static Common.EntityValidationConstants.User;
+
     public class PatientDto
     {
         [Required]
+        [StringLength(NameMaxLength, MinimumLength = NameMinLength)]
         public string FirstName { get; set; } = null!;
+
+        [StringLength(NameMaxLength, MinimumLength = NameMinLength)]
         public string? MiddleName { get; set; }
+
         [Required]
+        [StringLength(NameMaxLength, MinimumLength = NameMinLength)]
         public string LastName { get; set; } = null!;
+
         [Required]
-        public string PhoneNumber { get; set; }
+        [Phone]
+        [RegularExpression(PhoneNumberRegexPattern, ErrorMessage = InvalidPhoneNumberErrorMessage)]
+        public string PhoneNumber { get; set; } = null!;
+
         [Required]
-        public string Egn { get; set; }
+        [RegularExpression(EgnRegexPattern, ErrorMessage = InvalidEgnErrorMessage)]
+        public string Egn { get; set; } = null!;
+
         [Required]
-        public IFormFile ProfilePicture { get; set; }
+        public IFormFile ProfilePicture { get; set; } = null!;
+
         [Required]
-        public string Password { get; set; }
+        public string Password { get; set; } = null!;
 
     }
 }

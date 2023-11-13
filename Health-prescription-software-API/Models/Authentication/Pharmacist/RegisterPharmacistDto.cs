@@ -2,18 +2,24 @@
 {
     using System.ComponentModel.DataAnnotations;
 
+    using static Common.EntityValidationConstants.User;
+
     public class RegisterPharmacistDto
     {
         [Required]
+        [StringLength(NameMaxLength, MinimumLength = NameMinLength)]
         public string FirstName { get; set; } = null!;
 
+        [StringLength(NameMaxLength, MinimumLength = NameMinLength)]
         public string? MiddleName { get; set; }
 
         [Required]
+        [StringLength(NameMaxLength, MinimumLength = NameMinLength)]
         public string LastName { get; set; } = null!;
 
         [Required]
-        public string Egn { get; set; }
+        [RegularExpression(EgnRegexPattern, ErrorMessage = InvalidEgnErrorMessage)]
+        public string Egn { get; set; } = null!;
 
         [Required]
         [EmailAddress]
@@ -26,12 +32,16 @@
         public IFormFile ProfilePicture { get; set; } = null!;
 
         [Required]
-        public int UinNumber { get; set; }
+        [RegularExpression(UinRegexPattern, ErrorMessage = InvalidUniErrorMessage)]
+        public string UinNumber { get; set; } = null!;
 
         [Required]
+        [StringLength(PharmacyNameMaxLength, MinimumLength = PharmacyNameMinLength)]
         public string PharmacyName { get; set; } = null!;
 
         [Required]
+        [Phone]
+        [RegularExpression(PhoneNumberRegexPattern, ErrorMessage = InvalidPhoneNumberErrorMessage)]
         public string PhoneNumber { get; set; } = null!;
     }
 }
