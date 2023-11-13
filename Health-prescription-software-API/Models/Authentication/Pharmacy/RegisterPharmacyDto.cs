@@ -2,7 +2,7 @@
 {
 	using System.ComponentModel.DataAnnotations;
 
-	using static Common.EntityValidationConstants.Pharmacy;
+	using static Common.EntityValidationConstants.User;
 
 	public class RegisterPharmacyDto
 	{
@@ -13,17 +13,15 @@
 		public string Email { get; set; } = null!;
 
 		[Required]
-		[StringLength(NameMax, MinimumLength = NameMin)]
-		//todo; is it necessary async validation
+		[StringLength(PharmacyNameMaxLength, MinimumLength = PharmacyNameMinLength)]
 		public string PharmacyName { get; set; } = null!;
 
 		[Required]
-		// todo: is it validated on the password options?
 		public string Password { get; set; } = null!;
 
 		[Required]
 		[Phone]
-		// todo: is it validated on the password options?
+		[RegularExpression(PhoneNumberRegexPattern, ErrorMessage = InvalidPhoneNumberErrorMessage)]
 		public string PhoneNumber { get; set; } = null!;
 	}
 }

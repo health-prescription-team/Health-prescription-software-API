@@ -126,7 +126,6 @@ namespace Health_prescription_software_API.Controllers
         [HttpPost("Login/Pharmacy")]
         public async Task<IActionResult> LoginPharmacy([FromForm] LoginPharmacyDto PharmacyUser)
         {
-            //todo: check model state. Async validate if needed.
             string? token = await _authenticationService.LoginPharmacy(PharmacyUser);
 
             if (string.IsNullOrEmpty(token))
