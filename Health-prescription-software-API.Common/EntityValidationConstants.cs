@@ -50,25 +50,5 @@
 			public const int EmailMax = 100;
 		}
 
-		public static class User
-		{
-            public const int NameMaxLength = 50;
-            public const int NameMinLength = 2;
-
-			public const string EgnRegexPattern = @"^\d{10}$";
-			public const string InvalidEgnErrorMessage = "Invalid EGN format.";
-
-            public const string UinRegexPattern = @"^\d{10}$";
-            public const string InvalidUniErrorMessage = "Invalid Uin number format.";
-
-            public const int HospitalNameMaxLength = 100;
-			public const int HospitalNameMinLength = 3;
-
-			public const int PharmacyNameMaxLength = 100;
-			public const int PharmacyNameMinLength = 3;
-
-			public const string PhoneNumberRegexPattern = @"^((?=(\+359|0)?\s?(\d{1,3}|\(\d{1,3}\))(\s?\d{1,3}(\s?\d{1,3}){1,2}|\d{6}|\d{4}(\s?\d{1,3}){2})$).{9,17})$";
-			public const string InvalidPhoneNumberErrorMessage = "Invalid phone number.";
-        }
 	}
 }
