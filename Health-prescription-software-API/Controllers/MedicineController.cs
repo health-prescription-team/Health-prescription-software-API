@@ -6,10 +6,11 @@ namespace Health_prescription_software_API.Controllers
     using static Common.EntityValidationErrorMessages.Medicine;
 
     using Microsoft.AspNetCore.Mvc;
-	using Microsoft.AspNetCore.Authorization;
-	using Microsoft.Extensions.Options;
+    using Microsoft.AspNetCore.Authorization;
+    using Microsoft.Extensions.Options;
+    using Health_prescription_software_API.Contracts.Validations;
 
-	[Route("api/[controller]")]
+    [Route("api/[controller]")]
     [ApiController]
     public class MedicineController : ControllerBase
     {
@@ -88,10 +89,12 @@ namespace Health_prescription_software_API.Controllers
         //[Authorize]
         public async Task<IActionResult> All([FromQuery] QueryMedicineDTO? queryModel = null)
         {
-            //todo: validate the queryModel
-            if (false)//validationMedicine.IsQueryValide(queryModel))
+            if (!(await validationMedicine.IsQueryValid(queryModel)))
             {
-                ModelState.AddModelError(string.Empty, InvalidQueryString);
+                ModelState.AddModelError(
+                    validationMedicine.ErrorPropName??string.Empty
+                    , validationMedicine.ErrorMessage??string.Empty);
+
                 return apiBehaviorOptions
                     .Value.InvalidModelStateResponseFactory(ControllerContext);
 			}
