@@ -10,7 +10,6 @@
 		[Required]
 		[EmailAddress]
 		[StringLength(EmailMax, MinimumLength = EmailMin)]
-		//todo: async validation
 		public string Email { get; set; } = null!;
 
 		[Required]
@@ -24,7 +23,7 @@
 
 		[Required]
 		[Phone]
-		//todo: async validation
+		// todo: is it validated on the password options?
 		public string PhoneNumber { get; set; } = null!;
 	}
 }

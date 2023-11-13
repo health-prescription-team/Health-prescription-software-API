@@ -6,19 +6,30 @@ namespace Health_prescription_software_API.Controllers
     using Health_prescription_software_API.Models.Authentication.Patient;
     using Health_prescription_software_API.Models.Authentication.Pharmacist;
     using Microsoft.AspNetCore.Mvc;
+	using Microsoft.Extensions.Options;
+	using Health_prescription_software_API.Services.ValidationServices;
+	using Health_prescription_software_API.Contracts.Validations;
 
-    [ApiController]
+	[ApiController]
     [Route("api/[controller]")]
     public class AuthenticationController : ControllerBase
     {
         private readonly IAuthenticationService _authenticationService;
+        private readonly IValidationAuthentication validationService;
 
-        public AuthenticationController(IAuthenticationService authenticationService)
-        {
-            _authenticationService = authenticationService;
-        }
+		private readonly IOptions<ApiBehaviorOptions> apiBehaviorOptions;
 
-        [HttpPost("Register/Gp")]
+		public AuthenticationController(
+			IAuthenticationService authenticationService
+			, IOptions<ApiBehaviorOptions> apiBehaviorOptions
+            , IValidationAuthentication validationService)
+		{
+			_authenticationService = authenticationService;
+			this.apiBehaviorOptions = apiBehaviorOptions;
+			this.validationService = validationService;
+		}
+
+		[HttpPost("Register/Gp")]
         public async Task<IActionResult> RegisterGP([FromForm] RegisterGpDto GpUser)
         {
             var token = await _authenticationService.RegisterGp(GpUser);
@@ -80,16 +91,33 @@ namespace Health_prescription_software_API.Controllers
 
 
         [HttpPost("Register/Pharmacy")]
-        public async Task<IActionResult> RegisterPharmacy([FromForm] RegisterPharmacyDto PharmacyUser)
+        public async Task<IActionResult> RegisterPharmacy([FromForm] RegisterPharmacyDto pharmacyUser)
         {
-            //todo: async. validate
+			if (!(await validationService.IsPharmacyRegisterValid(pharmacyUser)))
+			{
+				ModelState.AddModelError(
+					validationService.ErrorPropName ?? string.Empty
+					, validationService.ErrorMessage ?? string.Empty);
 
-            string? token = await _authenticationService.RegisterPharmacy(PharmacyUser);
+				return apiBehaviorOptions
+					.Value.InvalidModelStateResponseFactory(ControllerContext);
+			}
 
-            if (string.IsNullOrEmpty(token))
+            string? token = null;
+            try
             {
-                return BadRequest();//todo: return more info.
+				token = await _authenticationService.RegisterPharmacy(pharmacyUser);
+
+				if (string.IsNullOrEmpty(token))
+				{
+					return BadRequest();//todo: return more info.
+				}
+			}
+            catch (Exception)
+            {
+                return StatusCode(500);
             }
+			
 
             return Ok(new { Token = token });
         }
