@@ -3,6 +3,7 @@
     using Health_prescription_software_API.Contracts.Validations;
     using Health_prescription_software_API.Data;
 	using Health_prescription_software_API.Models.Authentication.Pharmacy;
+	using Microsoft.EntityFrameworkCore;
 	using System.Threading.Tasks;
 
     public class ValidationAuthentication : IValidationAuthentication
@@ -18,9 +19,19 @@
 
 		public string? ErrorPropName { get; set; }
 
-		public Task<bool> IsPharmacyRegisterValid(RegisterPharmacyDto registerModel)
+		public async Task<bool> IsPharmacyRegisterValid(RegisterPharmacyDto registerModel)
 		{
-			throw new NotImplementedException();
+			bool isEmailPresent = await dbContext.Users
+				.AnyAsync(u => u.Email == registerModel.Email);
+			if (isEmailPresent)
+			{
+				ErrorPropName = nameof(registerModel.Email);
+				ErrorMessage = "User with the same email already exists.";
+				return false;
+			}
+			// todo: more checking if needed
+
+			return true;
 		}
 	}
 }

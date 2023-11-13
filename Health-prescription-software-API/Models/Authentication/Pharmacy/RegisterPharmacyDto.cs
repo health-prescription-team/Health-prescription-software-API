@@ -6,7 +6,6 @@
 
 	public class RegisterPharmacyDto
 	{
-		//todo: validation attributes and async. validation.
 
 		[Required]
 		[EmailAddress]
