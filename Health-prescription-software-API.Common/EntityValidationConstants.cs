@@ -18,6 +18,12 @@
 
 			public const int DetailsMaxLength = 500;
 			public const int DetailsMinLength = 5;
+
+			public const int SearchTermMin = 1;
+			public const int SearchTermMax = 500;
+
+			public const int EntriesPerPageMin = 1;
+			public const int EntriesPerPageMax = 100;
 		}
 
 	}
