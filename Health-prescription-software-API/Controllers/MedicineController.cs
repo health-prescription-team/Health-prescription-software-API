@@ -88,10 +88,13 @@ namespace Health_prescription_software_API.Controllers
         //[Authorize]
         public async Task<IActionResult> All([FromQuery] QueryMedicineDTO? queryModel = null)
         {
-            //todo: validate the queryModel
-            if (false)//!validationMedicine.IsQueryValide(queryModel))
+            
+            if (!(await validationMedicine.IsQueryValid(queryModel)))
             {
-                ModelState.AddModelError(string.Empty, InvalidQueryString);
+                ModelState.AddModelError(
+                    validationMedicine.ErrorPropName??string.Empty
+                    , validationMedicine.ErrorMessage??string.Empty);
+
                 return apiBehaviorOptions
                     .Value.InvalidModelStateResponseFactory(ControllerContext);
 			}

@@ -5,8 +5,9 @@
 	public interface IValidationMedicine
 	{
 
-        public string? ErrorMessage { get; }
+		public string? ErrorMessage { get;}
+		public string? ErrorPropName { get;}
 
-		bool IsQueryValide(QueryMedicineDTO? queryModel);
+		Task<bool> IsQueryValid(QueryMedicineDTO? queryModel);
 	}
 }

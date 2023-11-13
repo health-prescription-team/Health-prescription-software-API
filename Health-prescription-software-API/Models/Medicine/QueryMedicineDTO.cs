@@ -17,11 +17,12 @@
         [StringLength(SearchTermMax, MinimumLength = SearchTermMin)]
 		public string? SearchTerm { get; set; }
 
-		//todo: dynamic validation
+
+		[Range(1,int.MaxValue)]
 		public int? PageNumber { get; set; } 
 
 
-		[Range(EntriesPerPageMin, EntriesPerPageMax)]
+		[Range(1, int.MaxValue)]
 		public int? EntriesPerPage { get; set; }
 
     }
