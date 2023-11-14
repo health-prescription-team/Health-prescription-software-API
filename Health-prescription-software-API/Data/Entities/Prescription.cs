@@ -5,6 +5,11 @@ namespace Health_prescription_software_API.Data.Entities
 {
     public class Prescription
     {
+        public Prescription()
+        {
+            PrescriptionDetails = new HashSet<PrescriptionDetails>();
+        }
+
         [Key]
         public int Id { get; set; }
 
@@ -33,5 +38,7 @@ namespace Health_prescription_software_API.Data.Entities
         public DateTime CreatedAt { get; set; }
         [Required]
         public DateTime EndedAt { get; set;} 
+
+        public ICollection<PrescriptionDetails> PrescriptionDetails { get; set; }
     }
 }
