@@ -122,9 +122,11 @@ namespace Health_prescription_software_API.Services
 			AllMedicineDTO[] medicines = await medicineQuery
 				.Select(m => new AllMedicineDTO
 				{
+					Id = m.Id,
 					Name = m.Name,
 					MedicineCompany = m.MedicineCompany,
-					Price = m.Price
+					Price = m.Price,
+					MedicineImageBytes  = m.MedicineImageBytes
 				})
 				.ToArrayAsync();
 
