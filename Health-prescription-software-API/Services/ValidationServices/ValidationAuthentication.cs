@@ -2,10 +2,14 @@
 {
     using Health_prescription_software_API.Contracts.Validations;
     using Health_prescription_software_API.Data;
+    using Health_prescription_software_API.Data.Entities.User;
+    using Health_prescription_software_API.Models.Authentication.Pharmacist;
     using Health_prescription_software_API.Models.Authentication.Pharmacy;
     using Microsoft.EntityFrameworkCore;
     using System.Collections.Generic;
     using System.Threading.Tasks;
+
+    using static Common.EntityValidationErrorMessages.User;
 
     public class ValidationAuthentication : IValidationAuthentication
     {
@@ -36,6 +40,77 @@
                 return false;
             }
             // todo: more checking if needed
+
+            return true;
+        }
+
+        public async Task<bool> IsPharmacistRegisterValid(RegisterPharmacistDto registerModel)
+        {
+            bool isEmailPresent = await dbContext.Users.AnyAsync(u => u.Email == registerModel.Email);
+            User? userExistsByEgn = await dbContext.Users.FirstOrDefaultAsync(u => u.Egn == registerModel.Egn);
+            User? userExistsByUni = await dbContext.Users.FirstOrDefaultAsync(u => u.UinNumber == registerModel.UinNumber);
+
+            if (isEmailPresent || userExistsByEgn != null || userExistsByUni != null)
+            {
+                ModelError? modelError;
+
+                if (isEmailPresent)
+                {
+                    modelError = new ModelError
+                    {
+                        ErrorPropName = nameof(registerModel.Email),
+                        ErrorMessage = UserWithEmailExists
+                    };
+
+                    ModelErrors.Add(modelError);
+                }
+
+                if (userExistsByEgn != null)
+                {
+                    modelError = new ModelError
+                    {
+                        ErrorPropName = nameof(registerModel.Egn),
+                        ErrorMessage = UserWithEgnExists
+                    };
+
+                    ModelErrors.Add(modelError);
+                }
+
+                if (userExistsByUni != null)
+                {
+                    modelError = new ModelError
+                    {
+                        ErrorPropName = nameof(registerModel.UinNumber),
+                        ErrorMessage = UserWithUinNumberExists
+                    };
+
+                    ModelErrors.Add(modelError);
+                }
+
+                return false;
+            }
+
+            return true;
+        }
+
+        public async Task<bool> IsPharmacistLoginValid(LoginPharmacistDto loginModel)
+        {
+            User? userExistsByEgn = await dbContext.Users.FirstOrDefaultAsync(u => u.Egn == loginModel.Egn);
+
+            ModelError? modelError;
+
+            if (userExistsByEgn == null)
+            {
+                modelError = new ModelError
+                {
+                    ErrorPropName = nameof(loginModel.Egn),
+                    ErrorMessage = UserWithEgnDoesNotExist
+                };
+
+                ModelErrors.Add(modelError);
+
+                return false;
+            }
 
             return true;
         }

@@ -143,18 +143,26 @@ namespace Health_prescription_software_API.Controllers
         [HttpPost("Register/Pharmacist")]
         public async Task<IActionResult> RegisterPharmacist([FromForm] RegisterPharmacistDto formModel)
         {
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(ModelState);
-            }
-
             try
             {
+                if (!await validationService.IsPharmacistRegisterValid(formModel))
+                {
+                    foreach (var error in validationService.ModelErrors)
+                    {
+                        ModelState.AddModelError(
+                            error.ErrorMessage ?? string.Empty,
+                            error.ErrorPropName ?? string.Empty);
+                    }
+
+                    return apiBehaviorOptions
+                        .Value.InvalidModelStateResponseFactory(ControllerContext);
+                }
+
                 var token = await _authenticationService.RegisterPharmacist(formModel);
 
-                if (token == null)
+                if (string.IsNullOrWhiteSpace(token))
                 {
-                    throw new ArgumentException("Failed to register a pharmacist");
+                    return BadRequest("Registration failed."); //todo: return more info.
                 }
 
                 return Ok(new { Token = token });
@@ -169,18 +177,26 @@ namespace Health_prescription_software_API.Controllers
         [HttpPost("Login/Pharmacist")]
         public async Task<IActionResult> LoginPharmacist([FromForm] LoginPharmacistDto formModel)
         {
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(ModelState);
-            }
-
             try
             {
+                if (!await validationService.IsPharmacistLoginValid(formModel))
+                {
+                    foreach (var error in validationService.ModelErrors)
+                    {
+                        ModelState.AddModelError(
+                            error.ErrorMessage ?? string.Empty,
+                            error.ErrorPropName ?? string.Empty);
+                    }
+
+                    return apiBehaviorOptions
+                        .Value.InvalidModelStateResponseFactory(ControllerContext);
+                }
+
                 var token = await _authenticationService.LoginPharmacist(formModel);
 
-                if (token == string.Empty)
+                if (string.IsNullOrWhiteSpace(token))
                 {
-                    throw new ArgumentException("Failed to login a pharmacist");
+                    return BadRequest("Login failed."); //todo: return more info.
                 }
 
                 return Ok(new { Token = token });
