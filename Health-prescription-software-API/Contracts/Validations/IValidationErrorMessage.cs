@@ -1,8 +1,13 @@
 ﻿namespace Health_prescription_software_API.Contracts.Validations
 {
+    public class ModelError
+    {
+        public string? ErrorMessage { get; set; }
+        public string? ErrorPropName { get; set; }
+    }
+
     public interface IValidationErrorMessage
     {
-        public string? ErrorMessage { get; }
-        public string? ErrorPropName { get; }
+        ICollection<ModelError> ModelErrors { get; }
     }
 }

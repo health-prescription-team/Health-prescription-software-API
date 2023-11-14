@@ -6,6 +6,7 @@
     using static Common.GeneralConstants;
     using static Common.EntityValidationErrorMessages.Medicine;
     using Health_prescription_software_API.Contracts.Validations;
+    using System.Collections.Generic;
 
     public class ValidationMedicine : IValidationMedicine
     {
@@ -14,10 +15,10 @@
         public ValidationMedicine(HealthPrescriptionDbContext dbContext)
         {
             this.dbContext = dbContext;
+            this.ModelErrors = new HashSet<ModelError>();
         }
 
-        public string? ErrorPropName { get; set; }
-        public string? ErrorMessage { get; set; }
+        public ICollection<ModelError> ModelErrors { get; set; }
 
         public async Task<bool> IsQueryValid(QueryMedicineDTO? queryModel)
         {
@@ -45,8 +46,14 @@
 
             if (requiredEntries > availableEntries)
             {
-                ErrorPropName = $"{nameof(queryModel.EntriesPerPage)}-{nameof(queryModel.PageNumber)}";
-                ErrorMessage = InvalidQueryString;
+                var error = new ModelError
+                {
+                    ErrorPropName = $"{nameof(queryModel.EntriesPerPage)}-{nameof(queryModel.PageNumber)}",
+                    ErrorMessage = InvalidQueryString
+                };
+
+                ModelErrors.Add(error);
+
                 return false;
             }
 

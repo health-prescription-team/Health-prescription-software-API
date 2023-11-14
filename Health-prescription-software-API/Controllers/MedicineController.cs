@@ -91,9 +91,12 @@ namespace Health_prescription_software_API.Controllers
         {
             if (!(await validationMedicine.IsQueryValid(queryModel)))
             {
-                ModelState.AddModelError(
-                    validationMedicine.ErrorPropName??string.Empty
-                    , validationMedicine.ErrorMessage??string.Empty);
+                foreach (var error in validationMedicine.ModelErrors)
+                {
+                    ModelState.AddModelError(
+                        error.ErrorMessage ?? string.Empty,
+                        error.ErrorPropName ?? string.Empty);
+                }
 
                 return apiBehaviorOptions
                     .Value.InvalidModelStateResponseFactory(ControllerContext);
