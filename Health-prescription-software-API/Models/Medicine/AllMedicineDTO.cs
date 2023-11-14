@@ -9,18 +9,14 @@
 
 	public class AllMedicineDTO
 	{
-		[Required]
-		[StringLength(NameMaxLength, MinimumLength = NameMinLength)]
+		public int Id { get; set; }
+
 		public string Name { get; set; } = null!;
 
-
-		[Required]
-		[Range(PriceMinValue, PriceMaxValue)]
 		public decimal Price { get; set; }
-
-
-		[Required]
-		[StringLength(CompanyMaxLength, MinimumLength = CompanyMinLength)]
+		
 		public string MedicineCompany { get; set; } = null!;
+
+		public byte[]? MedicineImageBytes { get; set; }
 	}
 }
