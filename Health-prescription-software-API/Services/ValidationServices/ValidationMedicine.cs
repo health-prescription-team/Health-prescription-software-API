@@ -46,13 +46,20 @@
 
             if (requiredEntries > availableEntries)
             {
-                var error = new ModelError
+                var errorPageNumber = new ModelError
                 {
-                    ErrorPropName = $"{nameof(queryModel.EntriesPerPage)}-{nameof(queryModel.PageNumber)}",
+                    ErrorPropName = $"{nameof(queryModel.PageNumber)}",
+                    ErrorMessage = InvalidQueryString
+                }; 
+                
+                var errorEntriesPerPage = new ModelError
+                {
+                    ErrorPropName = $"{nameof(queryModel.EntriesPerPage)}",
                     ErrorMessage = InvalidQueryString
                 };
 
-                ModelErrors.Add(error);
+                ModelErrors.Add(errorPageNumber);
+                ModelErrors.Add(errorEntriesPerPage);
 
                 return false;
             }
