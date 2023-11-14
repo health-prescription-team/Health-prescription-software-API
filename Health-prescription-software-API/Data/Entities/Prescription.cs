@@ -28,5 +28,9 @@ namespace Health_prescription_software_API.Data.Entities
 
         [Required]
         public string Diagnosis { get; set; } = null!;
+
+        public DateTime CreatedAt { get; set; }
+
+        public DateTime EndedAt { get; set;} 
     }
 }
