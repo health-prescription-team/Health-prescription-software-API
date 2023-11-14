@@ -49,6 +49,5 @@
 			public const int EmailMin = 5;
 			public const int EmailMax = 100;
 		}
-
 	}
 }

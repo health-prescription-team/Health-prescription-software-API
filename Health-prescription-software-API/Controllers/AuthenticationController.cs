@@ -95,9 +95,12 @@ namespace Health_prescription_software_API.Controllers
         {
 			if (!(await validationService.IsPharmacyRegisterValid(pharmacyUser)))
 			{
-				ModelState.AddModelError(
-					validationService.ErrorPropName ?? string.Empty
-					, validationService.ErrorMessage ?? string.Empty);
+                foreach (var error in validationService.ModelErrors)
+                {
+                    ModelState.AddModelError(
+                        error.ErrorMessage ?? string.Empty,
+                        error.ErrorPropName ?? string.Empty);
+                }
 
 				return apiBehaviorOptions
 					.Value.InvalidModelStateResponseFactory(ControllerContext);
