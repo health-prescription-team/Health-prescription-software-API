@@ -16,6 +16,8 @@
 
         public DbSet<Prescription> Prescriptions { get; set; }
 
+        public DbSet<PrescriptionDetails> PrescriptionDetails { get; set; }
+
         protected override void OnModelCreating(ModelBuilder builder)
         {
             builder.Entity<IdentityRole>().HasData(
