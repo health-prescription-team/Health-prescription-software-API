@@ -34,7 +34,7 @@
             usersDbSet.As<IQueryable<User>>().Setup(m => m.ElementType).Returns(data.ElementType);
             usersDbSet.As<IQueryable<User>>().Setup(m => m.GetEnumerator()).Returns(data.GetEnumerator());
 
-            dbContext = new Mock<HealthPrescriptionDbContext>();
+            dbContext = new Mock<HealthPrescriptionDbContext>(new DbContextOptions<DbContext>());
 
             dbContext.Setup(m => m.Users).Returns(usersDbSet.Object);
 
