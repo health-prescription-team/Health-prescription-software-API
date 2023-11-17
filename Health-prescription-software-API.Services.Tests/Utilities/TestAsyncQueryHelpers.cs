@@ -6,7 +6,7 @@
     {
         private readonly IQueryProvider inner;
 
-        internal TestAsyncQueryProvider(IQueryProvider inner)
+        public TestAsyncQueryProvider(IQueryProvider inner)
         {
             this.inner = inner;
         }
@@ -38,7 +38,12 @@
 
         TResult IAsyncQueryProvider.ExecuteAsync<TResult>(Expression expression, CancellationToken cancellationToken)
         {
-            return inner.Execute<TResult>(expression);
+            Type expectedResultType = typeof(TResult).GetGenericArguments()[0];
+            object? executionResult = inner.Execute(expression);
+
+            return (TResult)typeof(Task).GetMethod(nameof(Task.FromResult))!
+                .MakeGenericMethod(expectedResultType)
+                .Invoke(null, new[] { executionResult })!;
         }
     }
 
