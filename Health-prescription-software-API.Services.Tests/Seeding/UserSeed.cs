@@ -1,6 +1,7 @@
 ﻿namespace Health_prescription_software_API.Services.Tests.Seeding
 {
     using Health_prescription_software_API.Data.Entities.User;
+    using Microsoft.AspNetCore.Http;
 
     public static class UserSeed
     {
@@ -10,7 +11,15 @@
             {
                 new()
                 {
-                    Id = "169f00d6-4abd-493f-8024-95d9c49337b3"
+                    Id = "169f00d6-4abd-493f-8024-95d9c49337b3",
+                    FirstName = "Петър",
+                    LastName = "Тестов",
+                    Egn = "0123456789",
+                    Email = "testov@tests.org",
+                    UinNumber = "0123456789",
+                    PhoneNumber = "088888888",
+                    PharmacyName = "Аптека",
+                    ProfilePicture = Array.Empty<byte>(),
                 },
                 new()
                 {
