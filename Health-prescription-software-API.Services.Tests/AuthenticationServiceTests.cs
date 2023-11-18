@@ -6,6 +6,9 @@
     using Microsoft.AspNetCore.Identity;
     using Microsoft.Extensions.Configuration;
 
+    using static Utilities.MockQueryableDbSet;
+    using static Seeding.UserSeed;
+
     public class AuthenticationServiceTests
     {
         private Mock<HealthPrescriptionDbContext> dbContext;
@@ -18,21 +21,7 @@
         {
             // Database mock setup
 
-            var usersDbSet = new Mock<DbSet<User>>();
-
-            var data = new User[] { }.AsQueryable();
-
-            usersDbSet.As<IAsyncEnumerable<User>>()
-              .Setup(m => m.GetAsyncEnumerator(It.IsAny<CancellationToken>()))
-              .Returns(new TestAsyncEnumerator<User>(data.GetEnumerator()));
-
-            usersDbSet.As<IQueryable<User>>()
-                   .Setup(m => m.Provider)
-                   .Returns(new TestAsyncQueryProvider<User>(data.Provider));
-
-            usersDbSet.As<IQueryable<User>>().Setup(m => m.Expression).Returns(data.Expression);
-            usersDbSet.As<IQueryable<User>>().Setup(m => m.ElementType).Returns(data.ElementType);
-            usersDbSet.As<IQueryable<User>>().Setup(m => m.GetEnumerator()).Returns(data.GetEnumerator());
+            var usersDbSet = MockDbSet(GenerateUsers());
 
             dbContext = new Mock<HealthPrescriptionDbContext>(new DbContextOptions<DbContext>());
 
@@ -51,7 +40,7 @@
             configuration.Setup(config => config[It.IsAny<string>()]).Returns((string key) => configurationSettings.ContainsKey(key) ? configurationSettings[key] : null);
 
             // UserManager and SignInManager mock setup
-
+            
             userManager = new Mock<UserManager<User>>(Mock.Of<IUserStore<User>>(), null, null, null, null, null, null, null, null);
             signInManager = new Mock<SignInManager<User>>(userManager.Object, Mock.Of<IHttpContextAccessor>(), Mock.Of<IUserClaimsPrincipalFactory<User>>(), null, null, null);
         }
