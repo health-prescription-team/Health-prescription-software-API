@@ -1,15 +1,15 @@
 ﻿namespace Health_prescription_software_API.Services.Tests
 {
-    using Data;
-    using Data.Entities.User;
     using Microsoft.AspNetCore.Http;
+    using Microsoft.Extensions.Options;
     using Microsoft.AspNetCore.Identity;
     using Microsoft.Extensions.Configuration;
 
+    using Data;
+    using Data.Entities.User;
+
     using static Utilities.MockQueryableDbSet;
     using static Seeding.UserSeed;
-    using Microsoft.Extensions.Logging;
-    using Microsoft.AspNetCore.Authentication;
 
     public class AuthenticationServiceTests
     {
@@ -42,15 +42,17 @@
             configuration.Setup(config => config[It.IsAny<string>()]).Returns((string key) => configurationSettings.ContainsKey(key) ? configurationSettings[key] : null);
 
             // UserManager and SignInManager mock setup
-            
+
             userManager = new Mock<UserManager<User>>(Mock.Of<IUserStore<User>>(), null, null, null, null, null, null, null, null);
+
             signInManager = new Mock<SignInManager<User>>(
                 userManager.Object,
                 Mock.Of<IHttpContextAccessor>(),
-                Mock.Of<IUserClaimsPrincipalFactory<User>>(), 
-                Mock.Of<IdentityOptions>(), 
-                Mock.Of<ILogger<SignInManager<User>>>(), 
-                Mock.Of<IAuthenticationSchemeProvider>());
+                Mock.Of<IUserClaimsPrincipalFactory<User>>(),
+                Mock.Of<IOptions<IdentityOptions>>(),
+                null,
+                null,
+                null);
         }
     }
 }
