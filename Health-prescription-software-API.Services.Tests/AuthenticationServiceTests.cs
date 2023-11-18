@@ -40,9 +40,15 @@
             configuration.Setup(config => config[It.IsAny<string>()]).Returns((string key) => configurationSettings.ContainsKey(key) ? configurationSettings[key] : null);
 
             // UserManager and SignInManager mock setup
-            
+
             userManager = new Mock<UserManager<User>>(Mock.Of<IUserStore<User>>(), null, null, null, null, null, null, null, null);
-            signInManager = new Mock<SignInManager<User>>(userManager.Object, Mock.Of<IHttpContextAccessor>(), Mock.Of<IUserClaimsPrincipalFactory<User>>(), null, null, null);
+            signInManager = new Mock<SignInManager<User>>(
+                userManager.Object,
+                Mock.Of<IHttpContextAccessor>(),
+                Mock.Of<IUserClaimsPrincipalFactory<User>>(), 
+                Mock.Of<IdentityOptions>(), 
+                null, 
+                null);
         }
     }
 }
