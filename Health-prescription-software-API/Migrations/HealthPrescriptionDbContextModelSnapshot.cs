@@ -30,6 +30,9 @@ namespace Health_prescription_software_API.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
+                    b.Property<decimal>("AveragePrice")
+                        .HasColumnType("decimal(18,2)");
+
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("bit");
 
@@ -48,9 +51,6 @@ namespace Health_prescription_software_API.Migrations
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
-
-                    b.Property<decimal>("Price")
-                        .HasColumnType("decimal(18,2)");
 
                     b.HasKey("Id");
 
@@ -206,25 +206,25 @@ namespace Health_prescription_software_API.Migrations
                     b.HasData(
                         new
                         {
-                            Id = "ae6cbae5-42dd-4519-a047-f1bfe32809f8",
+                            Id = "e3f17ee9-4866-4122-9b45-10e8c4c98c1f",
                             Name = "GP",
                             NormalizedName = "GP"
                         },
                         new
                         {
-                            Id = "06030db9-5cf8-4807-91c8-68f2e9a505c4",
+                            Id = "961e341f-93f3-40aa-b894-9eef1d272a9a",
                             Name = "Patient",
                             NormalizedName = "PATIENT"
                         },
                         new
                         {
-                            Id = "82912b92-7ce6-421e-a4b7-5183a94ba386",
+                            Id = "c59fb612-5293-4459-8500-681ea402baee",
                             Name = "Pharmacist",
                             NormalizedName = "PHARMACIST"
                         },
                         new
                         {
-                            Id = "1d267f86-7a43-44b1-acc1-82fd54e55a95",
+                            Id = "f55107b0-d9df-4477-94ef-1c1bf883ed01",
                             Name = "Pharmacy",
                             NormalizedName = "PHARMACY"
                         });

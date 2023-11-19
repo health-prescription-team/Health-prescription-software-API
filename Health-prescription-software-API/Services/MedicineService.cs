@@ -39,7 +39,7 @@ namespace Health_prescription_software_API.Services
 				{
 					MedicineCompany = model.MedicineCompany,
 					Name = model.Name,
-					Price = model.Price,
+					AveragePrice = model.Price,
 					MedicineImageBytes = memoryStream.ToArray(),
 					MedicineDetails = model.MedicineDetails,
 					IsDeleted = false
@@ -61,7 +61,7 @@ namespace Health_prescription_software_API.Services
 					{
 						Name = medicine.Name,
 						MedicineImageBytes = medicine.MedicineImageBytes,
-						Price = medicine.Price,
+						Price = medicine.AveragePrice,
 						MedicineCompany = medicine.MedicineCompany,
 						MedicineDetails = medicine.MedicineDetails
 					};
@@ -78,7 +78,7 @@ namespace Health_prescription_software_API.Services
 
 			Medicine medicineToEdit = await this.context.Medicines.FirstAsync(m => m.Id == id && !m.IsDeleted);
 			medicineToEdit.Name = editMedicineModel.Name;
-			medicineToEdit.Price = editMedicineModel.Price;
+			medicineToEdit.AveragePrice = editMedicineModel.Price;
 			medicineToEdit.MedicineCompany = editMedicineModel.MedicineCompany;
 			medicineToEdit.MedicineDetails = editMedicineModel.MedicineDetails;
 			medicineToEdit.MedicineImageBytes = editMedicineModel.MedicineImageBytes;
@@ -103,7 +103,7 @@ namespace Health_prescription_software_API.Services
 					//todo: obtain ordering from query string if needed
 					.OrderBy(m => m.Name)
 					.ThenBy(m => m.MedicineCompany)
-					.ThenByDescending(m => m.Price);
+					.ThenByDescending(m => m.AveragePrice);
 			}
 
 			int medicinesCount = medicineQuery.Count();
@@ -125,7 +125,7 @@ namespace Health_prescription_software_API.Services
 					Id = m.Id,
 					Name = m.Name,
 					MedicineCompany = m.MedicineCompany,
-					Price = m.Price,
+					Price = m.AveragePrice,
 					MedicineImageBytes  = m.MedicineImageBytes
 				})
 				.ToArrayAsync();
