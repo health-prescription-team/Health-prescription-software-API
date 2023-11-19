@@ -22,7 +22,7 @@ namespace Health_prescription_software_API.Data.Entities
         public byte[]? MedicineImageBytes { get; set; }
 
         [Required]
-        public decimal AveragePrice { get; set; } //average
+        public decimal AveragePrice { get; set; }
 
         [Required] 
         public string MedicineCompany { get; set; } = null!;
