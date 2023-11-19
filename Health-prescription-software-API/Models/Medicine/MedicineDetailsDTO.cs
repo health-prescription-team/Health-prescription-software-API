@@ -6,7 +6,7 @@
 
         public byte[]? MedicineImageBytes { get; set; }
 
-        public decimal Price { get; set; }
+        public decimal AveragePrice { get; set; }
 
         public string MedicineCompany { get; set; } = null!;
 

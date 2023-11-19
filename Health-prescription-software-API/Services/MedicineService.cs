@@ -19,6 +19,8 @@ namespace Health_prescription_software_API.Services
 			this.context = context;
 		}
 
+
+		//todo: Must be restricted only to noTech admin
 		public async Task Add(AddMedicineDTO model)
 		{
 			if (model is null)
@@ -39,7 +41,10 @@ namespace Health_prescription_software_API.Services
 				{
 					MedicineCompany = model.MedicineCompany,
 					Name = model.Name,
-					AveragePrice = model.Price,
+					//The medicine must be added from noTech admin who have permissions to add newly approved medicines!!!
+					//In this regard a medicine price is added only by Pharmacy in the users-medicines table.
+					//todo: Also an Average price is introduced as sql calculated value taken from the prices of all pharmacies.
+					//AveragePrice = model.Price,
 					MedicineImageBytes = memoryStream.ToArray(),
 					MedicineDetails = model.MedicineDetails,
 					IsDeleted = false
@@ -61,7 +66,7 @@ namespace Health_prescription_software_API.Services
 					{
 						Name = medicine.Name,
 						MedicineImageBytes = medicine.MedicineImageBytes,
-						Price = medicine.AveragePrice,
+						AveragePrice = medicine.AveragePrice,
 						MedicineCompany = medicine.MedicineCompany,
 						MedicineDetails = medicine.MedicineDetails
 					};
@@ -73,12 +78,13 @@ namespace Health_prescription_software_API.Services
 		 }
 
 
+
 		public async Task EditByIdAsync(int id, EditMedicineDTO editMedicineModel)
 		{
 
 			Medicine medicineToEdit = await this.context.Medicines.FirstAsync(m => m.Id == id && !m.IsDeleted);
 			medicineToEdit.Name = editMedicineModel.Name;
-			medicineToEdit.AveragePrice = editMedicineModel.Price;
+			//medicineToEdit.AveragePrice = editMedicineModel.Price;
 			medicineToEdit.MedicineCompany = editMedicineModel.MedicineCompany;
 			medicineToEdit.MedicineDetails = editMedicineModel.MedicineDetails;
 			medicineToEdit.MedicineImageBytes = editMedicineModel.MedicineImageBytes;
