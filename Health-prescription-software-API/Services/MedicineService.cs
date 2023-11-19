@@ -78,7 +78,8 @@ namespace Health_prescription_software_API.Services
 		 }
 
 
-
+		//todo: Edit must be performed only by noTech admin. 
+		//todo: Edit and Add must be introduced to Pharmacy as well. It ought to  edit price to the medicine.
 		public async Task EditByIdAsync(int id, EditMedicineDTO editMedicineModel)
 		{
 
@@ -131,7 +132,7 @@ namespace Health_prescription_software_API.Services
 					Id = m.Id,
 					Name = m.Name,
 					MedicineCompany = m.MedicineCompany,
-					Price = m.AveragePrice,
+					AveragePrice = m.AveragePrice,
 					MedicineImageBytes  = m.MedicineImageBytes
 				})
 				.ToArrayAsync();
