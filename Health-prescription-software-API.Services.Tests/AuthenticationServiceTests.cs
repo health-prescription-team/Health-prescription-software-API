@@ -7,6 +7,7 @@
 
     using Data;
     using Data.Entities.User;
+    using Models.Authentication.Pharmacist;
 
     using static Utilities.MockQueryableDbSet;
     using static Seeding.UserSeed;
@@ -54,6 +55,141 @@
                 null,
                 null,
                 null);
+        }
+
+        [Test]
+        public async Task RegisterPharmacistWithValidData()
+        {
+            // Arrange
+            var authService = new AuthenticationService(dbContext.Object, configuration.Object, userManager.Object, signInManager.Object);
+
+            RegisterPharmacistDto formModel = new()
+            {
+                FirstName = "Петър",
+                LastName = "Тестов",
+                Egn = "0123456789",
+                Email = "testov@tests.org",
+                UinNumber = "0123456789",
+                PhoneNumber = "088888888",
+                PharmacyName = "Аптека",
+                ProfilePicture = new FormFile(new MemoryStream(), 0, 321654, "test", "test.png"),
+                Password = "Parola1!",
+                ConfirmPassword = "Parola1!"
+            };
+
+            userManager.Setup(m => m.CreateAsync(It.IsAny<User>(), formModel.Password).Result).Returns(IdentityResult.Success);
+            userManager.Setup(m => m.GetRolesAsync(It.IsAny<User>()).Result).Returns(new List<string> { "Pharmacist" });
+
+            // Act
+
+            var token = await authService.RegisterPharmacist(formModel);
+
+            // Assert
+
+            Assert.That(string.IsNullOrWhiteSpace(token), Is.False);
+        }
+
+        [Test]
+        public async Task RegisterPharmacistWithInvalidData()
+        {
+            // Arrange
+            var authService = new AuthenticationService(dbContext.Object, configuration.Object, userManager.Object, signInManager.Object);
+
+            RegisterPharmacistDto formModel = new()
+            {
+                FirstName = "Петър",
+                LastName = "Тестов",
+                Egn = "0123456789",
+                Email = "testov@tests.org",
+                UinNumber = "0123456789",
+                PhoneNumber = "088888888",
+                PharmacyName = "Аптека",
+                ProfilePicture = new FormFile(new MemoryStream(), 0, 321654, "test", "test.png"),
+                Password = "Parola1!",
+                ConfirmPassword = "Parola1!"
+            };
+
+            userManager.Setup(m => m.CreateAsync(It.IsAny<User>(), It.IsAny<string>())).ReturnsAsync(IdentityResult.Failed());
+
+            // Act
+
+            var token = await authService.RegisterPharmacist(formModel);
+
+            // Assert
+
+            Assert.That(string.IsNullOrWhiteSpace(token), Is.True);
+        }
+
+        [Test]
+        public async Task LoginPharmacistWithExistingUserReturnsToken()
+        {
+            // Arrange
+
+            var authService = new AuthenticationService(dbContext.Object, configuration.Object, userManager.Object, signInManager.Object);
+
+            LoginPharmacistDto loginModel = new()
+            {
+                Egn = "0123456789",
+                Password = "Parola1!"
+            };
+
+            signInManager.Setup(m => m.PasswordSignInAsync(It.IsAny<User>(), It.IsAny<string>(), false, false)).ReturnsAsync(SignInResult.Success);
+            userManager.Setup(m => m.GetRolesAsync(It.IsAny<User>()).Result).Returns(new List<string> { "Pharmacist" });
+
+            // Act
+
+            var token = await authService.LoginPharmacist(loginModel);
+
+            // Assert
+
+            Assert.That(string.IsNullOrWhiteSpace(token), Is.False);
+        }
+
+        [Test]
+        public async Task LoginPharmacistWithExistingUserWrongPasswordReturnsEmpty()
+        {
+            // Arrange
+
+            var authService = new AuthenticationService(dbContext.Object, configuration.Object, userManager.Object, signInManager.Object);
+
+            LoginPharmacistDto loginModel = new()
+            {
+                Egn = "0123456789",
+                Password = "Parola"
+            };
+
+            signInManager.Setup(m => m.PasswordSignInAsync(It.IsAny<User>(), loginModel.Password, false, false)).ReturnsAsync(SignInResult.Failed);
+            userManager.Setup(m => m.GetRolesAsync(It.IsAny<User>()).Result).Returns(new List<string> { "Pharmacist" });
+
+            // Act
+
+            var token = await authService.LoginPharmacist(loginModel);
+
+            // Assert
+
+            Assert.That(string.IsNullOrWhiteSpace(token), Is.True);
+        }
+
+        [Test]
+        public async Task LoginPharmacistWithNonExistingUserReturnsEmpty()
+        {
+            // Arrange
+
+            var authService = new AuthenticationService(dbContext.Object, configuration.Object, userManager.Object, signInManager.Object);
+
+            LoginPharmacistDto loginModel = new()
+            {
+                Egn = "9876543210",
+                Password = "Parola1!"
+            };
+
+            // Act
+
+            var token = await authService.LoginPharmacist(loginModel);
+
+            // Assert
+
+            Assert.That(string.IsNullOrWhiteSpace(token), Is.True);
         }
     }
 }
