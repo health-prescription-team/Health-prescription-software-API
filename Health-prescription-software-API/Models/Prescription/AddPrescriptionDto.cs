@@ -1,17 +1,11 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel;
 
-namespace Health_prescription_software_API.Data.Entities
+namespace Health_prescription_software_API.Models.Prescription
 {
-    public class Prescription
+    public class AddPrescriptionDto
     {
-        public Prescription()
-        {
-            PrescriptionDetails = new HashSet<PrescriptionDetails>();
-        }
-
-        [Key]
-        public int Id { get; set; }
+        public int? Id { get; set; }
 
         [Required]
         public string? PatientId { get; set; } = null!;
@@ -23,10 +17,7 @@ namespace Health_prescription_software_API.Data.Entities
         [Required]
         public int Age { get; set; }
 
-        [Required]
-        [DefaultValue(true)]
-        public bool IsActive { get; set; }
-
+       
 
         [Required]
         public string GpName { get; set; } = null!;
@@ -37,8 +28,6 @@ namespace Health_prescription_software_API.Data.Entities
         [Required]
         public DateTime CreatedAt { get; set; }
         [Required]
-        public DateTime EndedAt { get; set;} 
-
-        public ICollection<PrescriptionDetails> PrescriptionDetails { get; set; }
+        public DateTime EndedAt { get; set; }
     }
 }
