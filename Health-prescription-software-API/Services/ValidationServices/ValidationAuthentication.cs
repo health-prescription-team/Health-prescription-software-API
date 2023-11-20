@@ -3,6 +3,7 @@
     using Health_prescription_software_API.Contracts.Validations;
     using Health_prescription_software_API.Data;
     using Health_prescription_software_API.Data.Entities.User;
+    using Health_prescription_software_API.Models.Authentication.Patient;
     using Health_prescription_software_API.Models.Authentication.Pharmacist;
     using Health_prescription_software_API.Models.Authentication.Pharmacy;
     using Microsoft.EntityFrameworkCore;
@@ -94,6 +95,52 @@
         }
 
         public async Task<bool> IsPharmacistLoginValid(LoginPharmacistDto loginModel)
+        {
+            User? userExistsByEgn = await dbContext.Users.FirstOrDefaultAsync(u => u.Egn == loginModel.Egn);
+
+            ModelError? modelError;
+
+            if (userExistsByEgn == null)
+            {
+                modelError = new ModelError
+                {
+                    ErrorPropName = nameof(loginModel.Egn),
+                    ErrorMessage = UserWithEgnDoesNotExist
+                };
+
+                ModelErrors.Add(modelError);
+
+                return false;
+            }
+
+            return true;
+        }
+
+        public async Task<bool> IsPatientRegisterValid(PatientDto registerModel)
+        {
+           
+            User? userExistsByEgn = await dbContext.Users.FirstOrDefaultAsync(u => u.Egn == registerModel.Egn);
+            if (userExistsByEgn != null)
+            {
+                ModelError? modelError;
+             
+
+                if (userExistsByEgn != null)
+                {
+                    modelError = new ModelError
+                    {
+                        ErrorPropName = nameof(registerModel.Egn),
+                        ErrorMessage = UserWithEgnExists
+                    };
+
+                    ModelErrors.Add(modelError);
+                }
+                return false;
+            }
+            return true;
+        }
+
+        public async Task<bool> IsPatientLoginValid(LoginPatientDto loginModel)
         {
             User? userExistsByEgn = await dbContext.Users.FirstOrDefaultAsync(u => u.Egn == loginModel.Egn);
 
