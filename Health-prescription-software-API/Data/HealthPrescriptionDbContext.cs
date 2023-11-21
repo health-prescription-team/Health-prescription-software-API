@@ -14,8 +14,13 @@ namespace Health_prescription_software_API.Data
 		public HealthPrescriptionDbContext(DbContextOptions options) : base(options) { }
 
         public DbSet<Medicine> Medicines { get; set; }
-
+        
         public DbSet<UserMedicine> UsersMedicines { get; set; }
+
+        public DbSet<Prescription> Prescriptions { get; set; }
+
+        public DbSet<PrescriptionDetails> PrescriptionDetails { get; set; }
+
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
