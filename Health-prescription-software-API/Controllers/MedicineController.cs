@@ -30,6 +30,7 @@ namespace Health_prescription_software_API.Controllers
 		}
 
 		[HttpPost]
+        //[Authorize(Roles = "NoTechAdmin")]
         public async Task<IActionResult> Add([FromForm] AddMedicineDTO model)
         {
             await medicineService.Add(model);

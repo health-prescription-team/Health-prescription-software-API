@@ -5,10 +5,10 @@ namespace Health_prescription_software_API.Models.Prescription
 {
     public class AddPrescriptionDto
     {
-        public int? Id { get; set; }
+        //public int? Id { get; set; }
 
         [Required]
-        public string? PatientId { get; set; } = null!;
+        public string PatientId { get; set; } = null!;
 
 
         [Required]

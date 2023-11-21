@@ -23,7 +23,7 @@ namespace Health_prescription_software_API.Services
         public async Task<int> Add(AddPrescriptionDto prescriptionModel)
         {
 
-            if ( await _context.Users.FirstOrDefaultAsync(x => x.Egn == prescriptionModel.Egn) is not null)
+            if ( await _context.Users.FirstOrDefaultAsync(x => x.Egn == prescriptionModel.Egn) is null)
             {
                 throw new NullReferenceException("Ne e nameren chovek s tova egn");
             }
@@ -39,10 +39,11 @@ namespace Health_prescription_software_API.Services
                 EndedAt = prescriptionModel.EndedAt,
                 Egn = prescriptionModel.Egn,
                 IsActive = true,
+                
 
             };
 
-          await _context.Prescriptions.AddAsync(modelDb);
+          _context.Prescriptions.Add(modelDb);
           await  _context.SaveChangesAsync();
 
             return modelDb.Id;
