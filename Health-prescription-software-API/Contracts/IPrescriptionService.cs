@@ -4,6 +4,6 @@ namespace Health_prescription_software_API.Contracts
 {
     public interface IPrescriptionService
     {
-        Task<int> Add(AddPrescriptionDto prescriptionModel);
+        Task<string> Add(AddPrescriptionDto prescriptionModel);
     }
 }

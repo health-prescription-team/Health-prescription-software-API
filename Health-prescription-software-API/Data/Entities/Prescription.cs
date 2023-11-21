@@ -16,7 +16,6 @@ namespace Health_prescription_software_API.Data.Entities
         [Required]
         public string? PatientId { get; set; } = null!;
 
-
         [Required]
         public string Egn { get; set; } = null!;
 

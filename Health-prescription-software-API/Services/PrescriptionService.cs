@@ -3,10 +3,7 @@ using Health_prescription_software_API.Data;
 using Health_prescription_software_API.Data.Entities;
 using Health_prescription_software_API.Models.Prescription;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.IdentityModel.Tokens;
-using System.IdentityModel.Tokens.Jwt;
-using System.Security.Claims;
-using System.Text;
+using System.Security.Cryptography;
 
 namespace Health_prescription_software_API.Services
 {
@@ -20,8 +17,11 @@ namespace Health_prescription_software_API.Services
         }
 
 
-        public async Task<int> Add(AddPrescriptionDto prescriptionModel)
+        public async Task<string> Add(AddPrescriptionDto prescriptionModel)
         {
+
+
+           var patient = await _context.Users.FirstOrDefaultAsync(x => x.Egn == prescriptionModel.Egn);
 
             if ( await _context.Users.FirstOrDefaultAsync(x => x.Egn == prescriptionModel.Egn) is null)
             {
@@ -29,13 +29,14 @@ namespace Health_prescription_software_API.Services
             }
 
 
+
             var modelDb = new Prescription
             {
-                PatientId = prescriptionModel.PatientId,
+                PatientId = patient.Id,
                 Age = prescriptionModel.Age,
                 GpName = prescriptionModel.GpName,
                 Diagnosis = prescriptionModel.Diagnosis,
-                CreatedAt = prescriptionModel.CreatedAt,
+                CreatedAt = DateTime.Now,
                 EndedAt = prescriptionModel.EndedAt,
                 Egn = prescriptionModel.Egn,
                 IsActive = true,
@@ -46,11 +47,30 @@ namespace Health_prescription_software_API.Services
           _context.Prescriptions.Add(modelDb);
           await  _context.SaveChangesAsync();
 
-            return modelDb.Id;
-             
+           
+            var hashedIdString = await HashingAlgorithm(modelDb.Id);
+
+            return hashedIdString;
         }
 
 
+
+
+        private async Task<string> HashingAlgorithm(int value)
+        {
+
+            byte[] idPrescriptionToBytes = BitConverter.GetBytes(value);
+
+            using (SHA256 sha256 = SHA256.Create())
+            {
+                byte[] hashBytes = sha256.ComputeHash(idPrescriptionToBytes);
+
+                
+                string hashedValue = BitConverter.ToString(hashBytes).Replace("-", "");
+
+                return hashedValue;
+            }
+        }
        
     }
 }

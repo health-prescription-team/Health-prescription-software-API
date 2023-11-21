@@ -73,8 +73,9 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddScoped<IMedicineService, MedicineService>();
 builder.Services.AddScoped<IAuthenticationService, AuthenticationService>();
 builder.Services.AddScoped<IValidationMedicine, ValidationMedicine>();
-builder.Services.AddScoped<IValidationAuthentication, ValidationAuthentication>();
+builder.Services.AddScoped<IvalidationPrescription, ValidationAuthentication>();
 builder.Services.AddScoped<IPrescriptionService, PrescriptionService>();
+builder.Services.AddScoped<IValidaitonPrescription, ValidationPrescription>();
 
 
 
