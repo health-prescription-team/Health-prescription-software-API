@@ -29,10 +29,15 @@ namespace Health_prescription_software_API.Controllers
 			this.apiBehaviorOptions = apiBehaviorOptions;
 		}
 
+        //todo: pharmacy Add
+        //todo: averagePrice sql calc.
+        //todo: who uses these actions?
+
 		[HttpPost]
         //[Authorize(Roles = "NoTechAdmin")]
         public async Task<IActionResult> Add([FromForm] AddMedicineDTO model)
         {
+            //todo: validations async and static
             await medicineService.Add(model);
 
             return Ok("Successfully added medicine");
@@ -52,7 +57,8 @@ namespace Health_prescription_software_API.Controllers
         }
 
         [HttpDelete("{id}")]
-        public async Task<IActionResult> Delete(int id)
+		//[Authorize(Roles = "NoTechAdmin")]
+		public async Task<IActionResult> Delete(int id)
         {
             bool result = await medicineService.Delete(id);
 
@@ -66,7 +72,8 @@ namespace Health_prescription_software_API.Controllers
 
 
         [HttpPut("{id}")]
-        public async Task<IActionResult> Edit(int id, [FromForm] EditMedicineDTO medicineToEdit)
+		//[Authorize(Roles = "NoTechAdmin")]
+		public async Task<IActionResult> Edit(int id, [FromForm] EditMedicineDTO medicineToEdit)
         {
 
             if (!ModelState.IsValid)
@@ -84,9 +91,9 @@ namespace Health_prescription_software_API.Controllers
             return Ok();
         }
 
+        //todo: second all with minimal dto for dynamic search
 
         [HttpGet]
-        //[Authorize(Roles = Pharmacy)]
         //[Authorize]
         public async Task<IActionResult> All([FromQuery] QueryMedicineDTO? queryModel = null)
         {
