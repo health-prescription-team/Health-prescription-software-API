@@ -12,7 +12,7 @@
 
     using static Common.EntityValidationErrorMessages.User;
 
-    public class ValidationAuthentication : IValidationAuthentication
+    public class ValidationAuthentication : IvalidationPrescription
     {
         private readonly HealthPrescriptionDbContext dbContext;
 

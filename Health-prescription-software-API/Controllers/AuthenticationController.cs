@@ -15,14 +15,14 @@ namespace Health_prescription_software_API.Controllers
     public class AuthenticationController : ControllerBase
     {
         private readonly IAuthenticationService _authenticationService;
-        private readonly IValidationAuthentication validationService;
+        private readonly IvalidationPrescription validationService;
 
 		private readonly IOptions<ApiBehaviorOptions> apiBehaviorOptions;
 
 		public AuthenticationController(
 			IAuthenticationService authenticationService
 			, IOptions<ApiBehaviorOptions> apiBehaviorOptions
-            , IValidationAuthentication validationService)
+            , IvalidationPrescription validationService)
 		{
 			_authenticationService = authenticationService;
 			this.apiBehaviorOptions = apiBehaviorOptions;
