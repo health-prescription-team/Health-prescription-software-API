@@ -20,7 +20,15 @@ namespace Health_prescription_software_API.Services
         public async Task<string> Add(AddPrescriptionDto prescriptionModel)
         {
 
+
            var patient = await _context.Users.FirstOrDefaultAsync(x => x.Egn == prescriptionModel.Egn);
+
+            if ( await _context.Users.FirstOrDefaultAsync(x => x.Egn == prescriptionModel.Egn) is null)
+            {
+                throw new NullReferenceException("Ne e nameren chovek s tova egn");
+            }
+
+
 
             var modelDb = new Prescription
             {
@@ -32,10 +40,11 @@ namespace Health_prescription_software_API.Services
                 EndedAt = prescriptionModel.EndedAt,
                 Egn = prescriptionModel.Egn,
                 IsActive = true,
+                
 
             };
 
-          await _context.Prescriptions.AddAsync(modelDb);
+          _context.Prescriptions.Add(modelDb);
           await  _context.SaveChangesAsync();
 
            
