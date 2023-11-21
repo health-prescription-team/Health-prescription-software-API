@@ -30,6 +30,9 @@ namespace Health_prescription_software_API.Services.ValidationServices
                     ErrorPropName = nameof(patientExist.Egn)
 
                 };
+
+                ModelErrors.Add(notFoundPatient);
+
                 return false;
             }
 
