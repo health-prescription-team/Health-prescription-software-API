@@ -1,18 +1,18 @@
-﻿using Health_prescription_software_API.Contracts.Validations;
-using Health_prescription_software_API.Data;
-using Health_prescription_software_API.Models.Prescription;
-using Microsoft.EntityFrameworkCore;
-
-namespace Health_prescription_software_API.Services.ValidationServices
+﻿namespace Health_prescription_software_API.Services.ValidationServices
 {
+    using Health_prescription_software_API.Contracts.Validations;
+    using Health_prescription_software_API.Data;
+    using Health_prescription_software_API.Models.Prescription;
+    using Microsoft.EntityFrameworkCore;
+
     public class ValidationPrescription : IValidaitonPrescription
     {
 
-        private readonly HealthPrescriptionDbContext _dbContext;
+        private readonly HealthPrescriptionDbContext dbContext;
 
         public ValidationPrescription(HealthPrescriptionDbContext healthPrescriptionDbContext)
         {
-            _dbContext = healthPrescriptionDbContext;
+            dbContext = healthPrescriptionDbContext;
             ModelErrors =  new HashSet<ModelError>();
         }
 
@@ -20,7 +20,7 @@ namespace Health_prescription_software_API.Services.ValidationServices
 
         public async Task<bool> IsPrescriptionValid(AddPrescriptionDto prescriptionModel)
         {
-            var patientExist = await _dbContext.Users.FirstOrDefaultAsync(x => x.Egn == prescriptionModel.Egn);
+            var patientExist = await dbContext.Users.FirstOrDefaultAsync(x => x.Egn == prescriptionModel.PatientEgn);
 
             if (patientExist == null)
             {
@@ -34,6 +34,24 @@ namespace Health_prescription_software_API.Services.ValidationServices
                 ModelErrors.Add(notFoundPatient);
 
                 return false;
+            }
+
+            foreach (var details in prescriptionModel.PrescriptionDetails)
+            {
+                var medicine = await dbContext.Medicines.FindAsync(details.MedicineId);
+
+                if (medicine == null)
+                {
+                    var modelError = new ModelError
+                    {
+                        ErrorPropName = nameof(details.MedicineId),
+                        ErrorMessage = $"Medicine with id: {details.MedicineId} does not exist."
+                    };
+
+                    ModelErrors.Add(modelError);
+
+                    return false;
+                }
             }
 
             return true;
