@@ -1,15 +1,17 @@
-﻿using System.ComponentModel.DataAnnotations;
-
-namespace Health_prescription_software_API.Data.Entities
+﻿namespace Health_prescription_software_API.Data.Entities
 {
+    using System.ComponentModel.DataAnnotations;
+
     public class PrescriptionDetails
     {
         [Key]
         public int Id { get; set; }
 
+        [Required]
         public int PrescriptionId { get; set; }
 
-        public int? MedicineId { get; set; }
+        [Required]
+        public int MedicineId { get; set; }
 
         [Required]
         public int EveningDose {  get; set; }
@@ -21,7 +23,5 @@ namespace Health_prescription_software_API.Data.Entities
         public int MorningDose { get; set; }
 
         public string? Notes { get; set; }
-        
-      
     }
 }
