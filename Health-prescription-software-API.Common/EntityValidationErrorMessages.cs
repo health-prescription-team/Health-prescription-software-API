@@ -22,7 +22,7 @@
 
 		public static class Prescription
 		{
-			public const string InvalidAgeRangeMessage = "Age must be between {0} and {1}.";
+			public const string InvalidAgeRangeMessage = "Age must be between {1} and {2}.";
 
 			public const string PatientDoesNotExist = "Patient cannot be found. He/She may not be registered";
 

@@ -18,7 +18,7 @@
         public string PatientEgn { get; set; } = null!;
 
         [Required]
-        [Range(MinAge, MinAge, ErrorMessage = InvalidAgeRangeMessage)]
+        [Range(MinAge, MaxAge, ErrorMessage = InvalidAgeRangeMessage)]
         public int Age { get; set; }
 
         [Required]
