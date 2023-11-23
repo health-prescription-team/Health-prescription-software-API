@@ -5,6 +5,9 @@
     using Health_prescription_software_API.Models.Prescription;
     using Microsoft.EntityFrameworkCore;
 
+    using static Common.EntityValidationErrorMessages.Medicine;
+    using static Common.EntityValidationErrorMessages.Prescription;
+
     public class ValidationPrescription : IValidaitonPrescription
     {
 
@@ -26,7 +29,7 @@
             {
                 var notFoundPatient = new ModelError
                 {
-                    ErrorMessage = "Patient cannot be found. He/She may not be registered",
+                    ErrorMessage = PatientDoesNotExist,
                     ErrorPropName = nameof(patientExist.Egn)
 
                 };
@@ -45,7 +48,7 @@
                     var modelError = new ModelError
                     {
                         ErrorPropName = nameof(details.MedicineId),
-                        ErrorMessage = $"Medicine with id: {details.MedicineId} does not exist."
+                        ErrorMessage = InvalidMedicineId
                     };
 
                     ModelErrors.Add(modelError);
