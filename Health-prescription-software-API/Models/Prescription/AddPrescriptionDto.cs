@@ -1,26 +1,29 @@
-﻿using System.ComponentModel.DataAnnotations;
-using System.ComponentModel;
-
-namespace Health_prescription_software_API.Models.Prescription
+﻿namespace Health_prescription_software_API.Models.Prescription
 {
+    using System.ComponentModel.DataAnnotations;
+
+    using static Common.EntityValidationConstants.User;
+
     public class AddPrescriptionDto
     {
-
-
-      
-        [Required]
-        public string Egn { get; set; } = null!;
-
-        [Required]
-        public int Age { get; set; } 
+        public AddPrescriptionDto()
+        {
+            this.PrescriptionDetails = new HashSet<PrescriptionDetailsDto>();
+        }
 
         [Required]
-        public string GpName { get; set; } = null!;
+        [RegularExpression(EgnRegexPattern, ErrorMessage = InvalidEgnErrorMessage)]
+        public string PatientEgn { get; set; } = null!;
+
+        [Required]
+        [Range(0, 200, ErrorMessage = "Invalid age.")]
+        public int Age { get; set; }
 
         [Required]
         public string Diagnosis { get; set; } = null!;
 
-        [Required]
-        public DateTime EndedAt { get; set; } 
+        public DateTime? ExpiresAt { get; set; }
+
+        public ICollection<PrescriptionDetailsDto> PrescriptionDetails { get; set; }
     }
 }
