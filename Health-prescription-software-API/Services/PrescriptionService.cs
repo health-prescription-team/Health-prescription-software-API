@@ -42,6 +42,7 @@
                     EveningDose = details.EveningDose,
                     LunchTimeDose = details.LunchTimeDose,
                     MorningDose = details.MorningDose,
+                    MeasurementUnit = details.MeasurementUnit,
                     Notes = details.Notes
                 };
 

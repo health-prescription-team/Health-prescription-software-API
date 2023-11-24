@@ -22,6 +22,9 @@
         [Required]
         public int MorningDose { get; set; }
 
+        [Required]
+        public string MeasurementUnit { get; set; } = null!;
+
         public string? Notes { get; set; }
     }
 }
