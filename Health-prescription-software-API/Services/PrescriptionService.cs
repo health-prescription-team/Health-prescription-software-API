@@ -30,12 +30,9 @@
                 PatientEgn = prescriptionModel.PatientEgn
             };
 
-            context.Prescriptions.Add(prescriptionEntity);
-            await context.SaveChangesAsync();
-
             foreach (var details in prescriptionModel.PrescriptionDetails)
             {
-                var prescriptionDetails = new PrescriptionDetails
+                prescriptionEntity.PrescriptionDetails.Add(new PrescriptionDetails
                 {
                     MedicineId = details.MedicineId,
                     PrescriptionId = prescriptionEntity.Id,
@@ -44,11 +41,10 @@
                     MorningDose = details.MorningDose,
                     MeasurementUnit = details.MeasurementUnit,
                     Notes = details.Notes
-                };
-
-                context.PrescriptionDetails.Add(prescriptionDetails);
+                });
             }
 
+            context.Prescriptions.Add(prescriptionEntity);
             await context.SaveChangesAsync();
 
             var hashedIdString = HashingAlgorithm(prescriptionEntity.Id);

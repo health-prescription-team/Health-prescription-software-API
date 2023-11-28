@@ -407,3 +407,4 @@ FodyWeavers.xsd
 # Ignore Migrations
 /Health-prescription-software-API/Migrations/
 
+/Health-prescription-software-API/Migrations/HealthPrescriptionDbContextModelSnapshot.cs
