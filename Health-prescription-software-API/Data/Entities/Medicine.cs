@@ -1,4 +1,5 @@
-﻿using System.ComponentModel;
+﻿
+using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 
 namespace Health_prescription_software_API.Data.Entities
@@ -27,5 +28,6 @@ namespace Health_prescription_software_API.Data.Entities
         [Required]
         [DefaultValue(false)]
         public bool IsDeleted { get; set; }
+
     }
 }
