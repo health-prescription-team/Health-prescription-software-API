@@ -4,6 +4,7 @@ using Health_prescription_software_API.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Health_prescription_software_API.Migrations
 {
     [DbContext(typeof(HealthPrescriptionDbContext))]
-    partial class HealthPrescriptionDbContextModelSnapshot : ModelSnapshot
+    [Migration("20231114204908_added_prescription_entity")]
+    partial class added_prescription_entity
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -68,9 +71,6 @@ namespace Health_prescription_software_API.Migrations
                     b.Property<int>("Age")
                         .HasColumnType("int");
 
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("datetime2");
-
                     b.Property<string>("Diagnosis")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -78,9 +78,6 @@ namespace Health_prescription_software_API.Migrations
                     b.Property<string>("Egn")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTime>("EndedAt")
-                        .HasColumnType("datetime2");
 
                     b.Property<string>("GpName")
                         .IsRequired()
@@ -96,39 +93,6 @@ namespace Health_prescription_software_API.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Prescriptions");
-                });
-
-            modelBuilder.Entity("Health_prescription_software_API.Data.Entities.PrescriptionDetails", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<int>("EveningDose")
-                        .HasColumnType("int");
-
-                    b.Property<int>("LunchTimeDose")
-                        .HasColumnType("int");
-
-                    b.Property<int?>("MedicineId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("MorningDose")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Notes")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("PrescriptionId")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("PrescriptionId");
-
-                    b.ToTable("PrescriptionDetails");
                 });
 
             modelBuilder.Entity("Health_prescription_software_API.Data.Entities.User.User", b =>
@@ -262,25 +226,25 @@ namespace Health_prescription_software_API.Migrations
                     b.HasData(
                         new
                         {
-                            Id = "730bdc3d-8125-4183-89bb-db9796988958",
+                            Id = "f404b77f-0eae-42cb-a1f8-3110cfed0968",
                             Name = "GP",
                             NormalizedName = "GP"
                         },
                         new
                         {
-                            Id = "4285cf72-f2d2-4f17-be72-c6519c8c1d41",
+                            Id = "69926e5a-f5e6-4d07-8975-d280b4c04734",
                             Name = "Patient",
                             NormalizedName = "PATIENT"
                         },
                         new
                         {
-                            Id = "83c6dca0-9359-42da-943b-29fe00170357",
+                            Id = "b8c95584-1c2c-4264-8e1a-8593d21adf26",
                             Name = "Pharmacist",
                             NormalizedName = "PHARMACIST"
                         },
                         new
                         {
-                            Id = "96ece562-f103-4c28-a4db-0e902e3eb1c6",
+                            Id = "4df7e291-6a54-440d-9f5a-e85747e82dd4",
                             Name = "Pharmacy",
                             NormalizedName = "PHARMACY"
                         });
@@ -392,15 +356,6 @@ namespace Health_prescription_software_API.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
-            modelBuilder.Entity("Health_prescription_software_API.Data.Entities.PrescriptionDetails", b =>
-                {
-                    b.HasOne("Health_prescription_software_API.Data.Entities.Prescription", null)
-                        .WithMany("PrescriptionDetails")
-                        .HasForeignKey("PrescriptionId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-                });
-
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
                 {
                     b.HasOne("Microsoft.AspNetCore.Identity.IdentityRole", null)
@@ -450,11 +405,6 @@ namespace Health_prescription_software_API.Migrations
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-                });
-
-            modelBuilder.Entity("Health_prescription_software_API.Data.Entities.Prescription", b =>
-                {
-                    b.Navigation("PrescriptionDetails");
                 });
 #pragma warning restore 612, 618
         }
