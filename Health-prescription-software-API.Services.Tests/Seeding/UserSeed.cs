@@ -23,11 +23,22 @@
                 },
                 new()
                 {
-                    Id = "20dfb9d8-5e6b-4a9e-8f88-0e3f2f4b681b"
+                    Id = "20dfb9d8-5e6b-4a9e-8f88-0e3f2f4b681b",
+                    FirstName = "Петър",
+                    LastName = "Тестов",
+                    Egn = "0111111112",
+                    PhoneNumber = "088888888",
+                    ProfilePicture = Array.Empty<byte>(),
+                    
                 },
                 new()
                 {
-                    Id = "26d9947f-9192-4c08-9124-8e016714427a"
+                    Id = "26d9947f-9192-4c08-9124-8e016714427a",
+                    FirstName = "Петър",
+                    LastName = "Тестов",
+                    Egn = "0111111111",
+                    PhoneNumber = "088888888",
+                    ProfilePicture = Array.Empty<byte>(),
                 },
                 new()
                 {
