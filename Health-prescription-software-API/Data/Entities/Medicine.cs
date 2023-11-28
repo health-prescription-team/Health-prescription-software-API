@@ -1,4 +1,4 @@
-﻿
+﻿using Microsoft.AspNetCore.Identity;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 
@@ -6,6 +6,11 @@ namespace Health_prescription_software_API.Data.Entities
 {
     public class Medicine
     {
+        public Medicine()
+        {
+			UsersMedicines = new HashSet<UserMedicine>();
+        }
+
         [Key]
         public int Id { get; set; }
 
@@ -17,7 +22,7 @@ namespace Health_prescription_software_API.Data.Entities
         public byte[]? MedicineImageBytes { get; set; }
 
         [Required]
-        public decimal Price { get; set; }
+        public decimal AveragePrice { get; set; }
 
         [Required] 
         public string MedicineCompany { get; set; } = null!;
@@ -29,5 +34,6 @@ namespace Health_prescription_software_API.Data.Entities
         [DefaultValue(false)]
         public bool IsDeleted { get; set; }
 
+        public ICollection<UserMedicine> UsersMedicines { get; set; }
     }
 }

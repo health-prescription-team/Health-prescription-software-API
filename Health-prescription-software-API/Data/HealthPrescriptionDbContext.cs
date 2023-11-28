@@ -1,7 +1,8 @@
-﻿namespace Health_prescription_software_API.Data
+﻿
+namespace Health_prescription_software_API.Data
 {
     using Data.Entities;
-    using Data.Entities.User;
+    using Health_prescription_software_API.Data.Entities.User;
     using Microsoft.AspNetCore.Identity;
     using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
     using Microsoft.EntityFrameworkCore;
@@ -10,13 +11,16 @@
 
     public class HealthPrescriptionDbContext : IdentityDbContext<User>
     {
-        public HealthPrescriptionDbContext(DbContextOptions options) : base(options) { }
+		public HealthPrescriptionDbContext(DbContextOptions options) : base(options) { }
 
         public DbSet<Medicine> Medicines { get; set; }
+        
+        public DbSet<UserMedicine> UsersMedicines { get; set; }
 
         public DbSet<Prescription> Prescriptions { get; set; }
 
         public DbSet<PrescriptionDetails> PrescriptionDetails { get; set; }
+
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
@@ -42,7 +46,11 @@
                     NormalizedName = Pharmacy.ToUpper()
                 });
 
+            builder.Entity<UserMedicine>()
+                .HasKey(um => new { um.MedicineId, um.UserId });
+
             base.OnModelCreating(builder);
+            
         }
     }
 }

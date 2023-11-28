@@ -1,20 +1,14 @@
-﻿namespace Health_prescription_software_API.Data.Entities
+﻿namespace Health_prescription_software_API.Models.Prescription
 {
     using System.ComponentModel.DataAnnotations;
 
-    public class PrescriptionDetails
+    public class PrescriptionDetailsDto
     {
-        [Key]
-        public int Id { get; set; }
-
-        [Required]
-        public int PrescriptionId { get; set; }
-
         [Required]
         public int MedicineId { get; set; }
 
         [Required]
-        public int EveningDose {  get; set; }
+        public int EveningDose { get; set; }
 
         [Required]
         public int LunchTimeDose { get; set; }
