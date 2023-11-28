@@ -1,61 +1,60 @@
-﻿using Health_prescription_software_API.Contracts;
-using Health_prescription_software_API.Contracts.Validations;
-using Health_prescription_software_API.Models.Prescription;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Options;
-
-namespace Health_prescription_software_API.Controllers
+﻿namespace Health_prescription_software_API.Controllers
 {
+    using Health_prescription_software_API.Contracts;
+    using Health_prescription_software_API.Contracts.Validations;
+    using Health_prescription_software_API.Models.Prescription;
+    using Microsoft.AspNetCore.Authorization;
+    using Microsoft.AspNetCore.Mvc;
+    using Microsoft.Extensions.Options;
+    using System.Security.Claims;
+
+    using static Common.Roles.RoleConstants;
 
     [Route("api/[controller]")]
     public class PrescriptionController : Controller
     {
-        private readonly IPrescriptionService _prescriptionService;
-        private readonly IValidaitonPrescription _validationService;
+        private readonly IPrescriptionService prescriptionService;
+        private readonly IValidaitonPrescription validationService;
 
         private readonly IOptions<ApiBehaviorOptions> apiBehaviorOptions;
 
         public PrescriptionController(IPrescriptionService prescriptionService,
-            IValidaitonPrescription validationService, 
+            IValidaitonPrescription validationService,
             IOptions<ApiBehaviorOptions> apiBehaviorOptions)
         {
-            _prescriptionService = prescriptionService;
-            this._validationService = validationService;
+            this.prescriptionService = prescriptionService;
+            this.validationService = validationService;
             this.apiBehaviorOptions = apiBehaviorOptions;
         }
 
         [HttpPost]
-        public async Task<IActionResult> Add([FromForm]AddPrescriptionDto prescriptionModel)
+        [Authorize(Roles = GP)]
+        public async Task<IActionResult> Add([FromBody] AddPrescriptionDto prescriptionModel)
         {
-
-
             try
             {
-                var checkPatientEgn = await _validationService.IsPrescriptionValid(prescriptionModel);
+                string GpId = User.FindFirstValue(ClaimTypes.NameIdentifier)!;
+                var checkPatientEgn = await validationService.IsPrescriptionValid(prescriptionModel);
 
                 if (checkPatientEgn == false)
                 {
-                    foreach(var error in _validationService.ModelErrors)
+                    foreach (var error in validationService.ModelErrors)
                     {
-                        ModelState.AddModelError(error.ErrorPropName, error.ErrorMessage);
+                        ModelState.AddModelError(error.ErrorPropName!, error.ErrorMessage!);
                     }
 
                     return apiBehaviorOptions.Value.InvalidModelStateResponseFactory(ControllerContext);
                 }
 
-                var hashedPrescriptionId = await _prescriptionService.Add(prescriptionModel);
-                
-                 return Ok(new {PrescriptionId = hashedPrescriptionId});
+                var hashedPrescriptionId = await prescriptionService.Add(prescriptionModel, GpId);
+
+                return Ok(new { PrescriptionId = hashedPrescriptionId });
 
             }
             catch (Exception)
             {
-
                 return StatusCode(500);
             }
-
         }
     }
-	
-
 }
