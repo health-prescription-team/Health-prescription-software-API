@@ -1,6 +1,7 @@
 ﻿namespace Health_prescription_software_API.Data.Entities
 {
     using System.ComponentModel.DataAnnotations;
+    using System.ComponentModel.DataAnnotations.Schema;
 
     public class PrescriptionDetails
     {
@@ -9,6 +10,8 @@
 
         [Required]
         public int PrescriptionId { get; set; }
+        [ForeignKey(nameof(PrescriptionId))]
+        public virtual Prescription Prescription { get; set; } = null!;
 
         [Required]
         public int MedicineId { get; set; }
