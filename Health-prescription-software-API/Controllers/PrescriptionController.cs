@@ -56,5 +56,14 @@
                 return StatusCode(500);
             }
         }
+
+        [HttpGet]
+        [Authorize(Roles = GP)]
+        public async Task<IActionResult> GetDropwnDownMedicaments()
+        {
+            var medicaments = await prescriptionService.GetMedicaments();
+
+            return Ok( new {Medicaments =  medicaments});
+        }
     }
 }

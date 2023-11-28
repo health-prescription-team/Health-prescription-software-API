@@ -5,5 +5,7 @@
     public interface IPrescriptionService
     {
         Task<string> Add(AddPrescriptionDto prescriptionModel, string GpId);
+
+        Task<IEnumerable<MedicineDropDownMenuDTO>> GetMedicaments();
     }
 }

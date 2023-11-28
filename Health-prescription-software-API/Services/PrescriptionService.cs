@@ -71,5 +71,16 @@
             }
         }
 
+        public async Task<IEnumerable<MedicineDropDownMenuDTO>> GetMedicaments()
+        {
+            var modelDb = await context.Medicines
+                .Select(x => new MedicineDropDownMenuDTO
+                {
+                    Id = x.Id,
+                    Name = x.Name,
+                }).ToListAsync();
+
+            return modelDb;
+        }
     }
 }
