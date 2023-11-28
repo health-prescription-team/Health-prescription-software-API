@@ -49,5 +49,11 @@
 			public const int EmailMin = 5;
 			public const int EmailMax = 100;
 		}
+
+		public static class Prescription
+		{
+			public const int MinAge = 0;
+			public const int MaxAge = 200;
+		}
 	}
 }

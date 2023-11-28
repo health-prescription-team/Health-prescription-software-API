@@ -401,3 +401,9 @@ FodyWeavers.xsd
 /Health-prescription-software-API/appsettings.Development.json
 /Health-prescription-software-API/appsettings.Production.json
 /Health-prescription-software-API/appsettings.Production.json
+
+/Health-prescription-software-API/Health-prescription-software-API.lutconfig
+
+# Ignore Migrations
+/Health-prescription-software-API/Migrations/
+
