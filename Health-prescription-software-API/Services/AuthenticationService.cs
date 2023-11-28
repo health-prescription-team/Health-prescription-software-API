@@ -23,7 +23,8 @@
         private readonly UserManager<User> _userManager;
         private readonly SignInManager<User> _signInManager;
 
-        public AuthenticationService(HealthPrescriptionDbContext context,
+        public AuthenticationService(
+            HealthPrescriptionDbContext context,
             IConfiguration config,
             UserManager<User> userManager,
             SignInManager<User> signInManager)

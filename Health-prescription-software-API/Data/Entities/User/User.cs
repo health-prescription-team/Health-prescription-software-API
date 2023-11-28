@@ -10,7 +10,13 @@
     [Index(nameof(UinNumber), IsUnique = true)]
     public class User : IdentityUser
     {
-        [MaxLength(NameMaxLength)]
+        
+		public User():base()
+		{
+			UsersMedicines = new HashSet<UserMedicine>();
+		}
+
+		[MaxLength(NameMaxLength)]
         public string? FirstName { get; set; } = null!;
 
         [MaxLength(NameMaxLength)]
@@ -36,5 +42,7 @@
         [Phone]
         [RegularExpression(PhoneNumberRegexPattern, ErrorMessage = InvalidPhoneNumberErrorMessage)]
         public override string? PhoneNumber { get => base.PhoneNumber; set => base.PhoneNumber = value; }
-    }
+
+        public ICollection<UserMedicine> UsersMedicines { get; set; }
+	}
 }

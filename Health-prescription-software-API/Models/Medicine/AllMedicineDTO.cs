@@ -13,7 +13,7 @@
 
 		public string Name { get; set; } = null!;
 
-		public decimal Price { get; set; }
+		public decimal AveragePrice { get; set; }
 		
 		public string MedicineCompany { get; set; } = null!;
 
