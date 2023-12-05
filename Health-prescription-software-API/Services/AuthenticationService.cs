@@ -54,124 +54,76 @@
         }
         public async Task<string?> RegisterPatient(PatientDto model)
         {
-            if (model == null)
+            using var memoryStream = new MemoryStream();
+            await model.ProfilePicture.CopyToAsync(memoryStream);
+
+            var user = new User
             {
-                throw new ArgumentNullException("Patient data cannot be null!");
-            }
-            if (model.ProfilePicture == null || model.ProfilePicture.Length == 0)
+                FirstName = model.FirstName,
+                MiddleName = model.LastName,
+                LastName = model.LastName,
+                ProfilePicture = memoryStream.ToArray(),
+                Egn = model.Egn,
+                Email = null,
+                UserName = model.Egn,
+                PhoneNumber = model.PhoneNumber
+
+            };
+
+            var result = await _userManager.CreateAsync(user, model.Password);
+
+            if (!result.Succeeded)
             {
-                throw new NullReferenceException("ProfilePicture model cannot be null!");
-            }
-            var egnCheckForDuplicate = await _context.Users.FirstOrDefaultAsync(x => x.Egn == model.Egn);
-
-            if (egnCheckForDuplicate is null)
-            {
-                using (var memoryStream = new MemoryStream())
-                {
-                    await model.ProfilePicture.CopyToAsync(memoryStream);
-
-                    var patientModel = new User
-                    {
-                        FirstName = model.FirstName,
-                        MiddleName = model.LastName,
-                        LastName = model.LastName,
-                        PhoneNumber = model.PhoneNumber,
-                        UserName = $"{model.FirstName}{model.Egn}",
-                        ProfilePicture = memoryStream.ToArray(),
-                        Egn = model.Egn,
-                        Email = "test3@abv.bg"
-                    };
-                    var result = await _userManager.CreateAsync(patientModel, model.Password);
-                    if (result.Succeeded)
-                    {
-                        await _signInManager.SignInAsync(patientModel, isPersistent: false);
-
-                        var user = await GetUserByEgn(model.Egn);
-
-                        await _userManager.AddToRoleAsync(user, RoleConstants.Patient);
-
-                        var securityToken = await GenerateToken(user);
-
-                        return securityToken;
-                    }
-                }
-            }
-            else
-            {
-                //todo: catch it in the controller
-                throw new ArgumentException("There is already register Patient with this egn!");
+                return null;
             }
 
+            await _signInManager.SignInAsync(user, isPersistent: false);
 
+            var userEntity = await this.GetUserByEgn(model.Egn);
 
-            return null;
+            await _userManager.AddToRoleAsync(userEntity!, RoleConstants.Patient);
+
+            var securityToken = await this.GenerateToken(userEntity!);
+
+            return securityToken;
+            
         }
 
         public async Task<string?> RegisterGp(RegisterGpDto model)
         {
-            //todo: checking the model is in controller or external class
-            if (model == null)
+            using var memoryStream = new MemoryStream();
+            await model.ProfilePicture.CopyToAsync(memoryStream);
+
+            var user = new User
             {
-                throw new ArgumentNullException("GP data cannot be null!");
+                FirstName = model.FirstName,
+                MiddleName = model.LastName,
+                LastName = model.LastName,
+                ProfilePicture = memoryStream.ToArray(),
+                Egn = model.Egn,
+                Email = null,
+                UserName = model.Egn,
+                PhoneNumber = model.PhoneNumber
+
+            };
+
+            var result = await _userManager.CreateAsync(user, model.Password);
+
+            if (!result.Succeeded)
+            {
+                return null;
             }
 
-            //todo: checking the model is in controller or external class
-            if (model.ProfilePicture == null || model.ProfilePicture.Length == 0)
-            {
-                throw new NullReferenceException("ProfilePicture model cannot be null!");
-            }
+            await _signInManager.SignInAsync(user, isPersistent: false);
 
-            //todo: dynamic(async) checking the model is in controller involving dedicated service method
-            var egnCheckForDuplicate = await _context.Users.FirstOrDefaultAsync(x => x.Egn == model.Egn);
+            var userEntity = await this.GetUserByEgn(model.Egn);
 
-            if (egnCheckForDuplicate is null)
-            {
-                using (var memoryStream = new MemoryStream())
-                {
-                    await model.ProfilePicture.CopyToAsync(memoryStream);
+            await _userManager.AddToRoleAsync(userEntity!, RoleConstants.GP);
 
-                    var gpModel = new User
-                    {
-                        FirstName = model.FirstName,
-                        MiddleName = model.LastName,
-                        LastName = model.LastName,
-                        UinNumber = model.UinNumber,
-                        ProfilePicture = memoryStream.ToArray(),
-                        Egn = model.Egn,
-                        HospitalName = model.HospitalName,
-                        Email = "test@abv.bg4",
-                        UserName = $"{model.FirstName}{model.UinNumber}",
-                        PhoneNumber = model.PhoneNumber
+            var securityToken = await this.GenerateToken(userEntity!);
 
-                    };
-
-                    var result = await _userManager.CreateAsync(gpModel, model.Password);
-
-                    if (result.Succeeded)
-                    {
-                        await _signInManager.SignInAsync(gpModel, isPersistent: false);
-
-                        var user = await GetUserByEgn(model.Egn);
-
-                        await _userManager.AddToRoleAsync(user, RoleConstants.GP);
-
-                        var securityToken = await GenerateToken(user);
-
-                        return securityToken;
-                    }
-                }
-            }
-            else
-            {
-                //todo: catch it in the controller
-                throw new ArgumentException("There is already register Gp with this egn!");
-            }
-
-
-
-
-            return null;
-
+            return securityToken;
+            
         }
 
         public async Task<string?> LoginGp(LoginGpDto model)
