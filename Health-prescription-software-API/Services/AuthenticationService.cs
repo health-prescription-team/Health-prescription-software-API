@@ -56,7 +56,7 @@
         {
             using var memoryStream = new MemoryStream();
             await model.ProfilePicture.CopyToAsync(memoryStream);
-
+            
             var user = new User
             {
                 FirstName = model.FirstName,
@@ -104,7 +104,6 @@
                 Email = null,
                 UserName = model.Egn,
                 PhoneNumber = model.PhoneNumber
-
             };
 
             var result = await _userManager.CreateAsync(user, model.Password);
@@ -170,9 +169,9 @@
 
                 User? user = await GetUserByEmailAsync(pharmacyUser.Email);
 
-                await _userManager.AddToRoleAsync(user, RoleConstants.Pharmacy);
+                await _userManager.AddToRoleAsync(user!, RoleConstants.Pharmacy);
 
-                var securityToken = await GenerateToken(user);
+                var securityToken = await GenerateToken(user!);
 
                 return securityToken;
             }
@@ -264,7 +263,7 @@
             {
                 new Claim(ClaimTypes.NameIdentifier,user.Id.ToString()),
                 new Claim(ClaimTypes.Name, $"{user.FirstName} {user.MiddleName} {user.LastName}"),
-                new Claim(ClaimTypes.MobilePhone, user.PhoneNumber),
+                new Claim(ClaimTypes.MobilePhone, user.PhoneNumber!),
                 new Claim(ClaimTypes.Role, userRole)
             };
 

@@ -47,16 +47,16 @@
 
             // UserManager and SignInManager mock setup
 
-            userManager = new Mock<UserManager<User>>(Mock.Of<IUserStore<User>>(), null, null, null, null, null, null, null, null);
+            userManager = new Mock<UserManager<User>>(Mock.Of<IUserStore<User>>(), null!, null!, null!, null!, null!, null!, null!, null!);
 
             signInManager = new Mock<SignInManager<User>>(
                 userManager.Object,
                 Mock.Of<IHttpContextAccessor>(),
                 Mock.Of<IUserClaimsPrincipalFactory<User>>(),
                 Mock.Of<IOptions<IdentityOptions>>(),
-                null,
-                null,
-                null);
+                null!,
+                null!,
+                null!);
         }
 
         [Test]
