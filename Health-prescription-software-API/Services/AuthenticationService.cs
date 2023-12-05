@@ -88,9 +88,9 @@
 
                         var user = await GetUserByEgn(model.Egn);
 
-                        await _userManager.AddToRoleAsync(user, RoleConstants.Patient);
+                        await _userManager.AddToRoleAsync(user!, RoleConstants.Patient);
 
-                        var securityToken = await GenerateToken(user);
+                        var securityToken = await GenerateToken(user!);
 
                         return securityToken;
                     }
@@ -153,9 +153,9 @@
 
                         var user = await GetUserByEgn(model.Egn);
 
-                        await _userManager.AddToRoleAsync(user, RoleConstants.GP);
+                        await _userManager.AddToRoleAsync(user!, RoleConstants.GP);
 
-                        var securityToken = await GenerateToken(user);
+                        var securityToken = await GenerateToken(user!);
 
                         return securityToken;
                     }
@@ -218,9 +218,9 @@
 
                 User? user = await GetUserByEmailAsync(pharmacyUser.Email);
 
-                await _userManager.AddToRoleAsync(user, RoleConstants.Pharmacy);
+                await _userManager.AddToRoleAsync(user!, RoleConstants.Pharmacy);
 
-                var securityToken = await GenerateToken(user);
+                var securityToken = await GenerateToken(user!);
 
                 return securityToken;
             }
@@ -312,7 +312,7 @@
             {
                 new Claim(ClaimTypes.NameIdentifier,user.Id.ToString()),
                 new Claim(ClaimTypes.Name, $"{user.FirstName} {user.MiddleName} {user.LastName}"),
-                new Claim(ClaimTypes.MobilePhone, user.PhoneNumber),
+                new Claim(ClaimTypes.MobilePhone, user.PhoneNumber!),
                 new Claim(ClaimTypes.Role, userRole)
             };
 
