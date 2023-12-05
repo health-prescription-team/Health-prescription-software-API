@@ -4,6 +4,7 @@
     using System.ComponentModel;
 
     using static Common.EntityValidationConstants.User;
+    using System.ComponentModel.DataAnnotations.Schema;
 
     public class Prescription
     {
@@ -32,11 +33,14 @@
         [DefaultValue(false)]
         public bool IsFulfilled { get; set; }
 
+        [Column(TypeName = "Timestamp")]
         public DateTime? FulfillmentDate { get; set; }
 
         [Required]
+        [Column(TypeName = "Timestamp")]
         public DateTime CreatedAt { get; set; }
 
+        [Column(TypeName = "Timestamp")]
         public DateTime? ExpiresAt { get; set; }
 
         public virtual ICollection<PrescriptionDetails> PrescriptionDetails { get; set; }
