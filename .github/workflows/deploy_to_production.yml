@@ -9,6 +9,7 @@ on:
 jobs:
 
   unit-tests:
+    name: Unit tests workflow
     uses: ./.github/workflows/unit_tests.yml
 
   build:
