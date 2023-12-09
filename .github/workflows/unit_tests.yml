@@ -22,10 +22,10 @@ jobs:
           dotnet-version: 8.x
 
       - name: Restore dependencies
-        run: dotnet restore
+        run: dotnet restore Health-prescription-software-API
 
       - name: Build
-        run: dotnet build --no-restore
+        run: dotnet build Health-prescription-software-API/Health-prescription-software-API.csproj --no-restore
 
       - name: Test
         run: dotnet test Health-prescription-software-API.Services.Tests/Health-prescription-software-API.Services.Tests.csproj --no-build --verbosity normal
