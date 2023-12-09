@@ -77,3 +77,4 @@ jobs:
           CONNECTION_STRING: ${{ secrets.DB_CONNECTION_STRING }}
         run: |
           dotnet ef database update --connection "${CONNECTION_STRING}"
+        working-directory: Health-prescription-software-API
