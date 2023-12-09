@@ -8,6 +8,9 @@ on:
 
 jobs:
 
+  unit-tests:
+    uses: ./.github\workflows\unit_tests.yml
+
   build:
     name: Build and save to artifact
     runs-on: ubuntu-latest
