@@ -17,10 +17,9 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Set up .NET Core
-        uses: actions/setup-dotnet@v1
+        uses: actions/setup-dotnet@v3
         with:
           dotnet-version: '8.x'
-          include-prerelease: true
 
       - name: Build with dotnet
         run: dotnet build Health-prescription-software-API/Health-prescription-software-API.csproj --configuration Release
@@ -64,10 +63,9 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Set up .NET Core
-        uses: actions/setup-dotnet@v1
+        uses: actions/setup-dotnet@v3
         with:
           dotnet-version: '8.x'
-          include-prerelease: true
 
       - name: Install dotnet-ef
         run: dotnet tool install --global dotnet-ef
