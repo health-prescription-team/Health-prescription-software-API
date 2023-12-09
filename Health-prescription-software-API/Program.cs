@@ -12,60 +12,56 @@ using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 
-
-
 builder.Services.AddControllers();
-
 
 builder.Services.AddCors(options =>
 {
-	options.AddPolicy(name: "CORSPolicy", p =>
-	{
-		p.WithOrigins("http://localhost:3000"
-						, "https://localhost:3000");
-	});
+    options.AddPolicy(name: "CORSPolicy", p =>
+    {
+        p.WithOrigins("http://localhost:3000",
+                      "https://localhost:3000");
+    });
 });
 
 builder.Services.AddDbContext<HealthPrescriptionDbContext>(options =>
 {
-	options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection"));
+    options.UseNpgsql(builder.Configuration.GetValue<string>("ConnectionStrings:DefaultConnection"));
 });
-
 
 builder.Services.AddIdentity<User, IdentityRole>(options =>
 {
-	options.SignIn.RequireConfirmedAccount = false;
-	options.Password.RequireNonAlphanumeric = true;
-	options.Password.RequiredLength = 6;
-	options.User.RequireUniqueEmail = false;
-	options.Password.RequireDigit = true;
-	options.Password.RequireLowercase = true;
-	options.SignIn.RequireConfirmedPhoneNumber = false;
+    options.SignIn.RequireConfirmedAccount = false;
+    options.Password.RequireNonAlphanumeric = true;
+    options.Password.RequiredLength = 6;
+    options.User.RequireUniqueEmail = false;
+    options.Password.RequireDigit = true;
+    options.Password.RequireLowercase = true;
+    options.SignIn.RequireConfirmedPhoneNumber = false;
 
 })
-	.AddEntityFrameworkStores<HealthPrescriptionDbContext>()
-	.AddDefaultTokenProviders();
+    .AddEntityFrameworkStores<HealthPrescriptionDbContext>()
+    .AddDefaultTokenProviders();
 
 builder.Services
-	.AddAuthentication(options =>
+    .AddAuthentication(options =>
 {
-	options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-	options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-	options.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
+    options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+    options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+    options.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
 })
-	.AddJwtBearer(options =>
-	{
-		options.SaveToken = true;
-		options.RequireHttpsMetadata = false;
-		options.TokenValidationParameters = new TokenValidationParameters()
-		{
-			ValidateIssuer = true,
-			ValidateAudience = true,
-			ValidAudience = builder.Configuration["Jwt:Audience"],
-			ValidIssuer = builder.Configuration["Jwt:Issuer"],
-			IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"]!))
-		};
-	});
+    .AddJwtBearer(options =>
+    {
+        options.SaveToken = true;
+        options.RequireHttpsMetadata = false;
+        options.TokenValidationParameters = new TokenValidationParameters()
+        {
+            ValidateIssuer = true,
+            ValidateAudience = true,
+            ValidAudience = builder.Configuration["Jwt:Audience"],
+            ValidIssuer = builder.Configuration["Jwt:Issuer"],
+            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"]!))
+        };
+    });
 
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
@@ -77,11 +73,7 @@ builder.Services.AddScoped<IvalidationPrescription, ValidationAuthentication>();
 builder.Services.AddScoped<IPrescriptionService, PrescriptionService>();
 builder.Services.AddScoped<IValidaitonPrescription, ValidationPrescription>();
 
-
-
 var app = builder.Build();
-
-
 
 app.UseSwagger();
 app.UseSwaggerUI();
