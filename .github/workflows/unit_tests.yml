@@ -25,7 +25,7 @@ jobs:
         run: dotnet restore Health-prescription-software-API
 
       - name: Build
-        run: dotnet build Health-prescription-software-API/Health-prescription-software-API.csproj --no-restore
+        run: dotnet build Health-prescription-software-API/Health-prescription-software-API.csproj --configuration Release --no-restore
 
       - name: Test
         run: dotnet test Health-prescription-software-API.Services.Tests/Health-prescription-software-API.Services.Tests.csproj --no-build --verbosity normal
