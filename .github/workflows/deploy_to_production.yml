@@ -2,7 +2,7 @@ name: Build and Deploy app to Azure Web app - Production
 
 on:
   push:
-    brnckes:
+    branches:
       - main
   workflow_dispatch:
 
