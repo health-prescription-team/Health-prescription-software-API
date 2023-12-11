@@ -4,10 +4,9 @@ namespace Health_prescription_software_API.Services
 	using Health_prescription_software_API.Data;
 	using Health_prescription_software_API.Data.Entities;
 	using Health_prescription_software_API.Models.Medicine;
-	using Microsoft.EntityFrameworkCore;
-	using System.Linq;
-
-	using static Common.GeneralConstants;
+    using Microsoft.EntityFrameworkCore;
+    using System.Linq;
+    using static Common.GeneralConstants;
 
 
 	public class MedicineService : IMedicineService
@@ -145,6 +144,20 @@ namespace Health_prescription_software_API.Services
 
 			return model;
 		}
+
+        public async Task<IEnumerable<AllMedicineMinimalDTO>> GetAllMinimalAsync()
+        {
+            var modelDb = await context.Medicines
+                .Where(m => !m.IsDeleted)
+				.AsNoTracking()
+                .Select(x => new AllMedicineMinimalDTO
+                {
+                    Id = x.Id,
+                    Name = x.Name,
+                }).ToListAsync();
+
+            return modelDb;
+        }
 
         public async Task<bool> Delete(int id)
         {
