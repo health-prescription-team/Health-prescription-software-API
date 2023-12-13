@@ -14,12 +14,12 @@
     public class PrescriptionController : Controller
     {
         private readonly IPrescriptionService prescriptionService;
-        private readonly IValidaitonPrescription validationService;
+        private readonly IValidationPrescription validationService;
 
         private readonly IOptions<ApiBehaviorOptions> apiBehaviorOptions;
 
         public PrescriptionController(IPrescriptionService prescriptionService,
-            IValidaitonPrescription validationService,
+            IValidationPrescription validationService,
             IOptions<ApiBehaviorOptions> apiBehaviorOptions)
         {
             this.prescriptionService = prescriptionService;

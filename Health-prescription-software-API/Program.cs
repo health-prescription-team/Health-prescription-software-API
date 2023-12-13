@@ -71,7 +71,7 @@ builder.Services.AddScoped<IAuthenticationService, AuthenticationService>();
 builder.Services.AddScoped<IValidationMedicine, ValidationMedicine>();
 builder.Services.AddScoped<IvalidationPrescription, ValidationAuthentication>();
 builder.Services.AddScoped<IPrescriptionService, PrescriptionService>();
-builder.Services.AddScoped<IValidaitonPrescription, ValidationPrescription>();
+builder.Services.AddScoped<IValidationPrescription, ValidationPrescription>();
 
 var app = builder.Build();
 
