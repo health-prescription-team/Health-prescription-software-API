@@ -5,5 +5,9 @@
     public interface IPrescriptionService
     {
         Task<string> Add(AddPrescriptionDto prescriptionModel, string GpId);
+
+        Task<IEnumerable<PatientPrescriptionsListDTO>> GetPatientPrescriptions(string PatientId);
+
+
     }
 }

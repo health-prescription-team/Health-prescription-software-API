@@ -15,6 +15,8 @@
 
         [Required]
         public int MedicineId { get; set; }
+        [ForeignKey(nameof(MedicineId))]
+        public virtual Medicine Medicine { get; set; } = null!;
 
         [Required]
         public int EveningDose {  get; set; }

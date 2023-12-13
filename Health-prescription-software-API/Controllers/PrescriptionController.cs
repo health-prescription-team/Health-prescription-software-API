@@ -56,5 +56,23 @@
                 return StatusCode(500);
             }
         }
+
+        [HttpGet]
+        [Authorize(Roles = Patient)]
+        public async Task<IActionResult> GetAll()
+        {
+            try
+            {
+                string patientId = User.FindFirstValue(ClaimTypes.NameIdentifier)!;
+
+                var patientPrescriptions = await prescriptionService.GetPatientPrescriptions(patientId);
+
+                return Ok(patientPrescriptions);
+            }
+            catch (Exception)
+            {
+                return StatusCode(500);
+            }
+        }
     }
 }

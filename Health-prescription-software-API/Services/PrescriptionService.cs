@@ -5,6 +5,7 @@
     using Health_prescription_software_API.Data.Entities;
     using Health_prescription_software_API.Models.Prescription;
     using Microsoft.EntityFrameworkCore;
+    using System.Collections.Generic;
     using System.Security.Cryptography;
 
     public class PrescriptionService : IPrescriptionService
@@ -65,6 +66,27 @@
 
                 return hashedValue;
             }
+        }
+
+        public async Task<IEnumerable<PatientPrescriptionsListDTO>> GetPatientPrescriptions(string PatientId)
+        {
+            var patient = await context.Users.FindAsync(PatientId);
+
+            var prescriptionsList = await context.Prescriptions
+                .Where(p => p.PatientEgn == patient!.Egn)
+                .Select(p => new PatientPrescriptionsListDTO
+                {
+                    PrescriptionId = p.Id,
+                    CreatedAt = p.CreatedAt,
+                    ExpiresAt = p.ExpiresAt,
+                    IsFulfilled = p.IsFulfilled,
+                    Medicaments = p.PrescriptionDetails
+                        .Select(pd => pd.Medicine.Name)
+                        .ToList()
+                })
+                .ToListAsync();
+
+            return prescriptionsList;
         }
     }
 }
