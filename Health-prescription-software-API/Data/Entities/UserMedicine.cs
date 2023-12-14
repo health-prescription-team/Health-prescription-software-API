@@ -10,7 +10,7 @@
         public string UserId { get; set; } = null!;
 
         [ForeignKey(nameof(Medicine))]
-        public int MedicineId { get; set; }
+        public Guid MedicineId { get; set; }
 
         public User.User User { get; set; } = null!;
 

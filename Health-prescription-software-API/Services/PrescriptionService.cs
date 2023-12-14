@@ -6,7 +6,6 @@
     using Health_prescription_software_API.Models.Prescription;
     using Microsoft.EntityFrameworkCore;
     using System.Collections.Generic;
-    using System.Security.Cryptography;
 
     public class PrescriptionService : IPrescriptionService
     {
@@ -17,7 +16,7 @@
             this.context = context;
         }
 
-        public async Task<string> Add(AddPrescriptionDto prescriptionModel, string GpId)
+        public async Task<Guid> Add(AddPrescriptionDto prescriptionModel, string GpId)
         {
             var prescriptionEntity = new Prescription
             {
@@ -46,24 +45,7 @@
             context.Prescriptions.Add(prescriptionEntity);
             await context.SaveChangesAsync();
 
-            var hashedIdString = HashingAlgorithm(prescriptionEntity.Id);
-
-            return hashedIdString;
-        }
-
-        private static string HashingAlgorithm(int value)
-        {
-            byte[] idPrescriptionToBytes = BitConverter.GetBytes(value);
-
-            using (SHA256 sha256 = SHA256.Create())
-            {
-                byte[] hashBytes = sha256.ComputeHash(idPrescriptionToBytes);
-
-
-                string hashedValue = BitConverter.ToString(hashBytes).Replace("-", "");
-
-                return hashedValue;
-            }
+            return prescriptionEntity.Id;
         }
 
         public async Task<IEnumerable<PatientPrescriptionsListDTO>> GetPatientPrescriptions(string patientId)

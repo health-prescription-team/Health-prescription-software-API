@@ -14,7 +14,7 @@
         }
 
         [Key]
-        public int Id { get; set; }
+        public Guid Id { get; set; }
 
         [Required]
         public string GpId { get; set; } = null!;

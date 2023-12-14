@@ -5,7 +5,7 @@
     public class AddPrescriptionDetailsDto
     {
         [Required]
-        public int MedicineId { get; set; }
+        public Guid MedicineId { get; set; }
 
         [Required]
         public int EveningDose { get; set; }

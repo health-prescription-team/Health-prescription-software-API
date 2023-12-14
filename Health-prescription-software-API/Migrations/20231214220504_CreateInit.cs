@@ -9,7 +9,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Health_prescription_software_API.Migrations
 {
     /// <inheritdoc />
-    public partial class Init : Migration
+    public partial class CreateInit : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -65,8 +65,7 @@ namespace Health_prescription_software_API.Migrations
                 name: "Medicines",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "integer", nullable: false)
-                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    Id = table.Column<Guid>(type: "uuid", nullable: false),
                     Name = table.Column<string>(type: "text", nullable: false),
                     MedicineImageBytes = table.Column<byte[]>(type: "bytea", nullable: false),
                     AveragePrice = table.Column<decimal>(type: "numeric", nullable: false),
@@ -83,8 +82,7 @@ namespace Health_prescription_software_API.Migrations
                 name: "Prescriptions",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "integer", nullable: false)
-                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    Id = table.Column<Guid>(type: "uuid", nullable: false),
                     GpId = table.Column<string>(type: "text", nullable: false),
                     PatientEgn = table.Column<string>(type: "text", nullable: false),
                     Age = table.Column<int>(type: "integer", nullable: false),
@@ -210,7 +208,7 @@ namespace Health_prescription_software_API.Migrations
                 columns: table => new
                 {
                     UserId = table.Column<string>(type: "text", nullable: false),
-                    MedicineId = table.Column<int>(type: "integer", nullable: false),
+                    MedicineId = table.Column<Guid>(type: "uuid", nullable: false),
                     MedicinePrice = table.Column<double>(type: "double precision", nullable: false)
                 },
                 constraints: table =>
@@ -234,10 +232,9 @@ namespace Health_prescription_software_API.Migrations
                 name: "PrescriptionDetails",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "integer", nullable: false)
-                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    PrescriptionId = table.Column<int>(type: "integer", nullable: false),
-                    MedicineId = table.Column<int>(type: "integer", nullable: false),
+                    Id = table.Column<Guid>(type: "uuid", nullable: false),
+                    PrescriptionId = table.Column<Guid>(type: "uuid", nullable: false),
+                    MedicineId = table.Column<Guid>(type: "uuid", nullable: false),
                     EveningDose = table.Column<int>(type: "integer", nullable: false),
                     LunchTimeDose = table.Column<int>(type: "integer", nullable: false),
                     MorningDose = table.Column<int>(type: "integer", nullable: false),
@@ -247,6 +244,12 @@ namespace Health_prescription_software_API.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_PrescriptionDetails", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_PrescriptionDetails_Medicines_MedicineId",
+                        column: x => x.MedicineId,
+                        principalTable: "Medicines",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
                         name: "FK_PrescriptionDetails_Prescriptions_PrescriptionId",
                         column: x => x.PrescriptionId,
@@ -260,10 +263,10 @@ namespace Health_prescription_software_API.Migrations
                 columns: new[] { "Id", "ConcurrencyStamp", "Name", "NormalizedName" },
                 values: new object[,]
                 {
-                    { "14d0799c-9a73-41ee-840d-86911ef0e9f6", null, "Patient", "PATIENT" },
-                    { "43f73598-23d5-4e16-a3e0-3f1c7b61fb4d", null, "GP", "GP" },
-                    { "5d446b94-d4bb-4c4b-9e9a-fe658824b4ca", null, "Pharmacy", "PHARMACY" },
-                    { "bb2b3985-472e-47f9-908c-c00291ed51b9", null, "Pharmacist", "PHARMACIST" }
+                    { "1b20d36b-7fba-4efa-9afb-8a7fa7272d21", null, "Patient", "PATIENT" },
+                    { "7096ca2c-d8ce-413b-9d96-a87112825452", null, "Pharmacy", "PHARMACY" },
+                    { "be85a352-0017-4d97-8b65-3ec0e40d188c", null, "Pharmacist", "PHARMACIST" },
+                    { "db016c26-261e-4bc5-944f-04a06470b425", null, "GP", "GP" }
                 });
 
             migrationBuilder.CreateIndex(
@@ -314,6 +317,11 @@ namespace Health_prescription_software_API.Migrations
                 table: "AspNetUsers",
                 column: "NormalizedUserName",
                 unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_PrescriptionDetails_MedicineId",
+                table: "PrescriptionDetails",
+                column: "MedicineId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_PrescriptionDetails_PrescriptionId",

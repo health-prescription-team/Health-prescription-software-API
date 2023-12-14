@@ -12,8 +12,8 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Health_prescription_software_API.Migrations
 {
     [DbContext(typeof(HealthPrescriptionDbContext))]
-    [Migration("20231205192629_Init")]
-    partial class Init
+    [Migration("20231214220504_CreateInit")]
+    partial class CreateInit
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -27,11 +27,9 @@ namespace Health_prescription_software_API.Migrations
 
             modelBuilder.Entity("Health_prescription_software_API.Data.Entities.Medicine", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("integer");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+                        .HasColumnType("uuid");
 
                     b.Property<decimal>("AveragePrice")
                         .HasColumnType("numeric");
@@ -62,11 +60,9 @@ namespace Health_prescription_software_API.Migrations
 
             modelBuilder.Entity("Health_prescription_software_API.Data.Entities.Prescription", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("integer");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+                        .HasColumnType("uuid");
 
                     b.Property<int>("Age")
                         .HasColumnType("integer");
@@ -102,11 +98,9 @@ namespace Health_prescription_software_API.Migrations
 
             modelBuilder.Entity("Health_prescription_software_API.Data.Entities.PrescriptionDetails", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("integer");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+                        .HasColumnType("uuid");
 
                     b.Property<int>("EveningDose")
                         .HasColumnType("integer");
@@ -118,8 +112,8 @@ namespace Health_prescription_software_API.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<int>("MedicineId")
-                        .HasColumnType("integer");
+                    b.Property<Guid>("MedicineId")
+                        .HasColumnType("uuid");
 
                     b.Property<int>("MorningDose")
                         .HasColumnType("integer");
@@ -127,10 +121,12 @@ namespace Health_prescription_software_API.Migrations
                     b.Property<string>("Notes")
                         .HasColumnType("text");
 
-                    b.Property<int>("PrescriptionId")
-                        .HasColumnType("integer");
+                    b.Property<Guid>("PrescriptionId")
+                        .HasColumnType("uuid");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("MedicineId");
 
                     b.HasIndex("PrescriptionId");
 
@@ -238,8 +234,8 @@ namespace Health_prescription_software_API.Migrations
 
             modelBuilder.Entity("Health_prescription_software_API.Data.Entities.UserMedicine", b =>
                 {
-                    b.Property<int>("MedicineId")
-                        .HasColumnType("integer");
+                    b.Property<Guid>("MedicineId")
+                        .HasColumnType("uuid");
 
                     b.Property<string>("UserId")
                         .HasColumnType("text");
@@ -282,25 +278,25 @@ namespace Health_prescription_software_API.Migrations
                     b.HasData(
                         new
                         {
-                            Id = "43f73598-23d5-4e16-a3e0-3f1c7b61fb4d",
+                            Id = "db016c26-261e-4bc5-944f-04a06470b425",
                             Name = "GP",
                             NormalizedName = "GP"
                         },
                         new
                         {
-                            Id = "14d0799c-9a73-41ee-840d-86911ef0e9f6",
+                            Id = "1b20d36b-7fba-4efa-9afb-8a7fa7272d21",
                             Name = "Patient",
                             NormalizedName = "PATIENT"
                         },
                         new
                         {
-                            Id = "bb2b3985-472e-47f9-908c-c00291ed51b9",
+                            Id = "be85a352-0017-4d97-8b65-3ec0e40d188c",
                             Name = "Pharmacist",
                             NormalizedName = "PHARMACIST"
                         },
                         new
                         {
-                            Id = "5d446b94-d4bb-4c4b-9e9a-fe658824b4ca",
+                            Id = "7096ca2c-d8ce-413b-9d96-a87112825452",
                             Name = "Pharmacy",
                             NormalizedName = "PHARMACY"
                         });
@@ -414,11 +410,19 @@ namespace Health_prescription_software_API.Migrations
 
             modelBuilder.Entity("Health_prescription_software_API.Data.Entities.PrescriptionDetails", b =>
                 {
+                    b.HasOne("Health_prescription_software_API.Data.Entities.Medicine", "Medicine")
+                        .WithMany()
+                        .HasForeignKey("MedicineId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.HasOne("Health_prescription_software_API.Data.Entities.Prescription", "Prescription")
                         .WithMany("PrescriptionDetails")
                         .HasForeignKey("PrescriptionId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.Navigation("Medicine");
 
                     b.Navigation("Prescription");
                 });

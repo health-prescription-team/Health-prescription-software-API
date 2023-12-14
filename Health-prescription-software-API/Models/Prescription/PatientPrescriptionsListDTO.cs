@@ -2,7 +2,7 @@
 {
     public class PatientPrescriptionsListDTO
     {
-        public int PrescriptionId { get; set; }
+        public Guid PrescriptionId { get; set; }
 
         public DateTime CreatedAt { get; set; }
 
