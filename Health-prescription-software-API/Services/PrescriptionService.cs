@@ -19,8 +19,6 @@
 
         public async Task<string> Add(AddPrescriptionDto prescriptionModel, string GpId)
         {
-            var patient = await context.Users.FirstOrDefaultAsync(x => x.Egn == prescriptionModel.PatientEgn);
-
             var prescriptionEntity = new Prescription
             {
                 Age = prescriptionModel.Age,
@@ -68,9 +66,9 @@
             }
         }
 
-        public async Task<IEnumerable<PatientPrescriptionsListDTO>> GetPatientPrescriptions(string PatientId)
+        public async Task<IEnumerable<PatientPrescriptionsListDTO>> GetPatientPrescriptions(string patientId)
         {
-            var patient = await context.Users.FindAsync(PatientId);
+            var patient = await context.Users.FindAsync(patientId);
 
             var prescriptionsList = await context.Prescriptions
                 .Where(p => p.PatientEgn == patient!.Egn)
