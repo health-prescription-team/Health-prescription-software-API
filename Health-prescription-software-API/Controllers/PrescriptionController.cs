@@ -14,12 +14,12 @@
     public class PrescriptionController : Controller
     {
         private readonly IPrescriptionService prescriptionService;
-        private readonly IValidaitonPrescription validationService;
+        private readonly IValidationPrescription validationService;
 
         private readonly IOptions<ApiBehaviorOptions> apiBehaviorOptions;
 
         public PrescriptionController(IPrescriptionService prescriptionService,
-            IValidaitonPrescription validationService,
+            IValidationPrescription validationService,
             IOptions<ApiBehaviorOptions> apiBehaviorOptions)
         {
             this.prescriptionService = prescriptionService;
@@ -50,6 +50,24 @@
 
                 return Ok(new { PrescriptionId = hashedPrescriptionId });
 
+            }
+            catch (Exception)
+            {
+                return StatusCode(500);
+            }
+        }
+
+        [HttpGet]
+        [Authorize(Roles = Patient)]
+        public async Task<IActionResult> GetAll()
+        {
+            try
+            {
+                string patientId = User.FindFirstValue(ClaimTypes.NameIdentifier)!;
+
+                var patientPrescriptions = await prescriptionService.GetPatientPrescriptions(patientId);
+
+                return Ok(patientPrescriptions);
             }
             catch (Exception)
             {

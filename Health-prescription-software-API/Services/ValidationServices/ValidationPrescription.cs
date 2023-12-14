@@ -8,7 +8,7 @@
     using static Common.EntityValidationErrorMessages.Medicine;
     using static Common.EntityValidationErrorMessages.Prescription;
 
-    public class ValidationPrescription : IValidaitonPrescription
+    public class ValidationPrescription : IValidationPrescription
     {
 
         private readonly HealthPrescriptionDbContext dbContext;
