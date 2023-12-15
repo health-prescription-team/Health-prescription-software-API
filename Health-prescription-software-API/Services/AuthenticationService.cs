@@ -60,7 +60,7 @@
             var user = new User
             {
                 FirstName = model.FirstName,
-                MiddleName = model.LastName,
+                MiddleName = model.MiddleName,
                 LastName = model.LastName,
                 ProfilePicture = memoryStream.ToArray(),
                 Egn = model.Egn,
@@ -97,7 +97,7 @@
             var user = new User
             {
                 FirstName = model.FirstName,
-                MiddleName = model.LastName,
+                MiddleName = model.MiddleName,
                 LastName = model.LastName,
                 ProfilePicture = memoryStream.ToArray(),
                 Egn = model.Egn,
@@ -205,7 +205,7 @@
             var user = new User
             {
                 FirstName = model.FirstName,
-                MiddleName = model.LastName,
+                MiddleName = model.MiddleName,
                 LastName = model.LastName,
                 UinNumber = model.UinNumber,
                 ProfilePicture = memoryStream.ToArray(),
@@ -263,7 +263,8 @@
             {
                 new Claim(ClaimTypes.NameIdentifier,user.Id.ToString()),
                 new Claim(ClaimTypes.Name, $"{user.FirstName} {user.MiddleName} {user.LastName}"),
-                new Claim(ClaimTypes.MobilePhone, user.PhoneNumber!),
+                new Claim("EGN", user.Egn!),
+                new Claim("PhoneNumber", user.PhoneNumber!),
                 new Claim(ClaimTypes.Role, userRole)
             };
 
