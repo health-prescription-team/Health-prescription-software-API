@@ -2,7 +2,7 @@
 
 namespace Health_prescription_software_API.Contracts.Validations
 {
-    public interface IValidaitonPrescription: IValidationErrorMessage
+    public interface IValidationPrescription: IValidationErrorMessage
     {
         Task<bool> IsPrescriptionValid(AddPrescriptionDto prescriptionModel);
 

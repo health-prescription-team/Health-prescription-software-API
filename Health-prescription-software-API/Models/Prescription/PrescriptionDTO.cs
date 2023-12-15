@@ -1,6 +1,6 @@
 ﻿namespace Health_prescription_software_API.Models.Prescription
 {
-    public class PrescriptionDetailsDTO
+    public class PrescriptionDTO
     {
     }
 }

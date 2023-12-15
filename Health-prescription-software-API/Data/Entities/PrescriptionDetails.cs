@@ -6,15 +6,17 @@
     public class PrescriptionDetails
     {
         [Key]
-        public int Id { get; set; }
+        public Guid Id { get; set; }
 
         [Required]
-        public int PrescriptionId { get; set; }
+        public Guid PrescriptionId { get; set; }
         [ForeignKey(nameof(PrescriptionId))]
         public virtual Prescription Prescription { get; set; } = null!;
 
         [Required]
-        public int MedicineId { get; set; }
+        public Guid MedicineId { get; set; }
+        [ForeignKey(nameof(MedicineId))]
+        public virtual Medicine Medicine { get; set; } = null!;
 
         [Required]
         public int EveningDose {  get; set; }

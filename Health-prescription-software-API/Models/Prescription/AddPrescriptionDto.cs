@@ -10,7 +10,7 @@
     {
         public AddPrescriptionDto()
         {
-            this.PrescriptionDetails = new HashSet<PrescriptionDetailsDto>();
+            this.PrescriptionDetails = new HashSet<AddPrescriptionDetailsDto>();
         }
 
         [Required]
@@ -26,6 +26,6 @@
 
         public DateTime? ExpiresAt { get; set; }
 
-        public ICollection<PrescriptionDetailsDto> PrescriptionDetails { get; set; }
+        public ICollection<AddPrescriptionDetailsDto> PrescriptionDetails { get; set; }
     }
 }

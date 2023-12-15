@@ -1,20 +1,19 @@
 namespace Health_prescription_software_API.Contracts
 {
-
-  using Data.Entities;
-  using Models.Medicine;
-
+    using Models.Medicine;
     public interface IMedicineService
     {
 
-        Task<MedicineDetailsDTO?> GetById(int id);
+        Task<MedicineDetailsDTO?> GetById(Guid id);
 
         Task Add(AddMedicineDTO model);
-     
-        Task EditByIdAsync(int id, EditMedicineDTO editMedicineModel);
-      
+
+        Task EditByIdAsync(Guid id, EditMedicineDTO editMedicineModel);
+
         Task<AllMedicineServiceModel> GetAllAsync(QueryMedicineDTO? query);
-      
-        Task<bool> Delete(int id);
+
+        Task<IEnumerable<AllMedicineMinimalDTO>> GetAllMinimalAsync();
+
+        Task<bool> Delete(Guid id);
     }
 }

@@ -1,14 +1,12 @@
 namespace Health_prescription_software_API.Controllers
 {
     using Contracts;
+    using Health_prescription_software_API.Contracts.Validations;
+    using Microsoft.AspNetCore.Authorization;
+    using Microsoft.AspNetCore.Mvc;
+    using Microsoft.Extensions.Options;
     using Models.Medicine;
     using static Common.Roles.RoleConstants;
-    using static Common.EntityValidationErrorMessages.Medicine;
-
-    using Microsoft.AspNetCore.Mvc;
-    using Microsoft.AspNetCore.Authorization;
-    using Microsoft.Extensions.Options;
-    using Health_prescription_software_API.Contracts.Validations;
 
     [Route("api/[controller]")]
     [ApiController]
@@ -44,7 +42,7 @@ namespace Health_prescription_software_API.Controllers
         }
 
         [HttpGet("{id}")]
-        public async Task<IActionResult> Details(int id)
+        public async Task<IActionResult> Details(Guid id)
         {
             var medicine = await medicineService.GetById(id);
 
@@ -58,7 +56,7 @@ namespace Health_prescription_software_API.Controllers
 
         [HttpDelete("{id}")]
 		//[Authorize(Roles = "NoTechAdmin")]
-		public async Task<IActionResult> Delete(int id)
+		public async Task<IActionResult> Delete(Guid id)
         {
             bool result = await medicineService.Delete(id);
 
@@ -73,7 +71,7 @@ namespace Health_prescription_software_API.Controllers
 
         [HttpPut("{id}")]
 		//[Authorize(Roles = "NoTechAdmin")]
-		public async Task<IActionResult> Edit(int id, [FromForm] EditMedicineDTO medicineToEdit)
+		public async Task<IActionResult> Edit(Guid id, [FromForm] EditMedicineDTO medicineToEdit)
         {
 
             if (!ModelState.IsValid)
@@ -90,8 +88,6 @@ namespace Health_prescription_software_API.Controllers
             }
             return Ok();
         }
-
-        //todo: second all with minimal dto for dynamic search
 
         [HttpGet]
         //[Authorize]
@@ -121,6 +117,15 @@ namespace Health_prescription_software_API.Controllers
             }
 
 
+        }
+
+        [HttpGet("DynamicSearch")]
+        [Authorize]
+        public async Task<IActionResult> AllMinimal()
+        {
+            var medicaments = await medicineService.GetAllMinimalAsync();
+
+            return Ok(new { Medicaments = medicaments });
         }
 
     }
