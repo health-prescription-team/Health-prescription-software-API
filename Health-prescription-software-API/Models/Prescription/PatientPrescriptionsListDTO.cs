@@ -4,9 +4,9 @@
     {
         public Guid PrescriptionId { get; set; }
 
-        public DateTime CreatedAt { get; set; }
+        public string CreatedAt { get; set; } = null!;
 
-        public DateTime? ExpiresAt { get; set; }
+        public string? ExpiresAt { get; set; }
 
         public bool IsFulfilled { get; set; }
 

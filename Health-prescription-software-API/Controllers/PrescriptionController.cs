@@ -34,7 +34,7 @@
             try
             {
                 string GpId = User.FindFirstValue(ClaimTypes.NameIdentifier)!;
-                var checkPatientEgn = await validationService.IsPrescriptionValid(prescriptionModel);
+                var checkPatientEgn = await validationService.IsAddPrescriptionValid(prescriptionModel);
 
                 if (checkPatientEgn == false)
                 {
@@ -58,14 +58,22 @@
         }
 
         [HttpGet]
-        [Authorize(Roles = Patient)]
-        public async Task<IActionResult> GetAll()
+        [Authorize]
+        public async Task<IActionResult> GetAll([FromForm] string EGN)
         {
             try
             {
-                string patientId = User.FindFirstValue(ClaimTypes.NameIdentifier)!;
+                if (!await validationService.IsPatientPrescriptionsValid(EGN))
+                {
+                    foreach (var error in validationService.ModelErrors)
+                    {
+                        ModelState.AddModelError(error.ErrorPropName!, error.ErrorMessage!);
+                    }
 
-                var patientPrescriptions = await prescriptionService.GetPatientPrescriptions(patientId);
+                    return apiBehaviorOptions.Value.InvalidModelStateResponseFactory(ControllerContext);
+                }
+
+                var patientPrescriptions = await prescriptionService.GetPatientPrescriptions(EGN);
 
                 return Ok(patientPrescriptions);
             }
