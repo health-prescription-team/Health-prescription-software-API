@@ -48,17 +48,15 @@
             return prescriptionEntity.Id;
         }
 
-        public async Task<IEnumerable<PatientPrescriptionsListDTO>> GetPatientPrescriptions(string patientId)
+        public async Task<IEnumerable<PatientPrescriptionsListDTO>> GetPatientPrescriptions(string patientEgn)
         {
-            var patient = await context.Users.FindAsync(patientId);
-
             var prescriptionsList = await context.Prescriptions
-                .Where(p => p.PatientEgn == patient!.Egn)
+                .Where(p => p.PatientEgn == patientEgn)
                 .Select(p => new PatientPrescriptionsListDTO
                 {
                     PrescriptionId = p.Id,
-                    CreatedAt = p.CreatedAt,
-                    ExpiresAt = p.ExpiresAt,
+                    CreatedAt = p.CreatedAt.ToString("yyyy-MM-dd"),
+                    ExpiresAt = p.ExpiresAt.HasValue ? p.ExpiresAt.Value.ToString("yyyy-MM-dd") : null,
                     IsFulfilled = p.IsFulfilled,
                     Medicaments = p.PrescriptionDetails
                         .Select(pd => pd.Medicine.Name)
