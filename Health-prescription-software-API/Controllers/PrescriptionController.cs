@@ -59,11 +59,11 @@
 
         [HttpGet]
         [Authorize]
-        public async Task<IActionResult> GetAll([FromForm] string EGN)
+        public async Task<IActionResult> GetAll([FromForm] PatientPrescriptionsFormDTO model)
         {
             try
             {
-                if (!await validationService.IsPatientPrescriptionsValid(EGN))
+                if (!await validationService.IsPatientPrescriptionsValid(model.EGN))
                 {
                     foreach (var error in validationService.ModelErrors)
                     {
@@ -73,7 +73,7 @@
                     return apiBehaviorOptions.Value.InvalidModelStateResponseFactory(ControllerContext);
                 }
 
-                var patientPrescriptions = await prescriptionService.GetPatientPrescriptions(EGN);
+                var patientPrescriptions = await prescriptionService.GetPatientPrescriptions(model.EGN);
 
                 return Ok(patientPrescriptions);
             }

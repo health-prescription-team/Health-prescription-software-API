@@ -63,6 +63,11 @@
 
         public async Task<bool> IsPatientPrescriptionsValid(string patientEgn)
         {
+            if (string.IsNullOrWhiteSpace(patientEgn))
+            {
+                return false;
+            }
+
             var validEgn = Regex.Match(patientEgn, EgnRegexPattern).Success;
 
             if (!validEgn)
