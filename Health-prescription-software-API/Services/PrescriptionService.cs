@@ -48,6 +48,19 @@
             return prescriptionEntity.Id;
         }
 
+        public void Delete(Guid id)
+        {
+            var modelDb = context.Prescriptions.FirstOrDefault(p => p.Id == id);
+
+            if (modelDb is null)
+            {
+                throw new  NullReferenceException("Prescription can not be null!");
+            }
+
+            context.Prescriptions.Remove(modelDb);
+            context.SaveChanges();
+        }
+
         public async Task<IEnumerable<PatientPrescriptionsListDTO>> GetPatientPrescriptions(string patientEgn)
         {
             var prescriptionsList = await context.Prescriptions

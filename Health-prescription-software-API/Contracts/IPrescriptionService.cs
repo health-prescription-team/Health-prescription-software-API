@@ -8,6 +8,8 @@
 
         Task<IEnumerable<PatientPrescriptionsListDTO>> GetPatientPrescriptions(string patientEgn);
 
+        void Delete(Guid id);
+
 
     }
 }
