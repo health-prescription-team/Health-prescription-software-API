@@ -34,8 +34,26 @@ Pharmacists ensure the safe and timely dispensing of medications:
   - **ReactJS:** A modern and responsive user interface for an intuitive experience.
 
 - **Backend:**
-  - **Entity Framework Core:** Efficient data management and retrieval for seamless operations.
-  - **MySQL:** Robust database for secure storage of sensitive healthcare data.
+ <details>
+  <summary>Server</summary>
+  <ul>
+    <li>Entity Framework Core</li>
+    <li>Asp.Net Core Web API 8</li>
+  </ul>
+</details>
+<details>
+<summary>Database</summary>
+  <ul>
+    <li>PostgreSQL</li>
+  </ul>
+</details>
+<details>
+<summary>DevOps</summary>
+  <ul>
+    <li>Azure</li>
+    <li>GitHub Actions</li>
+  </ul>
+</details>
 
 ## :loudspeaker: API Functionalities
 
