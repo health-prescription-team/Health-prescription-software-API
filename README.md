@@ -1,70 +1,81 @@
-# Health Prescription Software :hospital:
+# :hospital: Health Prescription Software
 
-Welcome to the Health Prescription Software project! This innovative software provides a comprehensive solution for healthcare professionals, patients, pharmacies, and pharmacists. It facilitates seamless communication and management of prescriptions and medications.
+Welcome to the future of healthcare management! Our Health Prescription Software brings together General Practitioners (GPs), patients, pharmacies, and pharmacists in a seamless and efficient ecosystem.
 
-## :pencil: Project Description
+## :computer: Portals
 
-This software features four distinct portals for General Practitioners (GPs), patients, pharmacies, and pharmacists. GPs can generate prescriptions for patients, which can then be fulfilled by pharmacists. Pharmacies have the capability to add new medications to the database, ensuring an up-to-date and comprehensive inventory.
+### :man_health_worker: General Practitioners (GPs)
 
-## :hammer: Used Technologies
+GPs play a crucial role in patient care. With our software, they can:
+- **Generate Prescriptions:** Create accurate and detailed prescriptions for patients with just a few clicks.
+- **View Patient History:** Access comprehensive patient records to make informed medical decisions.
 
-<details>
-  <summary>Server</summary>
-  <ul>
-    <li>Entity Framework Core</li>
-    <li>Asp.Net Core Web API 8</li>
-  </ul>
-</details>
+### :bust_in_silhouette: Patients
 
-<details>
-<summary>Database</summary>
-  <ul>
-    <li>PostgreSQL</li>
-  </ul>
-</details>
+Empowering patients with control over their health journey:
+- **Access Prescriptions:** Patients can view and download their prescriptions securely.
+- **Book Appointments:** Schedule appointments with GPs for personalized healthcare.
 
-<details>
-<summary>DevOps</summary>
-  <ul>
-    <li>Azure</li>
-    <li>GitHub Actions</li>
-  </ul>
-</details>
+### :pill: Pharmacies
 
-## :loudspeaker: API Functions
+Pharmacies are at the heart of medication fulfillment. They can:
+- **Add Medications:** Keep the database updated with the latest medications for efficient prescription fulfillment.
+- **Manage Inventory:** Track and manage medication inventory effortlessly.
 
-### :pushpin: Authentication
+### :man_health_worker: Pharmacists
 
-![Authentication](https://github.com/health-prescription-team/Health-prescription-software-API/assets/89745007/9284e2e5-c6f6-4b42-a1d2-5d0717ca98cc)
+Pharmacists ensure the safe and timely dispensing of medications:
+- **Fulfill Prescriptions:** Receive and process prescriptions from GPs, ensuring patients get the right medications.
+- **Communicate with GPs:** Collaborate with GPs for any clarification or additional information.
 
-### :pushpin: Medicine
+## :gear: Technologies Used
 
-![Medicine](https://github.com/health-prescription-team/Health-prescription-software-API/assets/89745007/a9137733-83b7-486b-98a2-3958ff6403e6)
+- **Frontend:**
+  - **ReactJS:** A modern and responsive user interface for an intuitive experience.
 
-### :pushpin: Prescription
+- **Backend:**
+  - **Entity Framework Core:** Efficient data management and retrieval for seamless operations.
+  - **MySQL:** Robust database for secure storage of sensitive healthcare data.
 
-![Prescription](https://github.com/health-prescription-team/Health-prescription-software-API/assets/89745007/02b4f55e-e5f5-4a58-ae5c-61e526723c8d)
+## :loudspeaker: API Functionalities
 
-## Authors
+### :key: Authentication
 
-- [Nikola Madzharov](https://www.linkedin.com/in/nikola-madzharov-106b90236/)
-- [Ivan Kukutsov](https://www.linkedin.com/in/ivan-kukutsov-422b56204/)
-- [Simona Chavdarova](https://www.linkedin.com/in/simona-chavdarova-028796299/)
+![Authentication](<insert authentication image link here>)
 
-## :wave: Contributing
+Secure and HIPAA-compliant authentication for all users, ensuring the confidentiality of patient information.
 
-<a href="https://github.com/Louis3797/awesome-readme-template/graphs/contributors">
-  <img src="https://contrib.rocks/image?repo=Louis3797/awesome-readme-template" />
-</a>
+### :pill: Medicine (Medication) API
 
-Give a :star: if you like this project!
+![Medicine API](<insert medicine API image link here>)
 
-## :handshake: Contact
+Pharmacies can easily add new medications to the database, keeping it up-to-date and comprehensive.
+
+### :notebook: Prescription API
+
+![Prescription API](<insert prescription API image link here>)
+
+GPs generate prescriptions for patients, and pharmacists fulfill these prescriptions with accuracy and efficiency.
+
+## :busts_in_silhouette: Meet the Creators
 
 - [Nikola Madzharov](https://www.linkedin.com/in/nikola-madzharov-106b90236/)
 - [Ivan Kukutsov](https://www.linkedin.com/in/ivan-kukutsov-422b56204/)
 - [Simona Chavdarova](https://www.linkedin.com/in/simona-chavdarova-028796299/)
 
-## License
+## :handshake: Contributing
 
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+If you're passionate about revolutionizing healthcare technology, we welcome your contributions. Let's build a healthier future together!
+
+## :email: Contact Us
+
+Connect with us on LinkedIn:
+- [Nikola Madzharov](https://www.linkedin.com/in/nikola-madzharov-106b90236/)
+- [Ivan Kukutsov](https://www.linkedin.com/in/ivan-kukutsov-422b56204/)
+- [Simona Chavdarova](https://www.linkedin.com/in/simona-chavdarova-028796299/)
+
+## :scroll: License
+
+This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for details.
+
+🌐 Thank you for joining us on this journey to transform healthcare! 🌐
