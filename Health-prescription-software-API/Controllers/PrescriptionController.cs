@@ -82,5 +82,30 @@
                 return StatusCode(500);
             }
         }
+
+        [HttpGet("{id}")]
+        public async Task<IActionResult> Details(Guid id)
+        {
+            try
+            {
+                if (!await validationService.IsPrescriptionValid(id))
+                {
+                    foreach (var error in validationService.ModelErrors)
+                    {
+                        ModelState.AddModelError(error.ErrorPropName!, error.ErrorMessage!);
+                    }
+
+                    return apiBehaviorOptions.Value.InvalidModelStateResponseFactory(ControllerContext);
+                }
+
+                var prescription = await prescriptionService.GetPrescriptionDetails(id);
+
+                return Ok(prescription);
+            }
+            catch (Exception)
+            {
+                return StatusCode(500);
+            }
+        }
     }
 }
