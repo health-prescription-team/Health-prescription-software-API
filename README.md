@@ -1,11 +1,34 @@
-# Jewelry-Web-Api
-
 ## :pencil: Project Description
-
+Ecommerce site where you find the best luxurious rings in the world and make a present for your beautiful girlfriend, wife, fiancee.
 
 ## :hammer: Used technologies
-* [ASP.NET Core 7.0](https://dotnet.microsoft.com/en-us/download/dotnet/7.0)
-* [Entity Framework Core 6.0](https://learn.microsoft.com/en-us/ef/core/)
+
+<details>
+  <summary>Client</summary>
+  <ul>
+    <li>HTML & CSS</li>
+     <li>ReactJS</li>
+    
+  </ul>
+</details>
+
+
+<details>
+  <summary>Server</summary>
+  <ul>
+    <li>Entity Framework Core</li>
+  </ul>
+</details>
+
+<details>
+<summary>Database</summary>
+  <ul>
+    <li>MySQL</li>
+     
+  </ul>
+</details>
+
+
 
 ## :loudspeaker: Api functions
 
