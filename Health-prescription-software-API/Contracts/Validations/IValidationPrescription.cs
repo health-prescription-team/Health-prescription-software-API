@@ -7,5 +7,7 @@ namespace Health_prescription_software_API.Contracts.Validations
         Task<bool> IsAddPrescriptionValid(AddPrescriptionDto prescriptionModel);
 
         Task<bool> IsPatientPrescriptionsValid(string patientEgn);
+
+        Task<bool> IsPrescriptionValid(Guid patientId);
     }
 }

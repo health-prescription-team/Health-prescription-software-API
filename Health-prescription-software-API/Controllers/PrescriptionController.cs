@@ -59,11 +59,11 @@
 
         [HttpGet]
         [Authorize]
-        public async Task<IActionResult> GetAll([FromForm] string EGN)
+        public async Task<IActionResult> GetAll([FromForm] PatientPrescriptionsFormDTO model)
         {
             try
             {
-                if (!await validationService.IsPatientPrescriptionsValid(EGN))
+                if (!await validationService.IsPatientPrescriptionsValid(model.EGN))
                 {
                     foreach (var error in validationService.ModelErrors)
                     {
@@ -73,7 +73,7 @@
                     return apiBehaviorOptions.Value.InvalidModelStateResponseFactory(ControllerContext);
                 }
 
-                var patientPrescriptions = await prescriptionService.GetPatientPrescriptions(EGN);
+                var patientPrescriptions = await prescriptionService.GetPatientPrescriptions(model.EGN);
 
                 return Ok(patientPrescriptions);
             }
@@ -83,6 +83,32 @@
             }
         }
 
+        [HttpGet("{id}")]
+        [Authorize]
+        public async Task<IActionResult> Details(Guid id)
+        {
+            try
+            {
+                if (!await validationService.IsPrescriptionValid(id))
+                {
+                    foreach (var error in validationService.ModelErrors)
+                    {
+                        ModelState.AddModelError(error.ErrorPropName!, error.ErrorMessage!);
+                    }
+
+                    return apiBehaviorOptions.Value.InvalidModelStateResponseFactory(ControllerContext);
+                }
+
+                var prescription = await prescriptionService.GetPrescriptionDetails(id);
+
+                return Ok(prescription);
+            }
+            catch (Exception)
+            {
+                return StatusCode(500);
+            }
+        }
+        
         [HttpDelete]
         public IActionResult Delete(Guid id) 
         {
@@ -91,6 +117,4 @@
             return Ok("Deleted successfully");
         }
     }
-
-    
 }
