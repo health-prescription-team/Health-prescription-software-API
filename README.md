@@ -34,24 +34,24 @@ Ecommerce site where you find the best luxurious rings in the world and make a p
 
 ### :pushpin: Authentication:
 ![image](https://github.com/health-prescription-team/Health-prescription-software-API/assets/89745007/9284e2e5-c6f6-4b42-a1d2-5d0717ca98cc)
-)
+
 
 
 
 ### :pushpin: Medicine:
-![image](![image](https://github.com/health-prescription-team/Health-prescription-software-API/assets/89745007/1f1eadf4-79cf-457f-b825-4c01aaeb2f8e)
-)
+
+![image](https://github.com/health-prescription-team/Health-prescription-software-API/assets/89745007/a9137733-83b7-486b-98a2-3958ff6403e6)
+
+### :pushpin: Prescription:
+
+![image](https://github.com/health-prescription-team/Health-prescription-software-API/assets/89745007/02b4f55e-e5f5-4a58-ae5c-61e526723c8d)
 
 
-
-## Author
-Nikola Madzharov 
-Ivan Kukutsov
-Simona Chavdarova
+## Authors
 <br />
-[LinkedIn](https://www.linkedin.com/in/nikola-madzharov-106b90236/)
-[LinkedIn](https://www.linkedin.com/in/ivan-kukutsov-422b56204/)
-[LinkedIn](https://www.linkedin.com/in/simona-chavdarova-028796299/)
+[LinkedIn](https://www.linkedin.com/in/nikola-madzharov-106b90236/) - Nikola Madzharov 
+[LinkedIn](https://www.linkedin.com/in/ivan-kukutsov-422b56204/) -  Ivan Kukutsov
+[LinkedIn](https://www.linkedin.com/in/simona-chavdarova-028796299/) - Simona Chavdarova
 
 ## :wave: Contributing
 
