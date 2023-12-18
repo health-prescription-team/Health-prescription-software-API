@@ -67,9 +67,40 @@
             return prescriptionsList;
         }
 
-        public Task<PrescriptionDTO> GetPrescriptionDetails(Guid prescriptionId)
+        public async Task<PrescriptionDTO> GetPrescriptionDetails(Guid prescriptionId)
         {
-            throw new NotImplementedException();
+            var entity = await context.Prescriptions
+                .Include(p => p.Gp)
+                .Include(p => p.PrescriptionDetails)
+                .ThenInclude(pd => pd.Medicine)
+                .FirstOrDefaultAsync(p => p.Id == prescriptionId);
+
+            var gpFullName = $"{entity!.Gp.FirstName} {(string.IsNullOrEmpty(entity.Gp.MiddleName) ? "" : entity.Gp.MiddleName + " ")}{entity.Gp.LastName}";
+
+            PrescriptionDTO prescription = new()
+            {
+                PatientEgn = entity!.PatientEgn,
+                GpFullName = gpFullName,
+                Age = entity.Age,
+                Diagnosis = entity.Diagnosis,
+                IsFulfilled = entity.IsFulfilled,
+                CreatedAt = entity.CreatedAt.ToString("yyyy-MM-dd"),
+                ExpiresAt = entity.ExpiresAt.HasValue ? entity.ExpiresAt.Value.ToString("yyyy-MM-dd") : null,
+                PrescriptionDetails = entity.PrescriptionDetails
+                    .Select(pd => new PrescriptionDetailsDTO
+                    {
+                        MedicineId = pd.MedicineId,
+                        MedicineName = pd.Medicine.Name,
+                        Notes = pd.Notes,
+                        EveningDose = pd.EveningDose,
+                        LunchTimeDose = pd.LunchTimeDose,
+                        MorningDose = pd.MorningDose,
+                        MeasurementUnit = pd.MeasurementUnit
+                    })
+                    .ToHashSet()
+            };
+
+            return prescription;
         }
     }
 }

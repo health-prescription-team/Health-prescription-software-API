@@ -7,9 +7,7 @@
             this.PrescriptionDetails = new HashSet<PrescriptionDetailsDTO>();
         }
 
-        public Guid Id { get; set; }
-
-        public string GpId { get; set; } = null!;
+        public string GpFullName { get; set; } = null!;
 
         public string PatientEgn { get; set; } = null!;
 
