@@ -66,5 +66,10 @@
 
             return prescriptionsList;
         }
+
+        public Task<PrescriptionDTO> GetPrescriptionDetails(Guid prescriptionId)
+        {
+            throw new NotImplementedException();
+        }
     }
 }
