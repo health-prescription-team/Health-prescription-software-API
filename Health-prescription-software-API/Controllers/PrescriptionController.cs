@@ -84,6 +84,7 @@
         }
 
         [HttpGet("{id}")]
+        [Authorize]
         public async Task<IActionResult> Details(Guid id)
         {
             try
