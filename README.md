@@ -47,7 +47,7 @@ Pharmacists ensure the safe and timely dispensing of medications:
 
 ![image](https://github.com/health-prescription-team/Health-prescription-software-API/assets/89745007/3aa17e6b-f36e-4b16-8661-7b3a9d5c4de9)
 
-### :pill: Medicine (Medication) API
+### :pill: Medicine  API
 
 ![image](https://github.com/health-prescription-team/Health-prescription-software-API/assets/89745007/7117bc82-fa88-45eb-9ed6-bd851faf07cf)
 
