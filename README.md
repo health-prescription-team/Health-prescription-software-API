@@ -1,7 +1,5 @@
 # :hospital: Health Prescription Software
 
-host address - https://health-prescription-api.azurewebsites.net/swagger/index.html
-
 Welcome to the future of healthcare management! Our Health Prescription Software brings together General Practitioners (GPs), patients, pharmacies, and pharmacists in a seamless and efficient ecosystem.
 
 ## :computer: Portals
