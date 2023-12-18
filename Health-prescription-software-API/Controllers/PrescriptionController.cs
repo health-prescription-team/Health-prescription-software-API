@@ -83,7 +83,7 @@
             }
         }
 
-        [HttpPost]
+        [HttpDelete]
         public IActionResult Delete(Guid id) 
         {
             prescriptionService.Delete(id);
