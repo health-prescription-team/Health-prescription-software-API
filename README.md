@@ -31,29 +31,15 @@ Pharmacists ensure the safe and timely dispensing of medications:
 ## :gear: Technologies Used
 
 - **Frontend:**
-  - **ReactJS:** A modern and responsive user interface for an intuitive experience.
+  - **Angular:** A modern and responsive user interface for an intuitive experience.
 
 - **Backend:**
- <details>
-  <summary>Server</summary>
-  <ul>
-    <li>Entity Framework Core</li>
-    <li>Asp.Net Core Web API 8</li>
-  </ul>
-</details>
-<details>
-<summary>Database</summary>
-  <ul>
-    <li>PostgreSQL</li>
-  </ul>
-</details>
-<details>
-<summary>DevOps</summary>
-  <ul>
-    <li>Azure</li>
-    <li>GitHub Actions</li>
-  </ul>
-</details>
+   - **Entity Framework Core**
+    - **ASP . Net Core Web API 8**
+    - **PostgreSQL**
+    - **Azure**   
+  
+
 
 ## :loudspeaker: API Functionalities
 
@@ -61,22 +47,15 @@ Pharmacists ensure the safe and timely dispensing of medications:
 
 ![image](https://github.com/health-prescription-team/Health-prescription-software-API/assets/89745007/3aa17e6b-f36e-4b16-8661-7b3a9d5c4de9)
 
-
-Secure and HIPAA-compliant authentication for all users, ensuring the confidentiality of patient information.
-
 ### :pill: Medicine (Medication) API
 
 ![image](https://github.com/health-prescription-team/Health-prescription-software-API/assets/89745007/7117bc82-fa88-45eb-9ed6-bd851faf07cf)
 
 
-Pharmacies can easily add new medications to the database, keeping it up-to-date and comprehensive.
-
 ### :notebook: Prescription API
 
 ![image](https://github.com/health-prescription-team/Health-prescription-software-API/assets/89745007/eb599f5d-8a64-4e57-8a2a-a58f9b1608a4)
 
-
-GPs generate prescriptions for patients, and pharmacists fulfill these prescriptions with accuracy and efficiency.
 
 ## :busts_in_silhouette: Meet the Creators
 
@@ -86,7 +65,7 @@ GPs generate prescriptions for patients, and pharmacists fulfill these prescript
 
 ## :handshake: Contributing
 
-If you're passionate about revolutionizing healthcare technology, we welcome your contributions. Let's build a healthier future together!
+If you would like to suppurt us you could do it by giving a star.
 
 ## :email: Contact Us
 
