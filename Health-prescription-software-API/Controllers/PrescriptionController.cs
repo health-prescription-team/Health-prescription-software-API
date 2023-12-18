@@ -14,12 +14,12 @@
     public class PrescriptionController : Controller
     {
         private readonly IPrescriptionService prescriptionService;
-        private readonly IValidaitonPrescription validationService;
+        private readonly IValidationPrescription validationService;
 
         private readonly IOptions<ApiBehaviorOptions> apiBehaviorOptions;
 
         public PrescriptionController(IPrescriptionService prescriptionService,
-            IValidaitonPrescription validationService,
+            IValidationPrescription validationService,
             IOptions<ApiBehaviorOptions> apiBehaviorOptions)
         {
             this.prescriptionService = prescriptionService;
@@ -34,7 +34,7 @@
             try
             {
                 string GpId = User.FindFirstValue(ClaimTypes.NameIdentifier)!;
-                var checkPatientEgn = await validationService.IsPrescriptionValid(prescriptionModel);
+                var checkPatientEgn = await validationService.IsAddPrescriptionValid(prescriptionModel);
 
                 if (checkPatientEgn == false)
                 {
@@ -58,12 +58,63 @@
         }
 
         [HttpGet]
-        [Authorize(Roles = GP)]
-        public async Task<IActionResult> GetDropwnDownMedicaments()
+        [Authorize]
+        public async Task<IActionResult> GetAll([FromForm] PatientPrescriptionsFormDTO model)
         {
-            var medicaments = await prescriptionService.GetMedicaments();
+            try
+            {
+                if (!await validationService.IsPatientPrescriptionsValid(model.EGN))
+                {
+                    foreach (var error in validationService.ModelErrors)
+                    {
+                        ModelState.AddModelError(error.ErrorPropName!, error.ErrorMessage!);
+                    }
 
-            return Ok( new {Medicaments =  medicaments});
+                    return apiBehaviorOptions.Value.InvalidModelStateResponseFactory(ControllerContext);
+                }
+
+                var patientPrescriptions = await prescriptionService.GetPatientPrescriptions(model.EGN);
+
+                return Ok(patientPrescriptions);
+            }
+            catch (Exception)
+            {
+                return StatusCode(500);
+            }
+        }
+
+        [HttpGet("{id}")]
+        [Authorize]
+        public async Task<IActionResult> Details(Guid id)
+        {
+            try
+            {
+                if (!await validationService.IsPrescriptionValid(id))
+                {
+                    foreach (var error in validationService.ModelErrors)
+                    {
+                        ModelState.AddModelError(error.ErrorPropName!, error.ErrorMessage!);
+                    }
+
+                    return apiBehaviorOptions.Value.InvalidModelStateResponseFactory(ControllerContext);
+                }
+
+                var prescription = await prescriptionService.GetPrescriptionDetails(id);
+
+                return Ok(prescription);
+            }
+            catch (Exception)
+            {
+                return StatusCode(500);
+            }
+        }
+        
+        [HttpDelete]
+        public IActionResult Delete(Guid id) 
+        {
+            prescriptionService.Delete(id);
+
+            return Ok("Deleted successfully");
         }
     }
 }

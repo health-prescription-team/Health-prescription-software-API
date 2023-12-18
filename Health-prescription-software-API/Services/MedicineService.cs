@@ -4,10 +4,9 @@ namespace Health_prescription_software_API.Services
 	using Health_prescription_software_API.Data;
 	using Health_prescription_software_API.Data.Entities;
 	using Health_prescription_software_API.Models.Medicine;
-	using Microsoft.EntityFrameworkCore;
-	using System.Linq;
-
-	using static Common.GeneralConstants;
+    using Microsoft.EntityFrameworkCore;
+    using System.Linq;
+    using static Common.GeneralConstants;
 
 
 	public class MedicineService : IMedicineService
@@ -56,7 +55,7 @@ namespace Health_prescription_software_API.Services
 			}
 		}
       
-		public async Task<MedicineDetailsDTO?> GetById(int id)
+		public async Task<MedicineDetailsDTO?> GetById(Guid id)
 		{
 				var medicine = await context.Medicines.FirstOrDefaultAsync(m => m.Id == id && !m.IsDeleted);
 
@@ -80,7 +79,7 @@ namespace Health_prescription_software_API.Services
 
 		//todo: Edit must be performed only by noTech admin. 
 		//todo: Edit and Add must be introduced to Pharmacy as well. It ought to  edit price to the medicine.
-		public async Task EditByIdAsync(int id, EditMedicineDTO editMedicineModel)
+		public async Task EditByIdAsync(Guid id, EditMedicineDTO editMedicineModel)
 		{
 
 			Medicine medicineToEdit = await this.context.Medicines.FirstAsync(m => m.Id == id && !m.IsDeleted);
@@ -146,7 +145,21 @@ namespace Health_prescription_software_API.Services
 			return model;
 		}
 
-        public async Task<bool> Delete(int id)
+        public async Task<IEnumerable<AllMedicineMinimalDTO>> GetAllMinimalAsync()
+        {
+            var modelDb = await context.Medicines
+                .Where(m => !m.IsDeleted)
+				.AsNoTracking()
+                .Select(x => new AllMedicineMinimalDTO
+                {
+                    Id = x.Id,
+                    Name = x.Name,
+                }).ToListAsync();
+
+            return modelDb;
+        }
+
+        public async Task<bool> Delete(Guid id)
         {
             var medicine = await context.Medicines.FirstOrDefaultAsync(m => m.Id == id && !m.IsDeleted);
 

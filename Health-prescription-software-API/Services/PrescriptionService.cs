@@ -5,7 +5,7 @@
     using Health_prescription_software_API.Data.Entities;
     using Health_prescription_software_API.Models.Prescription;
     using Microsoft.EntityFrameworkCore;
-    using System.Security.Cryptography;
+    using System.Collections.Generic;
 
     public class PrescriptionService : IPrescriptionService
     {
@@ -16,10 +16,8 @@
             this.context = context;
         }
 
-        public async Task<string> Add(AddPrescriptionDto prescriptionModel, string GpId)
+        public async Task<Guid> Add(AddPrescriptionDto prescriptionModel, string GpId)
         {
-            var patient = await context.Users.FirstOrDefaultAsync(x => x.Egn == prescriptionModel.PatientEgn);
-
             var prescriptionEntity = new Prescription
             {
                 Age = prescriptionModel.Age,
@@ -47,36 +45,75 @@
             context.Prescriptions.Add(prescriptionEntity);
             await context.SaveChangesAsync();
 
-            var hashedIdString = HashingAlgorithm(prescriptionEntity.Id);
-
-            return hashedIdString;
+            return prescriptionEntity.Id;
         }
 
-        private static string HashingAlgorithm(int value)
+        public void Delete(Guid id)
         {
-            byte[] idPrescriptionToBytes = BitConverter.GetBytes(value);
+            var modelDb = context.Prescriptions.FirstOrDefault(p => p.Id == id);
 
-            using (SHA256 sha256 = SHA256.Create())
+            if (modelDb is null)
             {
-                byte[] hashBytes = sha256.ComputeHash(idPrescriptionToBytes);
-
-
-                string hashedValue = BitConverter.ToString(hashBytes).Replace("-", "");
-
-                return hashedValue;
+                throw new  NullReferenceException("Prescription can not be null!");
             }
+
+            context.Prescriptions.Remove(modelDb);
+            context.SaveChanges();
         }
 
-        public async Task<IEnumerable<MedicineDropDownMenuDTO>> GetMedicaments()
+        public async Task<IEnumerable<PatientPrescriptionsListDTO>> GetPatientPrescriptions(string patientEgn)
         {
-            var modelDb = await context.Medicines
-                .Select(x => new MedicineDropDownMenuDTO
+            var prescriptionsList = await context.Prescriptions
+                .Where(p => p.PatientEgn == patientEgn)
+                .Select(p => new PatientPrescriptionsListDTO
                 {
-                    Id = x.Id,
-                    Name = x.Name,
-                }).ToListAsync();
+                    PrescriptionId = p.Id,
+                    CreatedAt = p.CreatedAt.ToString("yyyy-MM-dd"),
+                    ExpiresAt = p.ExpiresAt.HasValue ? p.ExpiresAt.Value.ToString("yyyy-MM-dd") : null,
+                    IsFulfilled = p.IsFulfilled,
+                    Medicaments = p.PrescriptionDetails
+                        .Select(pd => pd.Medicine.Name)
+                        .ToList()
+                })
+                .ToListAsync();
 
-            return modelDb;
+            return prescriptionsList;
+        }
+
+        public async Task<PrescriptionDTO> GetPrescriptionDetails(Guid prescriptionId)
+        {
+            var entity = await context.Prescriptions
+                .Include(p => p.Gp)
+                .Include(p => p.PrescriptionDetails)
+                .ThenInclude(pd => pd.Medicine)
+                .FirstOrDefaultAsync(p => p.Id == prescriptionId);
+
+            var gpFullName = $"{entity!.Gp.FirstName} {(string.IsNullOrEmpty(entity.Gp.MiddleName) ? "" : entity.Gp.MiddleName + " ")}{entity.Gp.LastName}";
+
+            PrescriptionDTO prescription = new()
+            {
+                PatientEgn = entity!.PatientEgn,
+                GpFullName = gpFullName,
+                Age = entity.Age,
+                Diagnosis = entity.Diagnosis,
+                IsFulfilled = entity.IsFulfilled,
+                CreatedAt = entity.CreatedAt.ToString("yyyy-MM-dd"),
+                ExpiresAt = entity.ExpiresAt.HasValue ? entity.ExpiresAt.Value.ToString("yyyy-MM-dd") : null,
+                PrescriptionDetails = entity.PrescriptionDetails
+                    .Select(pd => new PrescriptionDetailsDTO
+                    {
+                        MedicineId = pd.MedicineId,
+                        MedicineName = pd.Medicine.Name,
+                        Notes = pd.Notes,
+                        EveningDose = pd.EveningDose,
+                        LunchTimeDose = pd.LunchTimeDose,
+                        MorningDose = pd.MorningDose,
+                        MeasurementUnit = pd.MeasurementUnit
+                    })
+                    .ToHashSet()
+            };
+
+            return prescription;
         }
     }
 }

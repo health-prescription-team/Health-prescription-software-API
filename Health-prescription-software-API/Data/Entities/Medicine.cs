@@ -12,7 +12,7 @@ namespace Health_prescription_software_API.Data.Entities
         }
 
         [Key]
-        public int Id { get; set; }
+        public Guid Id { get; set; }
 
         [Required] 
         public string Name { get; set; } = null!;

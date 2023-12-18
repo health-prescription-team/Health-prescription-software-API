@@ -2,20 +2,23 @@
 {
     using System.ComponentModel.DataAnnotations;
 
-    public class PrescriptionDetailsDTO
+    public class AddPrescriptionDetailsDto
     {
+        [Required]
         public Guid MedicineId { get; set; }
 
-        public string MedicineName { get; set; } = null!;
-
-        public string? Notes { get; set; }
-
+        [Required]
         public int EveningDose { get; set; }
 
+        [Required]
         public int LunchTimeDose { get; set; }
 
+        [Required]
         public int MorningDose { get; set; }
 
+        [Required]
         public string MeasurementUnit { get; set; } = null!;
+
+        public string? Notes { get; set; }
     }
 }

@@ -14,10 +14,12 @@
         }
 
         [Key]
-        public int Id { get; set; }
+        public Guid Id { get; set; }
 
         [Required]
         public string GpId { get; set; } = null!;
+        [ForeignKey(nameof(GpId))]
+        public virtual User.User Gp { get; set; } = null!;
 
         [Required]
         [RegularExpression(EgnRegexPattern, ErrorMessage = InvalidEgnErrorMessage)]

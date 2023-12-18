@@ -39,8 +39,13 @@
         {
             User? user = await GetUserByEgn(model.Egn);
 
+            
+
             if (user != null)
             {
+
+
+
                 var result = await _signInManager.PasswordSignInAsync(user, model.Password, false, false);
 
                 if (result.Succeeded)
@@ -60,7 +65,7 @@
             var user = new User
             {
                 FirstName = model.FirstName,
-                MiddleName = model.LastName,
+                MiddleName = model.MiddleName,
                 LastName = model.LastName,
                 ProfilePicture = memoryStream.ToArray(),
                 Egn = model.Egn,
@@ -91,13 +96,16 @@
 
         public async Task<string?> RegisterGp(RegisterGpDto model)
         {
+
+
+
             using var memoryStream = new MemoryStream();
             await model.ProfilePicture.CopyToAsync(memoryStream);
 
             var user = new User
             {
                 FirstName = model.FirstName,
-                MiddleName = model.LastName,
+                MiddleName = model.MiddleName,
                 LastName = model.LastName,
                 ProfilePicture = memoryStream.ToArray(),
                 Egn = model.Egn,
@@ -117,7 +125,7 @@
 
             var userEntity = await this.GetUserByEgn(model.Egn);
 
-            await _userManager.AddToRoleAsync(userEntity!, RoleConstants.GP);
+            await _userManager.AddToRolesAsync(userEntity!, new string[]{RoleConstants.GP, RoleConstants.Patient});
 
             var securityToken = await this.GenerateToken(userEntity!);
 
@@ -205,7 +213,7 @@
             var user = new User
             {
                 FirstName = model.FirstName,
-                MiddleName = model.LastName,
+                MiddleName = model.MiddleName,
                 LastName = model.LastName,
                 UinNumber = model.UinNumber,
                 ProfilePicture = memoryStream.ToArray(),
@@ -227,7 +235,7 @@
 
             var userEntity = await this.GetUserByEgn(model.Egn);
 
-            await _userManager.AddToRoleAsync(userEntity!, RoleConstants.Pharmacist);
+            await _userManager.AddToRolesAsync(userEntity!, new string[] { RoleConstants.Pharmacist, RoleConstants.Patient });
 
             var securityToken = await this.GenerateToken(userEntity!);
 
@@ -257,14 +265,31 @@
             var tokenHandler = new JwtSecurityTokenHandler();
             var key = Encoding.UTF8.GetBytes(_config["Jwt:Key"]!);
 
-            var userRole = await GetUserRole(user);
+            var userRoles = await GetUserRole(user);
+            // ТРЯБВА ДА СЕ НАМЕРИ ПО-ДОБРЕ РЕШЕНИЕ ЗА ДОБАВЯНЕ НА РОЛИ ЗА ПОТРЕБИТЕЛИ С ПОВЕЧЕ ОТ ЕДНА РОЛЯ 
+
+            var mainRole = "";  // ГЛАВНАТА РОЛЯ НА ПОТРЕБИТЕЛЯ
+            var secondUserRole = ""; // ВТОРОСТЕПЕННА РОЛЯ НАПРИМЕР ДОКТОР И ПАЦИЕНТ
+
+            if (userRoles.Count > 1)
+            {
+                mainRole = userRoles[0];
+                secondUserRole = userRoles[1];
+            }
+            else
+            {
+                mainRole = userRoles[0];
+            }
+
 
             var claims = new[]
             {
                 new Claim(ClaimTypes.NameIdentifier,user.Id.ToString()),
                 new Claim(ClaimTypes.Name, $"{user.FirstName} {user.MiddleName} {user.LastName}"),
-                new Claim(ClaimTypes.MobilePhone, user.PhoneNumber!),
-                new Claim(ClaimTypes.Role, userRole)
+                new Claim("EGN", user.Egn!),
+                new Claim("PhoneNumber", user.PhoneNumber!),
+                new Claim(ClaimTypes.Role, mainRole),
+                  new Claim(ClaimTypes.Role, secondUserRole)
             };
 
             var tokenDescriptor = new SecurityTokenDescriptor
@@ -282,7 +307,7 @@
             return tokenToString;
         }
 
-        private async Task<string> GetUserRole(User user)
+        private async Task<List<string>> GetUserRole(User user)
         {
             var userRole = await _context.Users.FirstOrDefaultAsync(x => x.Egn == user.Egn);
 
@@ -291,9 +316,9 @@
                 throw new ArgumentNullException("The given user was not found!");
             }
 
-            var role = await _userManager.GetRolesAsync(userRole);
+            var roles = await _userManager.GetRolesAsync(userRole);
 
-            return role[0].ToString();
+            return roles.ToList();
 
         }
 
