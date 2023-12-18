@@ -8,6 +8,7 @@
     using static Common.EntityValidationErrorMessages.Medicine;
     using static Common.EntityValidationErrorMessages.Prescription;
     using static Common.EntityValidationConstants.User;
+    using System;
 
     public class ValidationPrescription : IValidationPrescription
     {
@@ -17,7 +18,7 @@
         public ValidationPrescription(HealthPrescriptionDbContext healthPrescriptionDbContext)
         {
             dbContext = healthPrescriptionDbContext;
-            ModelErrors =  new HashSet<ModelError>();
+            ModelErrors = new HashSet<ModelError>();
         }
 
         public ICollection<ModelError> ModelErrors { get; set; }
@@ -95,6 +96,24 @@
                 };
 
                 ModelErrors.Add(notFoundPatient);
+
+                return false;
+            }
+
+            return true;
+        }
+
+        public async Task<bool> IsPrescriptionValid(Guid prescriptionId)
+        {
+            var validId = await dbContext.Prescriptions.AnyAsync(p => p.Id == prescriptionId);
+
+            if (!validId)
+            {
+                var modelError = new ModelError
+                {
+                    ErrorMessage = PrescriptionDoesNotExist,
+                    ErrorPropName = "Id"
+                };
 
                 return false;
             }

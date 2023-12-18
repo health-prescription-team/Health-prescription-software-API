@@ -26,6 +26,7 @@
 
 			public const string PatientDoesNotExist = "Patient cannot be found. He/She may not be registered";
 
+			public const string PrescriptionDoesNotExist = "Prescription not found";
         }
 	}
 }
