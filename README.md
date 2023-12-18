@@ -33,7 +33,7 @@ Ecommerce site where you find the best luxurious rings in the world and make a p
 ## :loudspeaker: Api functions
 
 ### :pushpin: Authentication:
-![image](![image](https://github.com/health-prescription-team/Health-prescription-software-API/assets/89745007/9284e2e5-c6f6-4b42-a1d2-5d0717ca98cc)
+![image](https://github.com/health-prescription-team/Health-prescription-software-API/assets/89745007/9284e2e5-c6f6-4b42-a1d2-5d0717ca98cc)
 )
 
 
