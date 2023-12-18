@@ -41,19 +41,22 @@ Pharmacists ensure the safe and timely dispensing of medications:
 
 ### :key: Authentication
 
-![Authentication](<insert authentication image link here>)
+![image](https://github.com/health-prescription-team/Health-prescription-software-API/assets/89745007/3aa17e6b-f36e-4b16-8661-7b3a9d5c4de9)
+
 
 Secure and HIPAA-compliant authentication for all users, ensuring the confidentiality of patient information.
 
 ### :pill: Medicine (Medication) API
 
-![Medicine API](<insert medicine API image link here>)
+![image](https://github.com/health-prescription-team/Health-prescription-software-API/assets/89745007/7117bc82-fa88-45eb-9ed6-bd851faf07cf)
+
 
 Pharmacies can easily add new medications to the database, keeping it up-to-date and comprehensive.
 
 ### :notebook: Prescription API
 
-![Prescription API](<insert prescription API image link here>)
+![image](https://github.com/health-prescription-team/Health-prescription-software-API/assets/89745007/eb599f5d-8a64-4e57-8a2a-a58f9b1608a4)
+
 
 GPs generate prescriptions for patients, and pharmacists fulfill these prescriptions with accuracy and efficiency.
 
