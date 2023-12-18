@@ -108,5 +108,13 @@
                 return StatusCode(500);
             }
         }
+        
+        [HttpDelete]
+        public IActionResult Delete(Guid id) 
+        {
+            prescriptionService.Delete(id);
+
+            return Ok("Deleted successfully");
+        }
     }
 }
