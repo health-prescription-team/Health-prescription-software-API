@@ -58,12 +58,12 @@
         }
 
         [HttpGet]
-        [Authorize]
-        public async Task<IActionResult> GetAll([FromForm] PatientPrescriptionsFormDTO model)
+        [Authorize(Roles = Patient)]
+        public async Task<IActionResult> GetAll(string patientEgn)
         {
             try
             {
-                if (!await validationService.IsPatientPrescriptionsValid(model.EGN))
+                if (!await validationService.IsPatientPrescriptionsValid(patientEgn))
                 {
                     foreach (var error in validationService.ModelErrors)
                     {
@@ -73,7 +73,7 @@
                     return apiBehaviorOptions.Value.InvalidModelStateResponseFactory(ControllerContext);
                 }
 
-                var patientPrescriptions = await prescriptionService.GetPatientPrescriptions(model.EGN);
+                var patientPrescriptions = await prescriptionService.GetPatientPrescriptions(patientEgn);
 
                 return Ok(patientPrescriptions);
             }
