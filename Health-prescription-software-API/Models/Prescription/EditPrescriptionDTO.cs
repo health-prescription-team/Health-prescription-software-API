@@ -3,6 +3,8 @@
     using System.ComponentModel.DataAnnotations;
 
     using static Common.EntityValidationConstants.User;
+    using static Common.EntityValidationConstants.Prescription;
+    using static Common.EntityValidationErrorMessages.Prescription;
 
     public class EditPrescriptionDTO
     {
@@ -19,6 +21,7 @@
         public string PatientEgn { get; set; } = null!;
 
         [Required]
+        [Range(MinAge, MaxAge, ErrorMessage = InvalidAgeRangeMessage)]
         public int Age { get; set; }
 
         [Required]
