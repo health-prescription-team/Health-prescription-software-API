@@ -116,5 +116,38 @@
 
             return Ok("Deleted successfully");
         }
+
+        [HttpPut]
+        [Authorize(Roles = GP)]
+        public async Task<IActionResult> Edit([FromBody] EditPrescriptionDTO model)
+        {
+            try
+            {
+                string GpId = User.FindFirstValue(ClaimTypes.NameIdentifier)!;
+
+                if (!await validationService.IsGpThePrescriber(GpId, model.Id))
+                {
+                    return Unauthorized();
+                }
+
+                if (!await validationService.IsEditPrescriptionValid(model) || !ModelState.IsValid)
+                {
+                    foreach (var error in validationService.ModelErrors)
+                    {
+                        ModelState.AddModelError(error.ErrorPropName!, error.ErrorMessage!);
+                    }
+
+                    return apiBehaviorOptions.Value.InvalidModelStateResponseFactory(ControllerContext);
+                }
+
+                var prescriptionId = await prescriptionService.Edit(model, GpId);
+
+                return Ok(prescriptionId);
+            }
+            catch (Exception)
+            {
+                return StatusCode(500);
+            }
+        }
     }
 }

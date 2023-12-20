@@ -62,6 +62,43 @@
             return true;
         }
 
+        public async Task<bool> IsEditPrescriptionValid(EditPrescriptionDTO model)
+        {
+            var validId = await dbContext.Prescriptions.AnyAsync(p => p.Id == model.Id);
+
+            if (!validId)
+            {
+                ModelError? modelError;
+
+                if (!validId)
+                {
+                    modelError = new ModelError
+                    {
+                        ErrorPropName = "Id",
+                        ErrorMessage = PrescriptionDoesNotExist
+                    };
+
+                    ModelErrors.Add(modelError);
+                }
+
+                return false;
+            }
+
+            return true;
+        }
+
+        public async Task<bool> IsGpThePrescriber(string gpId, Guid prescriptionId)
+        {
+            var valid = await dbContext.Prescriptions.AnyAsync(p => p.Id == prescriptionId && p.GpId == gpId);
+
+            if (!valid)
+            {
+                return false;
+            }
+
+            return true;
+        }
+
         public async Task<bool> IsPatientPrescriptionsValid(string patientEgn)
         {
             if (string.IsNullOrWhiteSpace(patientEgn))
@@ -70,32 +107,35 @@
             }
 
             var validEgn = Regex.Match(patientEgn, EgnRegexPattern).Success;
-
-            if (!validEgn)
-            {
-                var invalidEgn = new ModelError
-                {
-                    ErrorPropName = "EGN",
-                    ErrorMessage = InvalidEgnErrorMessage
-                };
-
-                ModelErrors.Add(invalidEgn);
-
-                return false;
-            }
-
             var patientExist = await dbContext.Users.AnyAsync(u => u.Egn == patientEgn);
 
-            if (!patientExist)
+            if (!validEgn || !patientExist)
             {
-                var notFoundPatient = new ModelError
+                ModelError? modelError;
+
+                if (!validEgn)
                 {
-                    ErrorMessage = PatientDoesNotExist,
-                    ErrorPropName = "EGN"
 
-                };
+                    modelError = new ModelError
+                    {
+                        ErrorPropName = "EGN",
+                        ErrorMessage = InvalidEgnErrorMessage
+                    };
 
-                ModelErrors.Add(notFoundPatient);
+                    ModelErrors.Add(modelError); 
+                }
+
+                if (!patientExist)
+                {
+                    modelError = new ModelError
+                    {
+                        ErrorMessage = PatientDoesNotExist,
+                        ErrorPropName = "EGN"
+
+                    };
+
+                    ModelErrors.Add(modelError);
+                }
 
                 return false;
             }

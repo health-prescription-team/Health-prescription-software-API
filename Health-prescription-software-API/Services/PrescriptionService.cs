@@ -61,6 +61,33 @@
             context.SaveChanges();
         }
 
+        public async Task<Guid> Edit(EditPrescriptionDTO prescriptionModel, string GpId)
+        {
+            var entity = await context.Prescriptions
+                .Include(p => p.PrescriptionDetails)
+                .FirstOrDefaultAsync(p => p.Id == prescriptionModel.Id);
+
+            entity!.PatientEgn = prescriptionModel.PatientEgn;
+            entity!.Age = prescriptionModel.Age;
+            entity!.Diagnosis = prescriptionModel.Diagnosis;
+            entity!.ExpiresAt = prescriptionModel.ExpiresAt;
+            entity!.PrescriptionDetails = prescriptionModel.PrescriptionDetails
+                .Select(pd => new PrescriptionDetails
+                {
+                    MedicineId = pd.MedicineId,
+                    EveningDose = pd.EveningDose,
+                    LunchTimeDose = pd.LunchTimeDose,
+                    MorningDose = pd.MorningDose,
+                    MeasurementUnit = pd.MeasurementUnit,
+                    Notes = pd.Notes
+                })
+                .ToHashSet();
+
+            await context.SaveChangesAsync();
+
+            return entity.Id;
+        }
+
         public async Task<IEnumerable<PatientPrescriptionsListDTO>> GetPatientPrescriptions(string patientEgn)
         {
             var prescriptionsList = await context.Prescriptions

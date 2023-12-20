@@ -11,5 +11,7 @@
         Task<PrescriptionDTO> GetPrescriptionDetails(Guid prescriptionId);
 
         void Delete(Guid id);
+
+        Task<Guid> Edit(EditPrescriptionDTO prescriptionModel, string GpId);
     }
 }
