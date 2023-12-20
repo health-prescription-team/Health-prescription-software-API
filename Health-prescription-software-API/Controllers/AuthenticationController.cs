@@ -131,7 +131,7 @@ namespace Health_prescription_software_API.Controllers
         [HttpPost("Register/Pharmacy")]
         public async Task<IActionResult> RegisterPharmacy([FromForm] RegisterPharmacyDto pharmacyUser)
         {
-			if (!(await validationService.IsPharmacyRegisterValid(pharmacyUser)))
+			if ((await validationService.IsPharmacyRegisterValid(pharmacyUser)))
 			{
                 foreach (var error in validationService.ModelErrors)
                 {

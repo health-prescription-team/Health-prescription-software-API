@@ -282,15 +282,24 @@
             }
 
 
-            var claims = new[]
-            {
-                new Claim(ClaimTypes.NameIdentifier,user.Id.ToString()),
-                new Claim(ClaimTypes.Name, $"{user.FirstName} {user.MiddleName} {user.LastName}"),
-                new Claim("EGN", user.Egn!),
-                new Claim("PhoneNumber", user.PhoneNumber!),
-                new Claim(ClaimTypes.Role, mainRole),
-                  new Claim(ClaimTypes.Role, secondUserRole)
-            };
+
+            var claims = mainRole == RoleConstants.Pharmacy
+                ? new[]
+                {
+        new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
+        new Claim("UserName", $"{user.UserName!} "),
+        new Claim(ClaimTypes.Email, user?.Email!),
+        new Claim("PhoneNumber", user.PhoneNumber!),
+        new Claim(ClaimTypes.Role, mainRole!),
+                }
+                : new[]
+                {
+        new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
+        new Claim(ClaimTypes.Name, $"{user?.FirstName!} {user?.MiddleName} {user?.LastName!}"),
+        new Claim("EGN", user?.Egn!),
+        new Claim("PhoneNumber", user.PhoneNumber!),
+        new Claim(ClaimTypes.Role, mainRole!),
+                };
 
             var tokenDescriptor = new SecurityTokenDescriptor
             {
@@ -305,6 +314,7 @@
             var tokenToString = tokenHandler.WriteToken(token);
 
             return tokenToString;
+
         }
 
         private async Task<List<string>> GetUserRole(User user)
