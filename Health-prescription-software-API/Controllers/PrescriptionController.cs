@@ -28,7 +28,7 @@
         }
 
         [HttpPost]
-        [Authorize(Roles = GP)]
+       // [Authorize(Roles = GP)]
         public async Task<IActionResult> Add([FromBody] AddPrescriptionDto prescriptionModel)
         {
             try
@@ -58,7 +58,7 @@
         }
 
         [HttpGet]
-        [Authorize(Roles = Patient)]
+       // [Authorize(Roles = Patient)]
         public async Task<IActionResult> GetAll(string patientEgn)
         {
             try
@@ -84,7 +84,7 @@
         }
 
         [HttpGet("{id}")]
-        [Authorize]
+        //[Authorize]
         public async Task<IActionResult> Details(Guid id)
         {
             try
