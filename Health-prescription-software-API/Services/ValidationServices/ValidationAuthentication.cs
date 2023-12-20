@@ -38,11 +38,11 @@
 
                 ModelErrors.Add(error);
 
-                return false;
+                return true;
             }
             // todo: more checking if needed
 
-            return true;
+            return false;
         }
 
         public async Task<bool> IsPharmacistRegisterValid(RegisterPharmacistDto registerModel)
