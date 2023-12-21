@@ -268,29 +268,18 @@
             var userRoles = await GetUserRole(user);
             // ТРЯБВА ДА СЕ НАМЕРИ ПО-ДОБРЕ РЕШЕНИЕ ЗА ДОБАВЯНЕ НА РОЛИ ЗА ПОТРЕБИТЕЛИ С ПОВЕЧЕ ОТ ЕДНА РОЛЯ 
 
-            var mainRole = "";  // ГЛАВНАТА РОЛЯ НА ПОТРЕБИТЕЛЯ
-            var secondUserRole = ""; // ВТОРОСТЕПЕННА РОЛЯ НАПРИМЕР ДОКТОР И ПАЦИЕНТ
-
-            if (userRoles.Count > 1)
-            {
-                mainRole = userRoles[0];
-                secondUserRole = userRoles[1];
-            }
-            else
-            {
-                mainRole = userRoles[0];
-            }
+           
 
 
 
-            var claims = mainRole == RoleConstants.Pharmacy
+            var claims = userRoles == RoleConstants.Pharmacy
                 ? new[]
                 {
         new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
         new Claim("UserName", $"{user.UserName!} "),
         new Claim(ClaimTypes.Email, user?.Email!),
         new Claim("PhoneNumber", user.PhoneNumber!),
-        new Claim(ClaimTypes.Role, mainRole!),
+        new Claim(ClaimTypes.Role, userRoles!),
                 }
                 : new[]
                 {
@@ -298,7 +287,7 @@
         new Claim(ClaimTypes.Name, $"{user?.FirstName!} {user?.MiddleName} {user?.LastName!}"),
         new Claim("EGN", user?.Egn!),
         new Claim("PhoneNumber", user.PhoneNumber!),
-        new Claim(ClaimTypes.Role, mainRole!),
+        new Claim(ClaimTypes.Role, userRoles!),
                 };
 
             var tokenDescriptor = new SecurityTokenDescriptor
@@ -317,7 +306,7 @@
 
         }
 
-        private async Task<List<string>> GetUserRole(User user)
+        private async Task<string> GetUserRole(User user)
         {
             var userRole = await _context.Users.FirstOrDefaultAsync(x => x.Egn == user.Egn);
 
@@ -328,7 +317,7 @@
 
             var roles = await _userManager.GetRolesAsync(userRole);
 
-            return roles.ToList();
+            return roles.ToList()[0];
 
         }
 
