@@ -6,6 +6,7 @@
     using Health_prescription_software_API.Models.Authentication.Patient;
     using Health_prescription_software_API.Models.Authentication.Pharmacist;
     using Health_prescription_software_API.Models.Authentication.Pharmacy;
+    using Microsoft.AspNetCore.Identity;
     using Microsoft.EntityFrameworkCore;
     using System.Collections.Generic;
     using System.Threading.Tasks;
@@ -14,7 +15,7 @@
 
     public class ValidationAuthentication : IvalidationPrescription
     {
-        private readonly HealthPrescriptionDbContext dbContext;
+        private readonly HealthPrescriptionDbContext dbContext;        
 
         public ValidationAuthentication(HealthPrescriptionDbContext dbContext)
         {
@@ -23,26 +24,65 @@
         }
 
         public ICollection<ModelError> ModelErrors { get; set; }
+        
+        public async Task<bool> IsPharmacyLoginValid(LoginPharmacyDto loginModel)
+        {
+            User? userExistsByEmail = await dbContext.Users.FirstOrDefaultAsync(u => u.Email == loginModel.Email);
 
+            ModelError? modelError;
+
+            if (userExistsByEmail == null)
+            {
+                modelError = new ModelError
+                {
+                    ErrorPropName = nameof(loginModel.Email),
+                    ErrorMessage = PharmacyUserWithEmailDoesNotExists
+                };
+
+                ModelErrors.Add(modelError);
+
+                return false;
+            }
+
+            return true;
+        }
         public async Task<bool> IsPharmacyRegisterValid(RegisterPharmacyDto registerModel)
         {
             bool isEmailPresent = await dbContext.Users
                 .AnyAsync(u => u.Email == registerModel.Email);
-            if (isEmailPresent)
+            User? pharmacyUserExists = await dbContext.Users.FirstOrDefaultAsync(u => u.UserName == registerModel.PharmacyName);
+            
+            if (isEmailPresent || pharmacyUserExists != null)
             {
-                var error = new ModelError
+                ModelError? modelError;
+                if (isEmailPresent)
                 {
-                    ErrorPropName = nameof(registerModel.Email),
-                    ErrorMessage = "User with the same email already exists."
-                };
+                    var error = new ModelError
+                    {
+                        ErrorPropName = nameof(registerModel.Email),
+                        ErrorMessage = PharmacyUserWithEmailExists
+                    };
 
-                ModelErrors.Add(error);
+                    ModelErrors.Add(error);
 
-                return true;
-            }
-            // todo: more checking if needed
 
-            return false;
+                }
+                if (pharmacyUserExists != null)
+                {
+                    modelError = new ModelError
+                    {
+                        ErrorPropName = nameof(registerModel.PharmacyName),
+                        ErrorMessage = PharmacyUserWithSameNameExists
+                    };
+
+                    ModelErrors.Add(modelError);
+                }
+
+                return false;
+        
+            }         
+            
+               return true;
         }
 
         public async Task<bool> IsPharmacistRegisterValid(RegisterPharmacistDto registerModel)
@@ -143,8 +183,8 @@
         public async Task<bool> IsPatientLoginValid(LoginPatientDto loginModel)
         {
             User? userExistsByEgn = await dbContext.Users.FirstOrDefaultAsync(u => u.Egn == loginModel.Egn);
-
-            ModelError? modelError;
+            
+            ModelError ? modelError;
 
             if (userExistsByEgn == null)
             {
@@ -158,7 +198,7 @@
 
                 return false;
             }
-
+           
             return true;
         }
     }
