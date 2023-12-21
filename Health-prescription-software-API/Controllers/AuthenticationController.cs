@@ -6,30 +6,30 @@ namespace Health_prescription_software_API.Controllers
     using Health_prescription_software_API.Models.Authentication.Patient;
     using Health_prescription_software_API.Models.Authentication.Pharmacist;
     using Microsoft.AspNetCore.Mvc;
-	using Microsoft.Extensions.Options;
-	using Health_prescription_software_API.Services.ValidationServices;
-	using Health_prescription_software_API.Contracts.Validations;
+    using Microsoft.Extensions.Options;
+    using Health_prescription_software_API.Services.ValidationServices;
+    using Health_prescription_software_API.Contracts.Validations;
 
-	[ApiController]
+    [ApiController]
     [Route("api/[controller]")]
     public class AuthenticationController : ControllerBase
     {
         private readonly IAuthenticationService _authenticationService;
         private readonly IValidationAuthentication validationService;
 
-		private readonly IOptions<ApiBehaviorOptions> apiBehaviorOptions;
+        private readonly IOptions<ApiBehaviorOptions> apiBehaviorOptions;
 
-		public AuthenticationController(
-			IAuthenticationService authenticationService
-			, IOptions<ApiBehaviorOptions> apiBehaviorOptions
+        public AuthenticationController(
+            IAuthenticationService authenticationService
+            , IOptions<ApiBehaviorOptions> apiBehaviorOptions
             , IValidationAuthentication validationService)
-		{
-			_authenticationService = authenticationService;
-			this.apiBehaviorOptions = apiBehaviorOptions;
-			this.validationService = validationService;
-		}
+        {
+            _authenticationService = authenticationService;
+            this.apiBehaviorOptions = apiBehaviorOptions;
+            this.validationService = validationService;
+        }
 
-		[HttpPost("Register/Gp")]
+        [HttpPost("Register/Gp")]
         public async Task<IActionResult> RegisterGP([FromForm] RegisterGpDto GpUser)
         {
             var token = await _authenticationService.RegisterGp(GpUser);
@@ -54,8 +54,8 @@ namespace Health_prescription_software_API.Controllers
                     foreach (var error in validationService.ModelErrors)
                     {
                         ModelState.AddModelError(
-                            error.ErrorMessage ?? string.Empty,
-                            error.ErrorPropName ?? string.Empty);
+                            error.ErrorPropName ?? string.Empty,
+                            error.ErrorMessage ?? string.Empty);
                     }
 
                     return apiBehaviorOptions
@@ -89,8 +89,8 @@ namespace Health_prescription_software_API.Controllers
                     foreach (var error in validationService.ModelErrors)
                     {
                         ModelState.AddModelError(
-                            error.ErrorMessage ?? string.Empty,
-                            error.ErrorPropName ?? string.Empty);
+                            error.ErrorPropName ?? string.Empty,
+                            error.ErrorMessage ?? string.Empty);
                     }
 
                     return apiBehaviorOptions
@@ -138,8 +138,8 @@ namespace Health_prescription_software_API.Controllers
                     foreach (var error in validationService.ModelErrors)
                     {
                         ModelState.AddModelError(
-                            error.ErrorMessage ?? string.Empty,
-                            error.ErrorPropName ?? string.Empty);
+                            error.ErrorPropName ?? string.Empty,
+                            error.ErrorMessage ?? string.Empty);
                     }
 
                     return apiBehaviorOptions
@@ -176,8 +176,8 @@ namespace Health_prescription_software_API.Controllers
                     foreach (var error in validationService.ModelErrors)
                     {
                         ModelState.AddModelError(
-                            error.ErrorMessage ?? string.Empty,
-                            error.ErrorPropName ?? string.Empty);
+                            error.ErrorPropName ?? string.Empty,
+                            error.ErrorMessage ?? string.Empty);
                     }
 
                     return apiBehaviorOptions
@@ -197,7 +197,7 @@ namespace Health_prescription_software_API.Controllers
             {
                 return StatusCode(500, ex.Message);
             }
-            
+
         }
 
 
@@ -211,8 +211,8 @@ namespace Health_prescription_software_API.Controllers
                     foreach (var error in validationService.ModelErrors)
                     {
                         ModelState.AddModelError(
-                            error.ErrorMessage ?? string.Empty,
-                            error.ErrorPropName ?? string.Empty);
+                            error.ErrorPropName ?? string.Empty,
+                            error.ErrorMessage ?? string.Empty);
                     }
 
                     return apiBehaviorOptions
@@ -245,8 +245,8 @@ namespace Health_prescription_software_API.Controllers
                     foreach (var error in validationService.ModelErrors)
                     {
                         ModelState.AddModelError(
-                            error.ErrorMessage ?? string.Empty,
-                            error.ErrorPropName ?? string.Empty);
+                            error.ErrorPropName ?? string.Empty,
+                            error.ErrorMessage ?? string.Empty);
                     }
 
                     return apiBehaviorOptions
