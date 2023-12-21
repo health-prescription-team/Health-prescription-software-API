@@ -6,7 +6,6 @@
     using Health_prescription_software_API.Models.Authentication.Patient;
     using Health_prescription_software_API.Models.Authentication.Pharmacist;
     using Health_prescription_software_API.Models.Authentication.Pharmacy;
-    using Microsoft.AspNetCore.Identity;
     using Microsoft.EntityFrameworkCore;
     using System.Collections.Generic;
     using System.Threading.Tasks;
@@ -184,7 +183,7 @@
         {
             User? userExistsByEgn = await dbContext.Users.FirstOrDefaultAsync(u => u.Egn == loginModel.Egn);
             
-            ModelError ? modelError;
+            ModelError? modelError;
 
             if (userExistsByEgn == null)
             {
