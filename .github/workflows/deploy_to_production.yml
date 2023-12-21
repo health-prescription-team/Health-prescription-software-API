@@ -1,4 +1,4 @@
-name: Build and Deploy app to Azure Web app - Production
+name: Deploy to Azure - (Production)
 
 on:
   push:
