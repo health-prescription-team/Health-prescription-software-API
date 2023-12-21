@@ -15,14 +15,14 @@ namespace Health_prescription_software_API.Controllers
     public class AuthenticationController : ControllerBase
     {
         private readonly IAuthenticationService _authenticationService;
-        private readonly IvalidationPrescription validationService;
+        private readonly IValidationAuthentication validationService;
 
 		private readonly IOptions<ApiBehaviorOptions> apiBehaviorOptions;
 
 		public AuthenticationController(
 			IAuthenticationService authenticationService
 			, IOptions<ApiBehaviorOptions> apiBehaviorOptions
-            , IvalidationPrescription validationService)
+            , IValidationAuthentication validationService)
 		{
 			_authenticationService = authenticationService;
 			this.apiBehaviorOptions = apiBehaviorOptions;
@@ -131,7 +131,9 @@ namespace Health_prescription_software_API.Controllers
         [HttpPost("Register/Pharmacy")]
         public async Task<IActionResult> RegisterPharmacy([FromForm] RegisterPharmacyDto pharmacyUser)
         {
-			if ((await validationService.IsPharmacyRegisterValid(pharmacyUser)))
+            try
+            {
+                if ((await validationService.IsPharmacyRegisterValid(pharmacyUser)))
 			{
                 foreach (var error in validationService.ModelErrors)
                 {
@@ -144,37 +146,58 @@ namespace Health_prescription_software_API.Controllers
 					.Value.InvalidModelStateResponseFactory(ControllerContext);
 			}
 
-            string? token = null;
-            try
-            {
+                string? token = null;
+           
 				token = await _authenticationService.RegisterPharmacy(pharmacyUser);
 
 				if (string.IsNullOrEmpty(token))
 				{
 					return BadRequest();//todo: return more info.
 				}
-			}
-            catch (Exception)
+                return Ok(new { Token = token });
+            }
+            catch (Exception ex)
             {
-                return StatusCode(500);
+                return StatusCode(500, ex.Message);
             }
 			
 
-            return Ok(new { Token = token });
+            
         }
 
 
         [HttpPost("Login/Pharmacy")]
         public async Task<IActionResult> LoginPharmacy([FromForm] LoginPharmacyDto PharmacyUser)
         {
-            string? token = await _authenticationService.LoginPharmacy(PharmacyUser);
-
-            if (string.IsNullOrEmpty(token))
+            try
             {
-                return BadRequest();//todo: return more info.
-            }
+                if (!await validationService.IsPharmacyLoginValid(PharmacyUser))
+                {
+                    foreach (var error in validationService.ModelErrors)
+                    {
+                        ModelState.AddModelError(
+                            error.ErrorMessage ?? string.Empty,
+                            error.ErrorPropName ?? string.Empty);
+                    }
 
-            return Ok(new { Token = token });
+                    return apiBehaviorOptions
+                        .Value.InvalidModelStateResponseFactory(ControllerContext);
+                }
+
+                var token = await _authenticationService.LoginPharmacy(PharmacyUser);
+
+                if (string.IsNullOrWhiteSpace(token))
+                {
+                    return BadRequest("Login failed."); //todo: return more info.
+                }
+
+                return Ok(new { Token = token });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
+            
         }
 
 
