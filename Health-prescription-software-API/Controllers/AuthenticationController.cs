@@ -133,36 +133,36 @@ namespace Health_prescription_software_API.Controllers
         {
             try
             {
-                if ((await validationService.IsPharmacyRegisterValid(pharmacyUser)))
-			{
-                foreach (var error in validationService.ModelErrors)
+                if (!await validationService.IsPharmacyRegisterValid(pharmacyUser))
                 {
-                    ModelState.AddModelError(
-                        error.ErrorMessage ?? string.Empty,
-                        error.ErrorPropName ?? string.Empty);
+                    foreach (var error in validationService.ModelErrors)
+                    {
+                        ModelState.AddModelError(
+                            error.ErrorMessage ?? string.Empty,
+                            error.ErrorPropName ?? string.Empty);
+                    }
+
+                    return apiBehaviorOptions
+                        .Value.InvalidModelStateResponseFactory(ControllerContext);
                 }
 
-				return apiBehaviorOptions
-					.Value.InvalidModelStateResponseFactory(ControllerContext);
-			}
+                var token = await _authenticationService.RegisterPharmacy(pharmacyUser);
 
-                string? token = null;
-           
-				token = await _authenticationService.RegisterPharmacy(pharmacyUser);
+                if (string.IsNullOrWhiteSpace(token))
+                {
+                    return BadRequest("Registration failed."); //todo: return more info.
+                }
 
-				if (string.IsNullOrEmpty(token))
-				{
-					return BadRequest();//todo: return more info.
-				}
                 return Ok(new { Token = token });
             }
             catch (Exception ex)
             {
+                // TODO How to handle this?
                 return StatusCode(500, ex.Message);
             }
-			
 
-            
+
+
         }
 
 
