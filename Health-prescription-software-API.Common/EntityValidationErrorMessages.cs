@@ -1,4 +1,6 @@
-﻿namespace Health_prescription_software_API.Common
+﻿using System.Xml.Linq;
+
+namespace Health_prescription_software_API.Common
 {
 	public static class EntityValidationErrorMessages
 	{
@@ -18,6 +20,13 @@
 			public const string UserWithUinNumberExists = "User with the same uin already exists.";
 
 			public const string UserWithEgnDoesNotExist = "User with egn does not exist.";
+
+            public const string PharmacyUserWithEmailDoesNotExists = "Pharmacy user with this email does not exist.";
+
+            public const string PharmacyUserWithEmailExists = "Pharmacy user with the same email already exists.";
+
+			public const string PharmacyUserWithSameNameExists = "Pharmacy with the same name exists.";
+			
         }
 
 		public static class Prescription

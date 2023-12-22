@@ -4,9 +4,10 @@
     using Health_prescription_software_API.Models.Authentication.Pharmacy;
     using Health_prescription_software_API.Models.Authentication.Patient;
 
-	public interface IvalidationPrescription : IValidationErrorMessage
+	public interface IValidationAuthentication : IValidationErrorMessage
     {
-        public Task<bool> IsPharmacyRegisterValid(RegisterPharmacyDto registerModel);
+        Task<bool> IsPharmacyLoginValid(LoginPharmacyDto registerModel);
+        Task<bool> IsPharmacyRegisterValid(RegisterPharmacyDto registerModel);
 
         Task<bool> IsPharmacistRegisterValid(RegisterPharmacistDto registerModel);
 
