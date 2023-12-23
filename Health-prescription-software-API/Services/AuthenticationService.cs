@@ -111,7 +111,8 @@
                 Egn = model.Egn,
                 Email = null,
                 UserName = model.Egn,
-                PhoneNumber = model.PhoneNumber
+                PhoneNumber = model.PhoneNumber,
+                UinNumber = model.UinNumber
             };
 
             var result = await _userManager.CreateAsync(user, model.Password);

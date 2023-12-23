@@ -42,7 +42,7 @@
                 });
             }
 
-            context.Prescriptions.Add(prescriptionEntity);
+            await context.Prescriptions.AddAsync(prescriptionEntity);
             await context.SaveChangesAsync();
 
             return prescriptionEntity.Id;

@@ -43,7 +43,7 @@
 
             configuration = new Mock<IConfiguration>();
 
-            configuration.Setup(config => config[It.IsAny<string>()]).Returns((string key) => configurationSettings.ContainsKey(key) ? configurationSettings[key] : null);
+            configuration.Setup(config => config[It.IsAny<string>()]).Returns((string key) => configurationSettings.TryGetValue(key, out string? value) ? value : null);
 
             // UserManager and SignInManager mock setup
 

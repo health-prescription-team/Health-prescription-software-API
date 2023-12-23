@@ -3,6 +3,7 @@
     using Health_prescription_software_API.Contracts.Validations;
     using Health_prescription_software_API.Data;
     using Health_prescription_software_API.Data.Entities.User;
+    using Health_prescription_software_API.Models.Authentication.GP;
     using Health_prescription_software_API.Models.Authentication.Patient;
     using Health_prescription_software_API.Models.Authentication.Pharmacist;
     using Health_prescription_software_API.Models.Authentication.Pharmacy;
@@ -199,6 +200,50 @@
             }
            
             return true;
+        }
+
+        public async Task<bool> IsGpRegisterValid(RegisterGpDto registerModel)
+        {
+            var userExistsByEgn = await dbContext.Users
+               .AnyAsync(u => u.Egn == registerModel.Egn);
+            var userExistsByUINNumber = await dbContext.Users.AnyAsync(u => u.UinNumber == registerModel.UinNumber);
+
+            ModelError modelError;
+
+            if (userExistsByEgn || userExistsByUINNumber)
+            {
+
+                if (userExistsByEgn)
+                {
+                    modelError = new ModelError
+                    {
+                        ErrorPropName = "UserWithEgnExists",
+                        ErrorMessage = UserWithEgnExists
+
+                    };
+
+                    ModelErrors.Add(modelError);
+
+                }
+
+                if (userExistsByUINNumber)
+                {
+
+                    modelError = new ModelError
+                    {
+                        ErrorPropName = "UserWithUinNumberExists",
+                        ErrorMessage = UserWithUinNumberExists
+
+                    };
+
+                    ModelErrors.Add(modelError);
+                }
+
+                return false;
+            }
+
+            return true;
+
         }
     }
 }
