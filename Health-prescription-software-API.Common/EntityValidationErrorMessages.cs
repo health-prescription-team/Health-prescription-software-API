@@ -26,18 +26,19 @@ namespace Health_prescription_software_API.Common
             public const string PharmacyUserWithEmailExists = "Pharmacy user with the same email already exists.";
 
 			public const string PharmacyUserWithSameNameExists = "Pharmacy with the same name exists.";
-
-           
-
         }
 
 		public static class Prescription
 		{
 			public const string InvalidAgeRangeMessage = "Age must be between {1} and {2}.";
 
-			public const string PatientDoesNotExist = "Patient cannot be found. He/She may not be registered";
+			public const string PatientDoesNotExist = "Patient cannot be found. He/She may not be registered.";
 
-			public const string PrescriptionDoesNotExist = "Prescription not found";
+			public const string PrescriptionDoesNotExist = "Prescription not found.";
+
+			public const string CantEditPrescription = "Fulfilled prescriptions can't be edited.";
+
+			public const string CantDeletePrescription = "Fulfilled prescriptions can't be deleted.";
         }
 	}
 }
