@@ -38,6 +38,10 @@
         [Column(TypeName = "Timestamp")]
         public DateTime? FulfillmentDate { get; set; }
 
+        public string? FulfilledById { get; set; }
+        [ForeignKey(nameof(FulfilledById))]
+        public virtual User.User? FulfilledBy { get; set; }
+
         [Required]
         [Column(TypeName = "Timestamp")]
         public DateTime CreatedAt { get; set; }
