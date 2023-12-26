@@ -31,8 +31,8 @@
             {
                 var notFoundPatient = new ModelError
                 {
-                    ErrorMessage = PatientDoesNotExist,
-                    ErrorPropName = nameof(prescriptionModel.PatientEgn)
+                    ErrorPropName = nameof(prescriptionModel.PatientEgn),
+                    ErrorMessage = PatientDoesNotExist
 
                 };
 
@@ -122,15 +122,15 @@
                         ErrorMessage = InvalidEgnErrorMessage
                     };
 
-                    ModelErrors.Add(modelError); 
+                    ModelErrors.Add(modelError);
                 }
 
                 if (!patientExist)
                 {
                     modelError = new ModelError
                     {
-                        ErrorMessage = PatientDoesNotExist,
-                        ErrorPropName = "EGN"
+                        ErrorPropName = "EGN",
+                        ErrorMessage = PatientDoesNotExist
 
                     };
 
@@ -151,14 +151,49 @@
             {
                 var modelError = new ModelError
                 {
-                    ErrorMessage = PrescriptionDoesNotExist,
-                    ErrorPropName = "Id"
+                    ErrorPropName = "Id",
+                    ErrorMessage = PrescriptionDoesNotExist
                 };
 
                 return false;
             }
 
             return true;
+        }
+
+        public async Task<bool> IsPrescriptionFulfilled(Guid prescriptionId)
+        {
+            var prescription = await dbContext.Prescriptions.FindAsync(prescriptionId);
+            
+            ModelError? modelError;
+
+            if (prescription == null)
+            {
+                modelError = new ModelError
+                {
+                    ErrorPropName = "Id",
+                    ErrorMessage = PrescriptionDoesNotExist
+                };
+
+                ModelErrors.Add(modelError);
+
+                return true;
+            }
+
+            if (prescription.IsFulfilled)
+            {
+                modelError = new ModelError
+                {
+                    ErrorPropName = nameof(prescription.IsFulfilled),
+                    ErrorMessage = "Prescription already fulfilled."
+                };
+
+                ModelErrors.Add(modelError);
+
+                return true;
+            }
+
+            return false;
         }
     }
 }

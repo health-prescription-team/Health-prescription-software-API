@@ -142,5 +142,16 @@
 
             return prescription;
         }
+
+        public async Task FulfillPrescription(Guid prescriptionId, string fulfillerId)
+        {
+            var prescription = await context.Prescriptions.FindAsync(prescriptionId);
+
+            prescription!.IsFulfilled = true;
+            prescription.FulfillmentDate = DateTime.Now;
+            prescription.FulfilledById = fulfillerId;
+
+            await context.SaveChangesAsync();
+        }
     }
 }

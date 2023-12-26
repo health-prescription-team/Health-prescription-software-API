@@ -149,5 +149,33 @@
                 return StatusCode(500);
             }
         }
+
+        [HttpPut("Fulfill/{id}")]
+        [Authorize(Roles = "Pharmacy, Pharmacist")]
+        public async Task<IActionResult> Fulfill(Guid id)
+        {
+            try
+            {
+                string fulfillerId = User.FindFirstValue(ClaimTypes.NameIdentifier)!;
+
+                if (await validationService.IsPrescriptionFulfilled(id))
+                {
+                    foreach (var error in validationService.ModelErrors)
+                    {
+                        ModelState.AddModelError(error.ErrorPropName!, error.ErrorMessage!);
+                    }
+
+                    return apiBehaviorOptions.Value.InvalidModelStateResponseFactory(ControllerContext);
+                }
+
+                await prescriptionService.FulfillPrescription(id, fulfillerId);
+
+                return Ok();
+            }
+            catch (Exception)
+            {
+                return StatusCode(500);
+            }
+        }
     }
 }

@@ -13,5 +13,7 @@
         void Delete(Guid id);
 
         Task<Guid> Edit(EditPrescriptionDTO prescriptionModel, string GpId);
+
+        Task FulfillPrescription(Guid prescriptionId, string fulfillerId);
     }
 }
