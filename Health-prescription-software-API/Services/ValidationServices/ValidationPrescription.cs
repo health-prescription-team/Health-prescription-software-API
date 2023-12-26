@@ -31,8 +31,8 @@
             {
                 var notFoundPatient = new ModelError
                 {
-                    ErrorMessage = PatientDoesNotExist,
-                    ErrorPropName = nameof(prescriptionModel.PatientEgn)
+                    ErrorPropName = nameof(prescriptionModel.PatientEgn),
+                    ErrorMessage = PatientDoesNotExist
 
                 };
 
@@ -62,20 +62,51 @@
             return true;
         }
 
+        public async Task<bool> IsDeletePrescriptionValid(Guid prescriptionId)
+        {
+            var prescription = await dbContext.Prescriptions.FindAsync(prescriptionId);
+
+            if (prescription != null)
+            {
+                var modelError = new ModelError
+                {
+                    ErrorPropName = nameof(prescription.IsFulfilled),
+                    ErrorMessage = CantDeletePrescription
+                };
+
+                ModelErrors.Add(modelError);
+
+                return false;
+            }
+
+            return true;
+        }
+
         public async Task<bool> IsEditPrescriptionValid(EditPrescriptionDTO model)
         {
-            var validId = await dbContext.Prescriptions.AnyAsync(p => p.Id == model.Id);
+            var prescription = await dbContext.Prescriptions.FindAsync(model.Id);
 
-            if (!validId)
+            if (prescription == null || prescription.IsFulfilled)
             {
                 ModelError? modelError;
 
-                if (!validId)
+                if (prescription == null)
                 {
                     modelError = new ModelError
                     {
-                        ErrorPropName = "Id",
+                        ErrorPropName = nameof(prescription.Id),
                         ErrorMessage = PrescriptionDoesNotExist
+                    };
+
+                    ModelErrors.Add(modelError);
+                }
+
+                if (prescription!.IsFulfilled)
+                {
+                    modelError = new ModelError
+                    {
+                        ErrorPropName = nameof(prescription.IsFulfilled),
+                        ErrorMessage = CantEditPrescription
                     };
 
                     ModelErrors.Add(modelError);
@@ -122,16 +153,15 @@
                         ErrorMessage = InvalidEgnErrorMessage
                     };
 
-                    ModelErrors.Add(modelError); 
+                    ModelErrors.Add(modelError);
                 }
 
                 if (!patientExist)
                 {
                     modelError = new ModelError
                     {
-                        ErrorMessage = PatientDoesNotExist,
-                        ErrorPropName = "EGN"
-
+                        ErrorPropName = "EGN",
+                        ErrorMessage = PatientDoesNotExist
                     };
 
                     ModelErrors.Add(modelError);
@@ -151,9 +181,11 @@
             {
                 var modelError = new ModelError
                 {
-                    ErrorMessage = PrescriptionDoesNotExist,
-                    ErrorPropName = "Id"
+                    ErrorPropName = "Id",
+                    ErrorMessage = PrescriptionDoesNotExist
                 };
+
+                ModelErrors.Add(modelError);
 
                 return false;
             }

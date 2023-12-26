@@ -13,5 +13,7 @@ namespace Health_prescription_software_API.Contracts.Validations
         Task<bool> IsEditPrescriptionValid(EditPrescriptionDTO model);
 
         Task<bool> IsGpThePrescriber(string gpId, Guid prescriptionId);
+
+        Task<bool> IsDeletePrescriptionValid(Guid prescriptionId);
     }
 }
