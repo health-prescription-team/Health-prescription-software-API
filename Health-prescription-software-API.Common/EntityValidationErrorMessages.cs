@@ -26,10 +26,12 @@ namespace Health_prescription_software_API.Common
             public const string PharmacyUserWithEmailExists = "Pharmacy user with the same email already exists.";
 
 			public const string PharmacyUserWithSameNameExists = "Pharmacy with the same name exists.";
-
-           
-
         }
+
+		public static class Authentication
+		{
+			public const string InvalidLogin = "Invalid login";
+		}
 
 		public static class Prescription
 		{

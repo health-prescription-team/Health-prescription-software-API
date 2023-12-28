@@ -1,5 +1,6 @@
 ﻿namespace Health_prescription_software_API.Services.ValidationServices
 {
+    using Common.Roles;
     using Health_prescription_software_API.Contracts.Validations;
     using Health_prescription_software_API.Data;
     using Health_prescription_software_API.Data.Entities.User;
@@ -7,19 +8,23 @@
     using Health_prescription_software_API.Models.Authentication.Patient;
     using Health_prescription_software_API.Models.Authentication.Pharmacist;
     using Health_prescription_software_API.Models.Authentication.Pharmacy;
+    using Microsoft.AspNetCore.Identity;
     using Microsoft.EntityFrameworkCore;
     using System.Collections.Generic;
     using System.Threading.Tasks;
 
     using static Common.EntityValidationErrorMessages.User;
+    using static Common.EntityValidationErrorMessages.Authentication;
 
     public class ValidationAuthentication : IValidationAuthentication
     {
-        private readonly HealthPrescriptionDbContext dbContext;        
+        private readonly HealthPrescriptionDbContext dbContext;
+        private readonly UserManager<User> userManager;
 
-        public ValidationAuthentication(HealthPrescriptionDbContext dbContext)
+        public ValidationAuthentication(HealthPrescriptionDbContext dbContext, UserManager<User> userManager)
         {
             this.dbContext = dbContext;
+            this.userManager = userManager;
             this.ModelErrors = new HashSet<ModelError>();
         }
 
@@ -37,6 +42,21 @@
                 {
                     ErrorPropName = nameof(loginModel.Email),
                     ErrorMessage = PharmacyUserWithEmailDoesNotExists
+                };
+
+                ModelErrors.Add(modelError);
+
+                return false;
+            }
+
+            bool isUserRoleValid = await userManager.IsInRoleAsync(userExistsByEmail, RoleConstants.Pharmacy);
+
+            if (!isUserRoleValid)
+            {
+                modelError = new ModelError
+                {
+                    ErrorPropName = RoleConstants.Pharmacy,
+                    ErrorMessage = InvalidLogin
                 };
 
                 ModelErrors.Add(modelError);
@@ -153,6 +173,21 @@
                 return false;
             }
 
+            bool isUserRoleValid = await userManager.IsInRoleAsync(userExistsByEgn, RoleConstants.Pharmacist);
+
+            if (!isUserRoleValid)
+            {
+                modelError = new ModelError
+                {
+                    ErrorPropName = RoleConstants.Pharmacist,
+                    ErrorMessage = InvalidLogin
+                };
+
+                ModelErrors.Add(modelError);
+
+                return false;
+            }
+
             return true;
         }
 
@@ -198,7 +233,22 @@
 
                 return false;
             }
-           
+
+            bool isUserRoleValid = await userManager.IsInRoleAsync(userExistsByEgn, RoleConstants.Patient);
+
+            if (!isUserRoleValid)
+            {
+                modelError = new ModelError
+                {
+                    ErrorPropName = RoleConstants.Patient,
+                    ErrorMessage = InvalidLogin
+                };
+
+                ModelErrors.Add(modelError);
+
+                return false;
+            }
+
             return true;
         }
 
@@ -243,7 +293,43 @@
             }
 
             return true;
+        }
 
+        public async Task<bool> IsGpLoginValid(LoginGpDto loginModel)
+        {
+            User? userExistsByEgn = await dbContext.Users.FirstOrDefaultAsync(u => u.Egn == loginModel.Egn);
+
+            ModelError? modelError;
+
+            if (userExistsByEgn == null)
+            {
+                modelError = new ModelError
+                {
+                    ErrorPropName = nameof(loginModel.Egn),
+                    ErrorMessage = UserWithEgnDoesNotExist
+                };
+
+                ModelErrors.Add(modelError);
+
+                return false;
+            }
+
+            bool isUserRoleValid = await userManager.IsInRoleAsync(userExistsByEgn, RoleConstants.GP);
+
+            if (!isUserRoleValid)
+            {
+                modelError = new ModelError
+                {
+                    ErrorPropName = RoleConstants.GP,
+                    ErrorMessage = InvalidLogin
+                };
+
+                ModelErrors.Add(modelError);
+
+                return false;
+            }
+
+            return true;
         }
     }
 }

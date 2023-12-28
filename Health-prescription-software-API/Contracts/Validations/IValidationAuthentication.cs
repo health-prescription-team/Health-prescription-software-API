@@ -8,6 +8,7 @@
     public interface IValidationAuthentication : IValidationErrorMessage
     {
         Task<bool> IsPharmacyLoginValid(LoginPharmacyDto registerModel);
+
         Task<bool> IsPharmacyRegisterValid(RegisterPharmacyDto registerModel);
 
         Task<bool> IsPharmacistRegisterValid(RegisterPharmacistDto registerModel);
@@ -19,5 +20,7 @@
         Task<bool> IsPatientLoginValid(LoginPatientDto loginModel);
 
         Task<bool> IsGpRegisterValid(RegisterGpDto registerModel);
+
+        Task<bool> IsGpLoginValid(LoginGpDto loginModel);
     }
 }
