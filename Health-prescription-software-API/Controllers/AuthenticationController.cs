@@ -132,15 +132,35 @@ namespace Health_prescription_software_API.Controllers
         public async Task<IActionResult> LoginGp([FromForm] LoginGpDto GpUser)
         {
 
-            var token = await _authenticationService.LoginGp(GpUser);
-
-            if (token == string.Empty)
+            try
             {
-                //it's controller. instead return bad request
-                throw new ArgumentException("Failed to login a GP");
-            }
+                if (!await validationService.IsGpLoginValid(GpUser))
+                {
+                    foreach (var error in validationService.ModelErrors)
+                    {
+                        ModelState.AddModelError(
+                            error.ErrorPropName ?? string.Empty,
+                            error.ErrorMessage ?? string.Empty);
+                    }
 
-            return Ok(new { Token = token });
+                    return apiBehaviorOptions
+                        .Value.InvalidModelStateResponseFactory(ControllerContext);
+                }
+
+                var token = await _authenticationService.LoginGp(GpUser);
+
+                if (string.IsNullOrWhiteSpace(token))
+                {
+                    return BadRequest("Login failed.");
+                }
+
+                return Ok(new { Token = token });
+            }
+            catch (Exception ex)
+            {
+                // TODO How to handle this?
+                return StatusCode(500, ex.Message);
+            }
         }
 
 
@@ -176,9 +196,6 @@ namespace Health_prescription_software_API.Controllers
                 // TODO How to handle this?
                 return StatusCode(500, ex.Message);
             }
-
-
-
         }
 
 

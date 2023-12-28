@@ -9,6 +9,7 @@
 		public string Email { get; set; } = null!;
 
 		[Required]
-		public string Password { get; set; } = null!;
+        [DataType(DataType.Password)]
+        public string Password { get; set; } = null!;
 	}
 }

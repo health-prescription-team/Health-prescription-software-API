@@ -33,7 +33,7 @@
         public string HospitalName { get; set; } = null!;
 
         [Required]
-        [StringLength(PharmacyNameMaxLength, MinimumLength = PharmacyNameMinLength)]
+        [DataType(DataType.Password)]
         public string Password { get; set; } = null!;
 
         [Required]
