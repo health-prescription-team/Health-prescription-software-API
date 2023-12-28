@@ -54,7 +54,7 @@
 
             if (modelDb is null)
             {
-                throw new  NullReferenceException("Prescription can not be null!");
+                throw new NullReferenceException("Prescription can not be null!");
             }
 
             context.Prescriptions.Remove(modelDb);
@@ -90,11 +90,15 @@
 
         public async Task<IEnumerable<PatientPrescriptionsListDTO>> GetPatientPrescriptions(string patientEgn)
         {
+            var patient = await context.Users.FirstOrDefaultAsync(p => p.Egn == patientEgn);
+
             var prescriptionsList = await context.Prescriptions
                 .Where(p => p.PatientEgn == patientEgn)
                 .Select(p => new PatientPrescriptionsListDTO
                 {
                     PrescriptionId = p.Id,
+                    PatientEGN = patientEgn,
+                    PatientNames = $"{patient!.FirstName} {(string.IsNullOrEmpty(patient.MiddleName) ? "" : patient.MiddleName + " ")}{patient.LastName}",
                     CreatedAt = p.CreatedAt.ToString("yyyy-MM-dd"),
                     ExpiresAt = p.ExpiresAt.HasValue ? p.ExpiresAt.Value.ToString("yyyy-MM-dd") : null,
                     IsFulfilled = p.IsFulfilled,
