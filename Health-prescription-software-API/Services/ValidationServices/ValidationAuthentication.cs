@@ -50,7 +50,7 @@
         {
             bool isEmailPresent = await dbContext.Users
                 .AnyAsync(u => u.Email == registerModel.Email);
-            User? pharmacyUserExists = await dbContext.Users.FirstOrDefaultAsync(u => u.UserName == registerModel.PharmacyName);
+            User? pharmacyUserExists = await dbContext.Users.FirstOrDefaultAsync(u => u.PharmacyName == registerModel.PharmacyName);
             
             if (isEmailPresent || pharmacyUserExists != null)
             {

@@ -10,9 +10,8 @@
         [StringLength(NameMaxLength, MinimumLength = NameMinLength)]
         public string FirstName { get; set; } = null!;
 
-        [Required]
         [StringLength(NameMaxLength, MinimumLength = NameMinLength)]
-        public string MiddleName { get; set; } = null!;
+        public string? MiddleName { get; set; }
 
         [Required]
         [StringLength(NameMaxLength, MinimumLength = NameMinLength)]
