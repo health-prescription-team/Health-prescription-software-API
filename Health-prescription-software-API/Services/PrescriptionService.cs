@@ -50,14 +50,9 @@
 
         public void Delete(Guid id)
         {
-            var modelDb = context.Prescriptions.FirstOrDefault(p => p.Id == id);
+            var modelDb = context.Prescriptions.Find(id);
 
-            if (modelDb is null)
-            {
-                throw new NullReferenceException("Prescription can not be null!");
-            }
-
-            context.Prescriptions.Remove(modelDb);
+            context.Prescriptions.Remove(modelDb!);
             context.SaveChanges();
         }
 
