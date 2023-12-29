@@ -28,6 +28,11 @@ namespace Health_prescription_software_API.Common
 			public const string PharmacyUserWithSameNameExists = "Pharmacy with the same name exists.";
         }
 
+		public static class Authentication
+		{
+			public const string InvalidLogin = "Invalid login";
+		}
+
 		public static class Prescription
 		{
 			public const string InvalidAgeRangeMessage = "Age must be between {1} and {2}.";

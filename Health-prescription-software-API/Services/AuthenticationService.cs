@@ -1,13 +1,15 @@
 ﻿namespace Health_prescription_software_API.Services
 {
-    using Health_prescription_software_API.Common.Roles;
-    using Health_prescription_software_API.Contracts;
-    using Health_prescription_software_API.Data;
-    using Health_prescription_software_API.Data.Entities.User;
-    using Health_prescription_software_API.Models.Authentication.GP;
-    using Health_prescription_software_API.Models.Authentication.Patient;
-    using Health_prescription_software_API.Models.Authentication.Pharmacist;
-    using Health_prescription_software_API.Models.Authentication.Pharmacy;
+    using Common.Roles;
+    using Contracts;
+    using Data;
+    using Data.Entities.User;
+
+    using Models.Authentication.GP;
+    using Models.Authentication.Patient;
+    using Models.Authentication.Pharmacist;
+    using Models.Authentication.Pharmacy;
+
     using Microsoft.AspNetCore.Identity;
     using Microsoft.EntityFrameworkCore;
     using Microsoft.IdentityModel.Tokens;
@@ -39,18 +41,13 @@
         {
             User? user = await GetUserByEgn(model.Egn);
 
-            
-
             if (user != null)
             {
-
-
-
                 var result = await _signInManager.PasswordSignInAsync(user, model.Password, false, false);
 
                 if (result.Succeeded)
                 {
-                    var token = await GenerateToken(user);
+                    var token = GenerateToken(user, RoleConstants.Patient);
                     return token;
                 }
             }
@@ -61,7 +58,7 @@
         {
             using var memoryStream = new MemoryStream();
             await model.ProfilePicture.CopyToAsync(memoryStream);
-            
+
             var user = new User
             {
                 FirstName = model.FirstName,
@@ -84,21 +81,18 @@
 
             await _signInManager.SignInAsync(user, isPersistent: false);
 
-            var userEntity = await this.GetUserByEgn(model.Egn);
+            var userEntity = await GetUserByEgn(model.Egn);
 
             await _userManager.AddToRoleAsync(userEntity!, RoleConstants.Patient);
 
-            var securityToken = await this.GenerateToken(userEntity!);
+            var securityToken = GenerateToken(userEntity!);
 
             return securityToken;
-            
+
         }
 
         public async Task<string?> RegisterGp(RegisterGpDto model)
         {
-
-
-
             using var memoryStream = new MemoryStream();
             await model.ProfilePicture.CopyToAsync(memoryStream);
 
@@ -124,14 +118,14 @@
 
             await _signInManager.SignInAsync(user, isPersistent: false);
 
-            var userEntity = await this.GetUserByEgn(model.Egn);
+            var userEntity = await GetUserByEgn(model.Egn);
 
-            await _userManager.AddToRolesAsync(userEntity!, new string[]{RoleConstants.GP, RoleConstants.Patient});
+            await _userManager.AddToRolesAsync(userEntity!, new string[] { RoleConstants.GP, RoleConstants.Patient });
 
-            var securityToken = await this.GenerateToken(userEntity!);
+            var securityToken = GenerateToken(userEntity!, RoleConstants.GP);
 
             return securityToken;
-            
+
         }
 
         public async Task<string?> LoginGp(LoginGpDto model)
@@ -144,7 +138,7 @@
 
                 if (result.Succeeded)
                 {
-                    var token = await GenerateToken(user);
+                    var token = GenerateToken(user, RoleConstants.GP);
                     return token;
                 }
             }
@@ -166,8 +160,9 @@
                 Egn = null,
                 HospitalName = null,
                 Email = model.Email,
-                UserName = model.PharmacyName,
-                PhoneNumber = model.PhoneNumber
+                UserName = model.Email,
+                PhoneNumber = model.PhoneNumber,
+                PharmacyName = model.PharmacyName
             };
 
             IdentityResult? result = await _userManager.CreateAsync(pharmacyUser, model.Password);
@@ -180,7 +175,7 @@
 
                 await _userManager.AddToRoleAsync(user!, RoleConstants.Pharmacy);
 
-                var securityToken = await GenerateToken(user!);
+                var securityToken = GenerateToken(user!, RoleConstants.Pharmacy);
 
                 return securityToken;
             }
@@ -198,7 +193,7 @@
 
                 if (result.Succeeded)
                 {
-                    var token = await GenerateToken(pharmacyUser);
+                    var token = GenerateToken(pharmacyUser, RoleConstants.Pharmacy);
                     return token;
                 }
             }
@@ -234,11 +229,11 @@
 
             await _signInManager.SignInAsync(user, isPersistent: false);
 
-            var userEntity = await this.GetUserByEgn(model.Egn);
+            var userEntity = await GetUserByEgn(model.Egn);
 
             await _userManager.AddToRolesAsync(userEntity!, new string[] { RoleConstants.Pharmacist, RoleConstants.Patient });
 
-            var securityToken = await this.GenerateToken(userEntity!);
+            var securityToken = GenerateToken(userEntity!, RoleConstants.Pharmacist);
 
             return securityToken;
         }
@@ -253,7 +248,7 @@
 
                 if (result.Succeeded)
                 {
-                    var token = await this.GenerateToken(user);
+                    var token = GenerateToken(user, RoleConstants.Pharmacist);
                     return token;
                 }
             }
@@ -261,35 +256,39 @@
             return string.Empty;
         }
 
-        private async Task<string> GenerateToken(User user)
+        private string GenerateToken(User user, params string[] loginRoles)
         {
             var tokenHandler = new JwtSecurityTokenHandler();
             var key = Encoding.UTF8.GetBytes(_config["Jwt:Key"]!);
 
-            var userRoles = await GetUserRole(user);
-            // ТРЯБВА ДА СЕ НАМЕРИ ПО-ДОБРЕ РЕШЕНИЕ ЗА ДОБАВЯНЕ НА РОЛИ ЗА ПОТРЕБИТЕЛИ С ПОВЕЧЕ ОТ ЕДНА РОЛЯ 
+            string nameClaim;
+            List<Claim> claims = [];
 
-           
+            //  Adding role specific claims
+            if (loginRoles.Contains(RoleConstants.Pharmacy))
+            {
+                nameClaim = user.PharmacyName!;
+                claims.Add(new Claim(ClaimTypes.Email, user.Email!));
+            }
+            else
+            {
+                nameClaim = $"{user.FirstName} {(string.IsNullOrEmpty(user.MiddleName) ? "" : user.MiddleName + " ")}{user.LastName}";
+                claims.Add(new Claim("EGN", user.Egn!));
+            }
 
+            // Adding shared claims
+            claims.AddRange(new[]
+            {
+                new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
+                new Claim(ClaimTypes.Name, nameClaim),
+                new Claim("PhoneNumber", user.PhoneNumber!)
+            });
 
-
-            var claims = userRoles == RoleConstants.Pharmacy
-                ? new[]
-                {
-        new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
-        new Claim("UserName", $"{user.UserName!} "),
-        new Claim(ClaimTypes.Email, user?.Email!),
-        new Claim("PhoneNumber", user.PhoneNumber!),
-        new Claim(ClaimTypes.Role, userRoles!),
-                }
-                : new[]
-                {
-        new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
-        new Claim(ClaimTypes.Name, $"{user?.FirstName!} {user?.MiddleName} {user?.LastName!}"),
-        new Claim("EGN", user?.Egn!),
-        new Claim("PhoneNumber", user.PhoneNumber!),
-        new Claim(ClaimTypes.Role, userRoles!),
-                };
+            // Adding role claims
+            foreach (var role in loginRoles)
+            {
+                claims.Add(new Claim(ClaimTypes.Role, role));
+            }
 
             var tokenDescriptor = new SecurityTokenDescriptor
             {
@@ -297,29 +296,13 @@
                 Expires = DateTime.UtcNow.AddHours(1),
                 SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256),
                 Issuer = _config["Jwt:Issuer"],
-                Audience = _config["Jwt:Audience"],
+                Audience = _config["Jwt:Audience"]
             };
 
             var token = tokenHandler.CreateToken(tokenDescriptor);
             var tokenToString = tokenHandler.WriteToken(token);
 
             return tokenToString;
-
-        }
-
-        private async Task<string> GetUserRole(User user)
-        {
-            var userRole = await _context.Users.FirstOrDefaultAsync(x => x.Egn == user.Egn);
-
-            if (userRole == null)
-            {
-                throw new ArgumentNullException("The given user was not found!");
-            }
-
-            var roles = await _userManager.GetRolesAsync(userRole);
-
-            return roles.ToList()[0];
-
         }
 
         private async Task<User?> GetUserByEgn(string egn)
