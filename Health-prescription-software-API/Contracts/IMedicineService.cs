@@ -14,6 +14,6 @@ namespace Health_prescription_software_API.Contracts
 
         Task<IEnumerable<AllMedicineMinimalDTO>> GetAllMinimalAsync();
 
-        Task<bool> Delete(Guid id);
+        Task Delete(Guid id);
     }
 }

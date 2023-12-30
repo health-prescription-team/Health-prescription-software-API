@@ -73,17 +73,37 @@ namespace Health_prescription_software_API.Controllers
         }
 
         [HttpDelete("{id}")]
-        //[Authorize(Roles = Pharmacy)]
+        [Authorize(Roles = Pharmacy)]
         public async Task<IActionResult> Delete(Guid id)
         {
-            bool result = await medicineService.Delete(id);
-
-            if (result)
+            try
             {
-                return Ok("Successfully deleted medicine");
-            }
+                var pharmacyId = User.FindFirstValue(ClaimTypes.NameIdentifier)!;
+                bool isMedicineIdValid = await validationMedicine.IsMedicineValid(id);
 
-            return NotFound($"Item with id {id} not found.");
+                if (isMedicineIdValid && !await validationMedicine.IsPharmacyMedicineOwner(pharmacyId, id))
+                {
+                    return Unauthorized();
+                }
+
+                if (!isMedicineIdValid)
+                {
+                    foreach (var error in validationMedicine.ModelErrors)
+                    {
+                        ModelState.AddModelError(error.ErrorPropName!, error.ErrorMessage!);
+                    }
+
+                    return apiBehaviorOptions.Value.InvalidModelStateResponseFactory(ControllerContext);
+                }
+
+                await this.medicineService.Delete(id);
+
+                return NoContent();
+            }
+            catch (Exception)
+            {
+                return StatusCode(500);
+            }
         }
 
 

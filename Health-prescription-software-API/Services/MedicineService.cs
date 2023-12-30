@@ -142,20 +142,12 @@ namespace Health_prescription_software_API.Services
             return modelDb;
         }
 
-        public async Task<bool> Delete(Guid id)
+        public async Task Delete(Guid id)
         {
-            var medicine = await context.Medicines.FirstOrDefaultAsync(m => m.Id == id);
+            var medicine = await context.Medicines.FindAsync(id);
 
-            if (medicine != null)
-            {
-                context.Medicines.Remove(medicine);
-
-                await context.SaveChangesAsync();
-
-                return true;
-            }
-
-            return false;
+            context.Medicines.Remove(medicine!);
+            await context.SaveChangesAsync();
         }
     }
 }
