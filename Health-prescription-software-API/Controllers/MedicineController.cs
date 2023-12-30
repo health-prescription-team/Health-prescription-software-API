@@ -27,12 +27,8 @@ namespace Health_prescription_software_API.Controllers
 			this.apiBehaviorOptions = apiBehaviorOptions;
 		}
 
-        //todo: pharmacy Add
-        //todo: averagePrice sql calc.
-        //todo: who uses these actions?
-
 		[HttpPost]
-        //[Authorize(Roles = "NoTechAdmin")]
+        //[Authorize(Roles = Pharmacy)]
         public async Task<IActionResult> Add([FromForm] AddMedicineDTO model)
         {
             //todo: validations async and static
@@ -55,8 +51,8 @@ namespace Health_prescription_software_API.Controllers
         }
 
         [HttpDelete("{id}")]
-		//[Authorize(Roles = "NoTechAdmin")]
-		public async Task<IActionResult> Delete(Guid id)
+        //[Authorize(Roles = Pharmacy)]
+        public async Task<IActionResult> Delete(Guid id)
         {
             bool result = await medicineService.Delete(id);
 
@@ -70,8 +66,8 @@ namespace Health_prescription_software_API.Controllers
 
 
         [HttpPut("{id}")]
-		//[Authorize(Roles = "NoTechAdmin")]
-		public async Task<IActionResult> Edit(Guid id, [FromForm] EditMedicineDTO medicineToEdit)
+        //[Authorize(Roles = Pharmacy)]
+        public async Task<IActionResult> Edit(Guid id, [FromForm] EditMedicineDTO medicineToEdit)
         {
 
             if (!ModelState.IsValid)

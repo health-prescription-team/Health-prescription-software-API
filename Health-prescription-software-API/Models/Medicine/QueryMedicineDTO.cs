@@ -12,15 +12,12 @@
             EntriesPerPage = DefaultHitsPerPage;
             PageNumber = DefaultCurrentPage;
         }
-
         
         [StringLength(SearchTermMax, MinimumLength = SearchTermMin)]
 		public string? SearchTerm { get; set; }
 
-
 		[Range(1,int.MaxValue)]
 		public int? PageNumber { get; set; } 
-
 
 		[Range(1, int.MaxValue)]
 		public int? EntriesPerPage { get; set; }
