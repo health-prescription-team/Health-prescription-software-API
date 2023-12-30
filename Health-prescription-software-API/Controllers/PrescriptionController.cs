@@ -9,6 +9,7 @@
     using System.Security.Claims;
 
     using static Common.Roles.RoleConstants;
+    using static System.Runtime.InteropServices.JavaScript.JSType;
 
     [Route("api/[controller]")]
     public class PrescriptionController : Controller
@@ -168,6 +169,27 @@
                 var prescriptionId = await prescriptionService.Edit(model, GpId);
 
                 return Ok(prescriptionId);
+            }
+            catch (Exception)
+            {
+                return StatusCode(500);
+            }
+        }
+
+        public async Task<IActionResult> Finish(Guid id)
+        {
+
+            try
+            {
+
+                var prescriptionResult = await prescriptionService.FinishPrescription(id);
+                if (prescriptionResult  is false)
+                {
+                    ModelState.AddModelError("Prescription is not found",$"Cannot finish the prescriont with this Id {id}");
+                    return apiBehaviorOptions.Value.InvalidModelStateResponseFactory(ControllerContext);
+                }
+
+                return Ok(prescriptionResult);
             }
             catch (Exception)
             {
