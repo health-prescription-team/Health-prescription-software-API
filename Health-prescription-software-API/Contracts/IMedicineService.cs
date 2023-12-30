@@ -8,7 +8,7 @@ namespace Health_prescription_software_API.Contracts
 
         Task<Guid> Add(AddMedicineDTO model, string creatorId);
 
-        Task EditByIdAsync(Guid id, EditMedicineDTO editMedicineModel);
+        Task<Guid> EditByIdAsync(Guid id, EditMedicineDTO model);
 
         Task<AllMedicineServiceModel> GetAllAsync(QueryMedicineDTO? query);
 

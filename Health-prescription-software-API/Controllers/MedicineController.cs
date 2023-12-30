@@ -88,23 +88,37 @@ namespace Health_prescription_software_API.Controllers
 
 
         [HttpPut("{id}")]
-        //[Authorize(Roles = Pharmacy)]
-        public async Task<IActionResult> Edit(Guid id, [FromForm] EditMedicineDTO medicineToEdit)
+        [Authorize(Roles = Pharmacy)]
+        public async Task<IActionResult> Edit(Guid id, [FromForm] EditMedicineDTO model)
         {
-
-            if (!ModelState.IsValid)
-            {
-                return NotFound();
-            }
             try
             {
-                await this.medicineService.EditByIdAsync(id, medicineToEdit);
+                var pharmacyId = User.FindFirstValue(ClaimTypes.NameIdentifier)!;
+                bool isMedicineIdValid = await validationMedicine.IsMedicineValid(id);
+
+                if (isMedicineIdValid && !await validationMedicine.IsPharmacyMedicineOwner(pharmacyId, id))
+                {
+                    return Unauthorized();
+                }
+
+                if (!isMedicineIdValid)
+                {
+                    foreach (var error in validationMedicine.ModelErrors)
+                    {
+                        ModelState.AddModelError(error.ErrorPropName!, error.ErrorMessage!);
+                    }
+
+                    return apiBehaviorOptions.Value.InvalidModelStateResponseFactory(ControllerContext);
+                }
+
+                var medicineId = await this.medicineService.EditByIdAsync(id, model);
+
+                return Ok(new { MedicineId = medicineId });
             }
             catch (Exception)
             {
-                return NotFound();
+                return StatusCode(500);
             }
-            return Ok();
         }
 
         [HttpGet]

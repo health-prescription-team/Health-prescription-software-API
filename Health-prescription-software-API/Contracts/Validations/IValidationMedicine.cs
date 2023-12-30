@@ -7,5 +7,7 @@
         Task<bool> IsMedicineValid(Guid id);
 
         Task<bool> IsQueryValid(QueryMedicineDTO? queryModel);
+
+        Task<bool> IsPharmacyMedicineOwner(string pharmacyId, Guid medicineId);
     }
 }

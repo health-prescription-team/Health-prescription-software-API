@@ -7,7 +7,8 @@
         [Required]
         public string Name { get; set; } = null!;
 
-        [Required] public IFormFile MedicineImage { get; set; } = null!;
+        [Required] 
+        public IFormFile MedicineImage { get; set; } = null!;
 
         [Required]
         public decimal Price { get; set; }

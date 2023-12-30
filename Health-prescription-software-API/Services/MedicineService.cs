@@ -59,22 +59,24 @@ namespace Health_prescription_software_API.Services
             return medicineDTO;
         }
 
-
-        //todo: Edit must be performed only by noTech admin. 
-        //todo: Edit and Add must be introduced to Pharmacy as well. It ought to  edit price to the medicine.
-        public async Task EditByIdAsync(Guid id, EditMedicineDTO editMedicineModel)
+        public async Task<Guid> EditByIdAsync(Guid id, EditMedicineDTO model)
         {
+            var medicine = await this.context.Medicines.FindAsync(id);
 
-            Medicine medicineToEdit = await this.context.Medicines.FirstAsync(m => m.Id == id);
-            medicineToEdit.Name = editMedicineModel.Name;
-            //medicineToEdit.AveragePrice = editMedicineModel.Price;
-            medicineToEdit.MedicineCompany = editMedicineModel.MedicineCompany;
-            medicineToEdit.MedicineDetails = editMedicineModel.MedicineDetails;
-            medicineToEdit.MedicineImageBytes = editMedicineModel.MedicineImageBytes;
+            using var memoryStream = new MemoryStream();
+            await model.MedicineImage.CopyToAsync(memoryStream);
+
+            medicine!.Name = model.Name;
+            medicine!.Price = model.Price;
+            medicine!.MedicineCompany = model.MedicineCompany;
+            medicine!.MedicineDetails = model.MedicineDetails;
+            medicine!.MedicineImageBytes = memoryStream.ToArray();
+            medicine!.Ingredients = model.Ingredients;
+
             await this.context.SaveChangesAsync();
+
+            return id;
         }
-
-
 
         public async Task<AllMedicineServiceModel> GetAllAsync(QueryMedicineDTO? query)
         {

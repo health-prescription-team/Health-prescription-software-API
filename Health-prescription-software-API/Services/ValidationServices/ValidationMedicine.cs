@@ -40,6 +40,13 @@
             return true;
         }
 
+        public async Task<bool> IsPharmacyMedicineOwner(string pharmacyId, Guid medicineId)
+        {
+            var medicine = await dbContext.Medicines.FindAsync(medicineId);
+
+            return medicine?.OwnerId == pharmacyId;
+        }
+
         public async Task<bool> IsQueryValid(QueryMedicineDTO? queryModel)
         {
             if (queryModel is null)
