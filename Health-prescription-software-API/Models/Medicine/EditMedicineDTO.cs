@@ -1,16 +1,14 @@
-﻿using System.ComponentModel.DataAnnotations;
-
-namespace Health_prescription_software_API.Models.Medicine
+﻿namespace Health_prescription_software_API.Models.Medicine
 {
+    using System.ComponentModel.DataAnnotations;
+
     public class EditMedicineDTO
     {
-        //to-do: validations
         [Required]
         public string Name { get; set; } = null!;
 
         [Required]
-
-        public byte[]? MedicineImageBytes { get; set; }
+        public IFormFile MedicineImage { get; set; } = null!;
 
         [Required]
         [DataType(DataType.Currency)]

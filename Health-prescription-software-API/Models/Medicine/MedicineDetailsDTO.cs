@@ -13,5 +13,9 @@
         public string MedicineDetails { get; set; } = null!;
 
         public string? Ingredients { get; set; }
+
+        public string PharmacyName { get; set; } = null!;
+
+        public string PharmacyId { get; set; } = null!;
     }
 }

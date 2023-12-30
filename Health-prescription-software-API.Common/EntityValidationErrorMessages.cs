@@ -8,7 +8,7 @@ namespace Health_prescription_software_API.Common
 		{
 			public const string InvalidQueryString = "Invalid Query String.";
 
-			public const string InvalidMedicineId = "Medicine with id does not exist.";
+			public const string InvalidMedicineId = "Invalid medicine Id.";
 		}
 
 		public static class User

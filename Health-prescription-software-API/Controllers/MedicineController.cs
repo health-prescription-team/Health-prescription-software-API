@@ -6,6 +6,8 @@ namespace Health_prescription_software_API.Controllers
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.Extensions.Options;
     using Models.Medicine;
+    using System.Security.Claims;
+
     using static Common.Roles.RoleConstants;
 
     [Route("api/[controller]")]
@@ -17,98 +19,153 @@ namespace Health_prescription_software_API.Controllers
 
         private readonly IOptions<ApiBehaviorOptions> apiBehaviorOptions;
 
-		public MedicineController(
-			IMedicineService medicineService,
-			IValidationMedicine validationMedicine,
-			IOptions<ApiBehaviorOptions> apiBehaviorOptions)
-		{
-			this.medicineService = medicineService;
-			this.validationMedicine = validationMedicine;
-			this.apiBehaviorOptions = apiBehaviorOptions;
-		}
+        public MedicineController(
+            IMedicineService medicineService,
+            IValidationMedicine validationMedicine,
+            IOptions<ApiBehaviorOptions> apiBehaviorOptions)
+        {
+            this.medicineService = medicineService;
+            this.validationMedicine = validationMedicine;
+            this.apiBehaviorOptions = apiBehaviorOptions;
+        }
 
-		[HttpPost]
-        //[Authorize(Roles = Pharmacy)]
+        [HttpPost]
+        [Authorize(Roles = Pharmacy)]
         public async Task<IActionResult> Add([FromForm] AddMedicineDTO model)
         {
-            //todo: validations async and static
-            await medicineService.Add(model);
+            try
+            {
+                var pharmacyId = User.FindFirstValue(ClaimTypes.NameIdentifier)!;
 
-            return Ok("Successfully added medicine");
+                Guid medicineId = await medicineService.Add(model, pharmacyId);
+
+                return Ok(new { MedicineId = medicineId });
+            }
+            catch (Exception)
+            {
+                return StatusCode(500);
+            }
         }
 
         [HttpGet("{id}")]
+        [Authorize]
         public async Task<IActionResult> Details(Guid id)
         {
-            var medicine = await medicineService.GetById(id);
-
-            if (medicine == null)
+            try
             {
-                return NotFound($"Item with id {id} not found.");
-            }
+                if (!await validationMedicine.IsMedicineValid(id))
+                {
+                    foreach (var error in validationMedicine.ModelErrors)
+                    {
+                        ModelState.AddModelError(error.ErrorPropName!, error.ErrorMessage!);
+                    }
 
-            return Ok(medicine);
+                    return apiBehaviorOptions.Value.InvalidModelStateResponseFactory(ControllerContext);
+                }
+
+                var medicine = await medicineService.GetById(id);
+
+                return Ok(medicine);
+            }
+            catch (Exception)
+            {
+                return StatusCode(500);
+            }
         }
 
         [HttpDelete("{id}")]
-        //[Authorize(Roles = Pharmacy)]
+        [Authorize(Roles = Pharmacy)]
         public async Task<IActionResult> Delete(Guid id)
         {
-            bool result = await medicineService.Delete(id);
-
-            if (result)
+            try
             {
-                return Ok("Successfully deleted medicine");
-            }
+                var pharmacyId = User.FindFirstValue(ClaimTypes.NameIdentifier)!;
+                bool isMedicineIdValid = await validationMedicine.IsMedicineValid(id);
 
-            return NotFound($"Item with id {id} not found.");
+                if (isMedicineIdValid && !await validationMedicine.IsPharmacyMedicineOwner(pharmacyId, id))
+                {
+                    return Unauthorized();
+                }
+
+                if (!isMedicineIdValid)
+                {
+                    foreach (var error in validationMedicine.ModelErrors)
+                    {
+                        ModelState.AddModelError(error.ErrorPropName!, error.ErrorMessage!);
+                    }
+
+                    return apiBehaviorOptions.Value.InvalidModelStateResponseFactory(ControllerContext);
+                }
+
+                await this.medicineService.Delete(id);
+
+                return NoContent();
+            }
+            catch (Exception)
+            {
+                return StatusCode(500);
+            }
         }
 
 
         [HttpPut("{id}")]
-        //[Authorize(Roles = Pharmacy)]
-        public async Task<IActionResult> Edit(Guid id, [FromForm] EditMedicineDTO medicineToEdit)
+        [Authorize(Roles = Pharmacy)]
+        public async Task<IActionResult> Edit(Guid id, [FromForm] EditMedicineDTO model)
         {
-
-            if (!ModelState.IsValid)
-            {
-                return NotFound();
-            }
             try
             {
-                await this.medicineService.EditByIdAsync(id, medicineToEdit);
+                var pharmacyId = User.FindFirstValue(ClaimTypes.NameIdentifier)!;
+                bool isMedicineIdValid = await validationMedicine.IsMedicineValid(id);
+
+                if (isMedicineIdValid && !await validationMedicine.IsPharmacyMedicineOwner(pharmacyId, id))
+                {
+                    return Unauthorized();
+                }
+
+                if (!isMedicineIdValid)
+                {
+                    foreach (var error in validationMedicine.ModelErrors)
+                    {
+                        ModelState.AddModelError(error.ErrorPropName!, error.ErrorMessage!);
+                    }
+
+                    return apiBehaviorOptions.Value.InvalidModelStateResponseFactory(ControllerContext);
+                }
+
+                var medicineId = await this.medicineService.EditByIdAsync(id, model);
+
+                return Ok(new { MedicineId = medicineId });
             }
             catch (Exception)
             {
-                return NotFound();
+                return StatusCode(500);
             }
-            return Ok();
         }
 
         [HttpGet]
-        //[Authorize]
+        [Authorize]
         public async Task<IActionResult> All([FromQuery] QueryMedicineDTO? queryModel = null)
         {
-            if (!(await validationMedicine.IsQueryValid(queryModel)))
-            {
-                foreach (var error in validationMedicine.ModelErrors)
-                {
-                    ModelState.AddModelError(
-                        error.ErrorMessage ?? string.Empty,
-                        error.ErrorPropName ?? string.Empty);
-                }
-
-                return apiBehaviorOptions
-                    .Value.InvalidModelStateResponseFactory(ControllerContext);
-			}
             try
             {
+                if (!(await validationMedicine.IsQueryValid(queryModel)))
+                {
+                    foreach (var error in validationMedicine.ModelErrors)
+                    {
+                        ModelState.AddModelError(
+                            error.ErrorPropName!, error.ErrorMessage!);
+                    }
+
+                    return apiBehaviorOptions
+                        .Value.InvalidModelStateResponseFactory(ControllerContext);
+                }
+
                 AllMedicineServiceModel model = await medicineService.GetAllAsync(queryModel);
+
                 return Ok(model);
             }
             catch (Exception)
             {
-                //todo: ask FE
                 return StatusCode(500);
             }
 
