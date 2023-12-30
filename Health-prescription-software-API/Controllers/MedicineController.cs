@@ -7,6 +7,7 @@ namespace Health_prescription_software_API.Controllers
     using Microsoft.Extensions.Options;
     using Models.Medicine;
     using System.Security.Claims;
+
     using static Common.Roles.RoleConstants;
 
     [Route("api/[controller]")]
@@ -18,17 +19,17 @@ namespace Health_prescription_software_API.Controllers
 
         private readonly IOptions<ApiBehaviorOptions> apiBehaviorOptions;
 
-		public MedicineController(
-			IMedicineService medicineService,
-			IValidationMedicine validationMedicine,
-			IOptions<ApiBehaviorOptions> apiBehaviorOptions)
-		{
-			this.medicineService = medicineService;
-			this.validationMedicine = validationMedicine;
-			this.apiBehaviorOptions = apiBehaviorOptions;
-		}
+        public MedicineController(
+            IMedicineService medicineService,
+            IValidationMedicine validationMedicine,
+            IOptions<ApiBehaviorOptions> apiBehaviorOptions)
+        {
+            this.medicineService = medicineService;
+            this.validationMedicine = validationMedicine;
+            this.apiBehaviorOptions = apiBehaviorOptions;
+        }
 
-		[HttpPost]
+        [HttpPost]
         [Authorize(Roles = Pharmacy)]
         public async Task<IActionResult> Add([FromForm] AddMedicineDTO model)
         {
@@ -142,29 +143,29 @@ namespace Health_prescription_software_API.Controllers
         }
 
         [HttpGet]
-        //[Authorize]
+        [Authorize]
         public async Task<IActionResult> All([FromQuery] QueryMedicineDTO? queryModel = null)
         {
-            if (!(await validationMedicine.IsQueryValid(queryModel)))
-            {
-                foreach (var error in validationMedicine.ModelErrors)
-                {
-                    ModelState.AddModelError(
-                        error.ErrorMessage ?? string.Empty,
-                        error.ErrorPropName ?? string.Empty);
-                }
-
-                return apiBehaviorOptions
-                    .Value.InvalidModelStateResponseFactory(ControllerContext);
-			}
             try
             {
+                if (!(await validationMedicine.IsQueryValid(queryModel)))
+                {
+                    foreach (var error in validationMedicine.ModelErrors)
+                    {
+                        ModelState.AddModelError(
+                            error.ErrorPropName!, error.ErrorMessage!);
+                    }
+
+                    return apiBehaviorOptions
+                        .Value.InvalidModelStateResponseFactory(ControllerContext);
+                }
+
                 AllMedicineServiceModel model = await medicineService.GetAllAsync(queryModel);
+
                 return Ok(model);
             }
             catch (Exception)
             {
-                //todo: ask FE
                 return StatusCode(500);
             }
 
