@@ -14,8 +14,6 @@ namespace Health_prescription_software_API.Data
 		public HealthPrescriptionDbContext(DbContextOptions options) : base(options) { }
 
         public virtual DbSet<Medicine> Medicines { get; set; }
-        
-        public virtual DbSet<UserMedicine> UsersMedicines { get; set; }
 
         public virtual DbSet<Prescription> Prescriptions { get; set; }
 
@@ -45,9 +43,6 @@ namespace Health_prescription_software_API.Data
                     Name = Pharmacy,
                     NormalizedName = Pharmacy.ToUpper()
                 });
-
-            builder.Entity<UserMedicine>()
-                .HasKey(um => new { um.MedicineId, um.UserId });
 
             base.OnModelCreating(builder);
             

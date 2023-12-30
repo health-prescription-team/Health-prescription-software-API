@@ -10,9 +10,8 @@
         [StringLength(NameMaxLength, MinimumLength = NameMinLength)]
         public string FirstName { get; set; } = null!;
 
-        [Required]
         [StringLength(NameMaxLength, MinimumLength = NameMinLength)]
-        public string MiddleName { get; set; } = null!;
+        public string? MiddleName { get; set; }
 
         [Required]
         [StringLength(NameMaxLength, MinimumLength = NameMinLength)]
@@ -34,7 +33,7 @@
         public string HospitalName { get; set; } = null!;
 
         [Required]
-        [StringLength(PharmacyNameMaxLength, MinimumLength = PharmacyNameMinLength)]
+        [DataType(DataType.Password)]
         public string Password { get; set; } = null!;
 
         [Required]
