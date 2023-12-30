@@ -83,6 +83,23 @@
             return entity.Id;
         }
 
+        public async Task<bool> FinishPrescription(Guid id)
+        {
+            var prescriptionsList = await context.Prescriptions
+                . FirstOrDefaultAsync(x => x.Id ==  id);
+
+            if (prescriptionsList is null)
+            {
+                return false;
+            }
+
+            prescriptionsList.FulfillmentDate = DateTime.Now;
+            prescriptionsList.IsFulfilled =  true;
+            await context.SaveChangesAsync();
+
+            return true;
+        }
+
         public async Task<IEnumerable<PatientPrescriptionsListDTO>> GetPatientPrescriptions(string patientEgn)
         {
             var patient = await context.Users.FirstOrDefaultAsync(p => p.Egn == patientEgn);
