@@ -175,7 +175,7 @@
                 return StatusCode(500);
             }
         }
-
+        [HttpPost("Complete/{id}")]
         public async Task<IActionResult> Finish(Guid id)
         {
 
