@@ -27,14 +27,14 @@ namespace Health_prescription_software_API.Services
 				throw new NullReferenceException("Medicine model cannot be null!");
 			}
 
-			if (model.MedicineFile == null || model.MedicineFile.Length == 0)
+			if (model.MedicineImage == null || model.MedicineImage.Length == 0)
 			{
 				throw new NullReferenceException("Image model cannot be null!");
 			}
 
 			using (var memoryStream = new MemoryStream())
 			{
-				await model.MedicineFile.CopyToAsync(memoryStream);
+				await model.MedicineImage.CopyToAsync(memoryStream);
 
 				var modelDb = new Medicine
 				{
@@ -45,8 +45,7 @@ namespace Health_prescription_software_API.Services
 					//todo: Also an Average price is introduced as sql calculated value taken from the prices of all pharmacies.
 					//AveragePrice = model.Price,
 					MedicineImageBytes = memoryStream.ToArray(),
-					MedicineDetails = model.MedicineDetails,
-					IsDeleted = false
+					MedicineDetails = model.MedicineDetails
 
 				};
 
@@ -57,7 +56,7 @@ namespace Health_prescription_software_API.Services
       
 		public async Task<MedicineDetailsDTO?> GetById(Guid id)
 		{
-				var medicine = await context.Medicines.FirstOrDefaultAsync(m => m.Id == id && !m.IsDeleted);
+				var medicine = await context.Medicines.FirstOrDefaultAsync(m => m.Id == id);
 
 				if (medicine != null)
 				{
@@ -65,7 +64,7 @@ namespace Health_prescription_software_API.Services
 					{
 						Name = medicine.Name,
 						MedicineImageBytes = medicine.MedicineImageBytes,
-						AveragePrice = medicine.AveragePrice,
+						Price = medicine.Price,
 						MedicineCompany = medicine.MedicineCompany,
 						MedicineDetails = medicine.MedicineDetails
 					};
@@ -82,7 +81,7 @@ namespace Health_prescription_software_API.Services
 		public async Task EditByIdAsync(Guid id, EditMedicineDTO editMedicineModel)
 		{
 
-			Medicine medicineToEdit = await this.context.Medicines.FirstAsync(m => m.Id == id && !m.IsDeleted);
+			Medicine medicineToEdit = await this.context.Medicines.FirstAsync(m => m.Id == id);
 			medicineToEdit.Name = editMedicineModel.Name;
 			//medicineToEdit.AveragePrice = editMedicineModel.Price;
 			medicineToEdit.MedicineCompany = editMedicineModel.MedicineCompany;
@@ -97,7 +96,6 @@ namespace Health_prescription_software_API.Services
 		{
 			IQueryable<Medicine> medicineQuery = context.Medicines
 				.AsQueryable()
-				.Where(m => !m.IsDeleted)
 				.AsNoTracking();
 
 
@@ -109,7 +107,7 @@ namespace Health_prescription_software_API.Services
 					//todo: obtain ordering from query string if needed
 					.OrderBy(m => m.Name)
 					.ThenBy(m => m.MedicineCompany)
-					.ThenByDescending(m => m.AveragePrice);
+					.ThenByDescending(m => m.Price);
 			}
 
 			int medicinesCount = medicineQuery.Count();
@@ -131,7 +129,7 @@ namespace Health_prescription_software_API.Services
 					Id = m.Id,
 					Name = m.Name,
 					MedicineCompany = m.MedicineCompany,
-					AveragePrice = m.AveragePrice,
+					Price = m.Price,
 					MedicineImageBytes  = m.MedicineImageBytes
 				})
 				.ToArrayAsync();
@@ -148,7 +146,6 @@ namespace Health_prescription_software_API.Services
         public async Task<IEnumerable<AllMedicineMinimalDTO>> GetAllMinimalAsync()
         {
             var modelDb = await context.Medicines
-                .Where(m => !m.IsDeleted)
 				.AsNoTracking()
                 .Select(x => new AllMedicineMinimalDTO
                 {
@@ -161,11 +158,11 @@ namespace Health_prescription_software_API.Services
 
         public async Task<bool> Delete(Guid id)
         {
-            var medicine = await context.Medicines.FirstOrDefaultAsync(m => m.Id == id && !m.IsDeleted);
+            var medicine = await context.Medicines.FirstOrDefaultAsync(m => m.Id == id);
 
 			if (medicine != null)
 			{
-				medicine.IsDeleted = true;
+				context.Medicines.Remove(medicine);
 
 				await context.SaveChangesAsync();
 

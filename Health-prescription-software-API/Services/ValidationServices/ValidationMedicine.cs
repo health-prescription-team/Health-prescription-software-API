@@ -42,7 +42,7 @@
             int requiredEntries = entriesPerPage * pageNumber - entriesPerPage + 1;
 
             int availableEntries = await dbContext.Medicines
-                .CountAsync(m => !m.IsDeleted);
+                .CountAsync();
 
             if (requiredEntries > availableEntries)
             {

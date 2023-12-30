@@ -1,16 +1,10 @@
-﻿using Microsoft.AspNetCore.Identity;
-using System.ComponentModel;
-using System.ComponentModel.DataAnnotations;
-
-namespace Health_prescription_software_API.Data.Entities
+﻿namespace Health_prescription_software_API.Data.Entities
 {
+    using System.ComponentModel.DataAnnotations;
+    using System.ComponentModel.DataAnnotations.Schema;
+
     public class Medicine
     {
-        public Medicine()
-        {
-			UsersMedicines = new HashSet<UserMedicine>();
-        }
-
         [Key]
         public Guid Id { get; set; }
 
@@ -18,11 +12,15 @@ namespace Health_prescription_software_API.Data.Entities
         public string Name { get; set; } = null!;
 
         [Required] 
-
         public byte[]? MedicineImageBytes { get; set; }
 
         [Required]
-        public decimal AveragePrice { get; set; }
+        public decimal Price { get; set; }
+
+        [Required]
+        public string OwnerId { get; set; } = null!;
+        [ForeignKey(nameof(OwnerId))]
+        public virtual User.User Owner { get; set; } = null!;
 
         [Required] 
         public string MedicineCompany { get; set; } = null!;
@@ -30,10 +28,6 @@ namespace Health_prescription_software_API.Data.Entities
         [Required] 
         public string MedicineDetails { get; set; } = null!;
 
-        [Required]
-        [DefaultValue(false)]
-        public bool IsDeleted { get; set; }
-
-        public ICollection<UserMedicine> UsersMedicines { get; set; }
+        public string? Ingredients { get; set; }
     }
 }

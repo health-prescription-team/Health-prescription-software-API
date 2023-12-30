@@ -15,9 +15,7 @@
                     MedicineImageBytes = [],
                     MedicineCompany = "Fake Pharma",
                     MedicineDetails = "Аспирин 50 мг.",
-                    AveragePrice = 12.33m,
-                    IsDeleted = false,
-                    UsersMedicines = []
+                    Price = 12.33m
                 },
                 new Medicine()
                 {
@@ -26,9 +24,7 @@
                     MedicineImageBytes = [],
                     MedicineCompany = "Лекарства ООД",
                     MedicineDetails = "Парацетамол 14 мг.",
-                    AveragePrice = 4.33m,
-                    IsDeleted = false,
-                    UsersMedicines = []
+                    Price = 4.33m
                 },
                 new Medicine()
                 {
@@ -37,9 +33,7 @@
                     MedicineImageBytes = [],
                     MedicineCompany = "Unknown",
                     MedicineDetails = "Gives random super powers.",
-                    AveragePrice = 4.33m,
-                    IsDeleted = true,
-                    UsersMedicines = []
+                    Price = 4.33m
                 }
             ];
         }
