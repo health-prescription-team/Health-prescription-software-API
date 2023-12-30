@@ -4,16 +4,16 @@ namespace Health_prescription_software_API.Contracts
     public interface IMedicineService
     {
 
-        Task<MedicineDetailsDTO?> GetById(Guid id);
+        Task<MedicineDetailsDTO> GetById(Guid id);
 
-        Task Add(AddMedicineDTO model);
+        Task<Guid> Add(AddMedicineDTO model, string creatorId);
 
-        Task EditByIdAsync(Guid id, EditMedicineDTO editMedicineModel);
+        Task<Guid> EditByIdAsync(Guid id, EditMedicineDTO model);
 
         Task<AllMedicineServiceModel> GetAllAsync(QueryMedicineDTO? query);
 
         Task<IEnumerable<AllMedicineMinimalDTO>> GetAllMinimalAsync();
 
-        Task<bool> Delete(Guid id);
+        Task Delete(Guid id);
     }
 }

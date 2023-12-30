@@ -4,6 +4,10 @@
     {
         public Guid PrescriptionId { get; set; }
 
+        public string PatientNames { get; set; } = null!;
+
+        public string PatientEGN { get; set; } = null!;
+
         public string CreatedAt { get; set; } = null!;
 
         public string? ExpiresAt { get; set; }

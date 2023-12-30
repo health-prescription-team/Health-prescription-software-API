@@ -109,12 +109,37 @@
             }
         }
         
-        [HttpDelete]
-        public IActionResult Delete(Guid id) 
+        [HttpDelete("{id}")]
+        [Authorize(Roles = GP)]
+        public async Task<IActionResult> Delete(Guid id) 
         {
-            prescriptionService.Delete(id);
+            try
+            {
+                string GpId = User.FindFirstValue(ClaimTypes.NameIdentifier)!;
 
-            return Ok("Deleted successfully");
+                if (!await validationService.IsGpThePrescriber(GpId, id))
+                {
+                    return Unauthorized();
+                }
+
+                if (!await validationService.IsDeletePrescriptionValid(id))
+                {
+                    foreach (var error in validationService.ModelErrors)
+                    {
+                        ModelState.AddModelError(error.ErrorPropName!, error.ErrorMessage!);
+                    }
+
+                    return apiBehaviorOptions.Value.InvalidModelStateResponseFactory(ControllerContext);
+                }
+
+                prescriptionService.Delete(id);
+
+                return Ok("Deleted successfully");
+            }
+            catch (Exception)
+            {
+                return StatusCode(500);
+            }
         }
 
         [HttpPut]

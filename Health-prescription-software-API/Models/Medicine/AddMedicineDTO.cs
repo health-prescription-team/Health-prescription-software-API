@@ -1,13 +1,14 @@
-﻿using System.ComponentModel.DataAnnotations;
-
-namespace Health_prescription_software_API.Models.Medicine
+﻿namespace Health_prescription_software_API.Models.Medicine
 {
+    using System.ComponentModel.DataAnnotations;
+
     public class AddMedicineDTO
     {
         [Required]
         public string Name { get; set; } = null!;
 
-        [Required] public IFormFile MedicineFile { get; set; } = null!;
+        [Required] 
+        public IFormFile MedicineImage { get; set; } = null!;
 
         [Required]
         public decimal Price { get; set; }
@@ -17,5 +18,7 @@ namespace Health_prescription_software_API.Models.Medicine
 
         [Required]
         public string MedicineDetails { get; set; } = null!;
+
+        public string? Ingredients { get; set; }
     }
 }
