@@ -4,7 +4,7 @@ namespace Health_prescription_software_API.Contracts
     public interface IMedicineService
     {
 
-        Task<MedicineDetailsDTO?> GetById(Guid id);
+        Task<MedicineDetailsDTO> GetById(Guid id);
 
         Task<Guid> Add(AddMedicineDTO model, string creatorId);
 

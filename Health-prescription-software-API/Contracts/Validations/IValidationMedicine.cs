@@ -4,6 +4,7 @@
 
     public interface IValidationMedicine : IValidationErrorMessage
     {
+        Task<bool> IsMedicineValid(Guid id);
 
         Task<bool> IsQueryValid(QueryMedicineDTO? queryModel);
     }

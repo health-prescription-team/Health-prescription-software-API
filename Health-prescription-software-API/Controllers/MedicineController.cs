@@ -47,16 +47,29 @@ namespace Health_prescription_software_API.Controllers
         }
 
         [HttpGet("{id}")]
+        [Authorize]
         public async Task<IActionResult> Details(Guid id)
         {
-            var medicine = await medicineService.GetById(id);
-
-            if (medicine == null)
+            try
             {
-                return NotFound($"Item with id {id} not found.");
-            }
+                if (!await validationMedicine.IsMedicineValid(id))
+                {
+                    foreach (var error in validationMedicine.ModelErrors)
+                    {
+                        ModelState.AddModelError(error.ErrorPropName!, error.ErrorMessage!);
+                    }
 
-            return Ok(medicine);
+                    return apiBehaviorOptions.Value.InvalidModelStateResponseFactory(ControllerContext);
+                }
+
+                var medicine = await medicineService.GetById(id);
+
+                return Ok(medicine);
+            }
+            catch (Exception)
+            {
+                return StatusCode(500);
+            }
         }
 
         [HttpDelete("{id}")]

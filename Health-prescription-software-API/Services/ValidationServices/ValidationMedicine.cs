@@ -7,6 +7,7 @@
     using static Common.EntityValidationErrorMessages.Medicine;
     using Health_prescription_software_API.Contracts.Validations;
     using System.Collections.Generic;
+    using System;
 
     public class ValidationMedicine : IValidationMedicine
     {
@@ -19,6 +20,25 @@
         }
 
         public ICollection<ModelError> ModelErrors { get; set; }
+
+        public async Task<bool> IsMedicineValid(Guid id)
+        {
+            bool isIdValid = await dbContext.Medicines.AnyAsync(m => m.Id == id);
+
+            if (!isIdValid)
+            {
+                var modelError = new ModelError {
+                    ErrorPropName = "Id",
+                    ErrorMessage = InvalidMedicineId
+                };
+
+                ModelErrors.Add(modelError);
+
+                return false;
+            }
+
+            return true;
+        }
 
         public async Task<bool> IsQueryValid(QueryMedicineDTO? queryModel)
         {
