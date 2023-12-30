@@ -6,6 +6,7 @@ namespace Health_prescription_software_API.Controllers
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.Extensions.Options;
     using Models.Medicine;
+    using System.Security.Claims;
     using static Common.Roles.RoleConstants;
 
     [Route("api/[controller]")]
@@ -28,13 +29,21 @@ namespace Health_prescription_software_API.Controllers
 		}
 
 		[HttpPost]
-        //[Authorize(Roles = Pharmacy)]
+        [Authorize(Roles = Pharmacy)]
         public async Task<IActionResult> Add([FromForm] AddMedicineDTO model)
         {
-            //todo: validations async and static
-            await medicineService.Add(model);
+            try
+            {
+                var pharmacyId = User.FindFirstValue(ClaimTypes.NameIdentifier)!;
 
-            return Ok("Successfully added medicine");
+                Guid medicineId = await medicineService.Add(model, pharmacyId);
+
+                return Ok(new { MedicineId = medicineId });
+            }
+            catch (Exception)
+            {
+                return StatusCode(500);
+            }
         }
 
         [HttpGet("{id}")]

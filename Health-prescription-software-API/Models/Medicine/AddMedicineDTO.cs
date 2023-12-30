@@ -1,7 +1,7 @@
-﻿using System.ComponentModel.DataAnnotations;
-
-namespace Health_prescription_software_API.Models.Medicine
+﻿namespace Health_prescription_software_API.Models.Medicine
 {
+    using System.ComponentModel.DataAnnotations;
+
     public class AddMedicineDTO
     {
         [Required]

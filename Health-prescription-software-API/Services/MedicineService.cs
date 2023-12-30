@@ -18,41 +18,27 @@ namespace Health_prescription_software_API.Services
 			this.context = context;
 		}
 
-
-		//todo: Must be restricted only to noTech admin
-		public async Task Add(AddMedicineDTO model)
+		public async Task<Guid> Add(AddMedicineDTO model, string creatorId)
 		{
-			if (model is null)
-			{
-				throw new NullReferenceException("Medicine model cannot be null!");
-			}
+            using var memoryStream = new MemoryStream();
+            await model.MedicineImage.CopyToAsync(memoryStream);
 
-			if (model.MedicineImage == null || model.MedicineImage.Length == 0)
-			{
-				throw new NullReferenceException("Image model cannot be null!");
-			}
+            var medicine = new Medicine
+            {
+                Name = model.Name,
+                Price = model.Price,
+                MedicineImageBytes = memoryStream.ToArray(),
+                MedicineDetails = model.MedicineDetails,
+                MedicineCompany = model.MedicineCompany,
+                Ingredients = model.Ingredients,
+                OwnerId = creatorId
+            };
 
-			using (var memoryStream = new MemoryStream())
-			{
-				await model.MedicineImage.CopyToAsync(memoryStream);
+            await context.Medicines.AddAsync(medicine);
+            await context.SaveChangesAsync();
 
-				var modelDb = new Medicine
-				{
-					MedicineCompany = model.MedicineCompany,
-					Name = model.Name,
-					//The medicine must be added from noTech admin who have permissions to add newly approved medicines!!!
-					//In this regard a medicine price is added only by Pharmacy in the users-medicines table.
-					//todo: Also an Average price is introduced as sql calculated value taken from the prices of all pharmacies.
-					//AveragePrice = model.Price,
-					MedicineImageBytes = memoryStream.ToArray(),
-					MedicineDetails = model.MedicineDetails
-
-				};
-
-				await context.Medicines.AddAsync(modelDb);
-				await context.SaveChangesAsync();
-			}
-		}
+			return medicine.Id;
+        }
       
 		public async Task<MedicineDetailsDTO?> GetById(Guid id)
 		{
