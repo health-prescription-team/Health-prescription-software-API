@@ -55,8 +55,11 @@
 
             // Assert
 
-            Assert.That(validationResult, Is.True);
-            Assert.That(actual: validationService.ModelErrors.Count, Is.EqualTo(0));
+            Assert.Multiple(() =>
+            {
+                Assert.That(validationResult, Is.True);
+                Assert.That(actual: validationService.ModelErrors.Count, Is.EqualTo(0));
+            });
         }
 
         [Test]
@@ -86,9 +89,13 @@
 
             // Assert
 
-            Assert.That(validationResult, Is.False);
-            Assert.That(actualErrorPropName, Is.EqualTo(expectedErrorPropName));
-            Assert.That(actualErrorMessage, Is.EqualTo(expectedErrorMessage));
+            Assert.Multiple(() =>
+            {
+                Assert.That(validationResult, Is.False);
+                Assert.That(actual: validationService.ModelErrors.Count, Is.EqualTo(1));
+                Assert.That(actualErrorPropName, Is.EqualTo(expectedErrorPropName));
+                Assert.That(actualErrorMessage, Is.EqualTo(expectedErrorMessage));
+            });
         }
 
         [Test]
@@ -118,9 +125,157 @@
 
             // Assert
 
-            Assert.That(validationResult, Is.False);
-            Assert.That(actualErrorPropName, Is.EqualTo(expectedErrorPropName));
-            Assert.That(actualErrorMessage, Is.EqualTo(expectedErrorMessage));
+            Assert.Multiple(() =>
+            {
+                Assert.That(validationResult, Is.False);
+                Assert.That(actual: validationService.ModelErrors.Count, Is.EqualTo(1));
+                Assert.That(actualErrorPropName, Is.EqualTo(expectedErrorPropName));
+                Assert.That(actualErrorMessage, Is.EqualTo(expectedErrorMessage));
+            });
+        }
+
+        [Test]
+        public async Task IsPharmacyRegisterValidWithValidDataReturnsTrue()
+        {
+            // Arrange
+
+            var validationService = new ValidationAuthentication(dbContext.Object, userManager.Object);
+
+            RegisterPharmacyDto registerModel = new()
+            {
+                Email = "newPharmacy@test.bg",
+                PharmacyName = "Нова Аптека",
+                PhoneNumber = "1234567890",
+                Password = "Parola1!"
+            };
+
+            // Act
+
+            var validationResult = await validationService.IsPharmacyRegisterValid(registerModel);
+
+            // Assert
+
+            Assert.Multiple(() =>
+            {
+                Assert.That(validationResult, Is.True);
+                Assert.That(actual: validationService.ModelErrors.Count, Is.EqualTo(0));
+            });
+        }
+
+        [Test]
+        public async Task IsPharmacyRegisterValidWithExistingEmailReturnsFalse()
+        {
+            // Arrange
+
+            var validationService = new ValidationAuthentication(dbContext.Object, userManager.Object);
+
+            RegisterPharmacyDto registerModel = new()
+            {
+                Email = "pharmacy@test.bg",
+                PharmacyName = "Нова Аптека",
+                PhoneNumber = "1234567890",
+                Password = "Parola1!"
+            };
+
+            var expectedErrorPropName = nameof(registerModel.Email);
+            var expectedErrorMessage = PharmacyUserWithEmailExists;
+
+            // Act
+
+            var validationResult = await validationService.IsPharmacyRegisterValid(registerModel);
+
+            var actualErrorPropName = validationService.ModelErrors.ToArray()[0].ErrorPropName;
+            var actualErrorMessage = validationService.ModelErrors.ToArray()[0].ErrorMessage;
+
+            // Assert
+
+            Assert.Multiple(() =>
+            {
+                Assert.That(validationResult, Is.False);
+                Assert.That(actual: validationService.ModelErrors.Count, Is.EqualTo(1));
+                Assert.That(actualErrorPropName, Is.EqualTo(expectedErrorPropName));
+                Assert.That(actualErrorMessage, Is.EqualTo(expectedErrorMessage));
+            });
+        }
+
+        [Test]
+        public async Task IsPharmacyRegisterValidWithExistingPharmacyNameReturnsFalse()
+        {
+            // Arrange
+
+            var validationService = new ValidationAuthentication(dbContext.Object, userManager.Object);
+
+            RegisterPharmacyDto registerModel = new()
+            {
+                Email = "nonexisting@test.bg",
+                PharmacyName = "Аптека",
+                PhoneNumber = "1234567890",
+                Password = "Parola1!"
+            };
+
+            var expectedErrorPropName = nameof(registerModel.PharmacyName);
+            var expectedErrorMessage = PharmacyUserWithSameNameExists;
+
+            // Act
+
+            var validationResult = await validationService.IsPharmacyRegisterValid(registerModel);
+
+            var actualErrorPropName = validationService.ModelErrors.ToArray()[0].ErrorPropName;
+            var actualErrorMessage = validationService.ModelErrors.ToArray()[0].ErrorMessage;
+
+            // Assert
+
+            Assert.Multiple(() =>
+            {
+                Assert.That(validationResult, Is.False);
+                Assert.That(actual: validationService.ModelErrors.Count, Is.EqualTo(1));
+                Assert.That(actualErrorPropName, Is.EqualTo(expectedErrorPropName));
+                Assert.That(actualErrorMessage, Is.EqualTo(expectedErrorMessage));
+            });
+        }
+
+        [Test]
+        public async Task IsPharmacyRegisterValidWithExistingPharmacyNameAndEmailReturnsFalse()
+        {
+            // Arrange
+
+            var validationService = new ValidationAuthentication(dbContext.Object, userManager.Object);
+
+            RegisterPharmacyDto registerModel = new()
+            {
+                Email = "pharmacy@test.bg",
+                PharmacyName = "Аптека",
+                PhoneNumber = "1234567890",
+                Password = "Parola1!"
+            };
+
+            var expectedNameErrorPropName = nameof(registerModel.PharmacyName);
+            var expectedNameErrorMessage = PharmacyUserWithSameNameExists;
+
+            var expectedEmailErrorPropName = nameof(registerModel.Email);
+            var expectedEmailErrorMessage = PharmacyUserWithEmailExists;
+
+            // Act
+
+            var validationResult = await validationService.IsPharmacyRegisterValid(registerModel);
+
+            var actualEmailErrorPropName = validationService.ModelErrors.ToArray()[0].ErrorPropName;
+            var actualEmailErrorMessage = validationService.ModelErrors.ToArray()[0].ErrorMessage;
+
+            var actualNameErrorPropName = validationService.ModelErrors.ToArray()[1].ErrorPropName;
+            var actualNameErrorMessage = validationService.ModelErrors.ToArray()[1].ErrorMessage;
+
+            // Assert
+
+            Assert.Multiple(() =>
+            {
+                Assert.That(validationResult, Is.False);
+                Assert.That(actual: validationService.ModelErrors.Count, Is.EqualTo(2));
+                Assert.That(actualNameErrorPropName, Is.EqualTo(expectedNameErrorPropName));
+                Assert.That(actualNameErrorMessage, Is.EqualTo(expectedNameErrorMessage));
+                Assert.That(actualEmailErrorPropName, Is.EqualTo(expectedEmailErrorPropName));
+                Assert.That(actualEmailErrorMessage, Is.EqualTo(expectedEmailErrorMessage));
+            });
         }
     }
 }
