@@ -15,7 +15,7 @@
 
         Task<bool> IsPharmacistLoginValid(LoginPharmacistDto loginModel);
 
-        Task<bool> IsPatientRegisterValid(PatientDto registerModel);
+        Task<bool> IsPatientRegisterValid(RegisterPatientDto registerModel);
 
         Task<bool> IsPatientLoginValid(LoginPatientDto loginModel);
 

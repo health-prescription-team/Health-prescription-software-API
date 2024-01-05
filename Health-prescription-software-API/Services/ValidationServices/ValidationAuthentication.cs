@@ -29,7 +29,7 @@
         }
 
         public ICollection<ModelError> ModelErrors { get; set; }
-        
+
         public async Task<bool> IsPharmacyLoginValid(LoginPharmacyDto loginModel)
         {
             User? userExistsByEmail = await dbContext.Users.FirstOrDefaultAsync(u => u.Email == loginModel.Email);
@@ -66,13 +66,13 @@
 
             return true;
         }
+
         public async Task<bool> IsPharmacyRegisterValid(RegisterPharmacyDto registerModel)
         {
-            bool isEmailPresent = await dbContext.Users
-                .AnyAsync(u => u.Email == registerModel.Email);
-            User? pharmacyUserExists = await dbContext.Users.FirstOrDefaultAsync(u => u.PharmacyName == registerModel.PharmacyName);
-            
-            if (isEmailPresent || pharmacyUserExists != null)
+            bool isEmailPresent = await dbContext.Users.AnyAsync(u => u.Email == registerModel.Email);
+            bool pharmacyUserExists = await dbContext.Users.AnyAsync(u => u.PharmacyName == registerModel.PharmacyName);
+
+            if (isEmailPresent || pharmacyUserExists)
             {
                 ModelError? modelError;
                 if (isEmailPresent)
@@ -84,10 +84,9 @@
                     };
 
                     ModelErrors.Add(error);
-
-
                 }
-                if (pharmacyUserExists != null)
+
+                if (pharmacyUserExists)
                 {
                     modelError = new ModelError
                     {
@@ -99,19 +98,18 @@
                 }
 
                 return false;
-        
-            }         
-            
-               return true;
+            }
+
+            return true;
         }
 
         public async Task<bool> IsPharmacistRegisterValid(RegisterPharmacistDto registerModel)
         {
             bool isEmailPresent = await dbContext.Users.AnyAsync(u => u.Email == registerModel.Email);
-            User? userExistsByEgn = await dbContext.Users.FirstOrDefaultAsync(u => u.Egn == registerModel.Egn);
-            User? userExistsByUni = await dbContext.Users.FirstOrDefaultAsync(u => u.UinNumber == registerModel.UinNumber);
+            bool userExistsByEgn = await dbContext.Users.AnyAsync(u => u.Egn == registerModel.Egn);
+            bool userExistsByUni = await dbContext.Users.AnyAsync(u => u.UinNumber == registerModel.UinNumber);
 
-            if (isEmailPresent || userExistsByEgn != null || userExistsByUni != null)
+            if (isEmailPresent || userExistsByEgn || userExistsByUni)
             {
                 ModelError? modelError;
 
@@ -126,7 +124,7 @@
                     ModelErrors.Add(modelError);
                 }
 
-                if (userExistsByEgn != null)
+                if (userExistsByEgn)
                 {
                     modelError = new ModelError
                     {
@@ -137,7 +135,7 @@
                     ModelErrors.Add(modelError);
                 }
 
-                if (userExistsByUni != null)
+                if (userExistsByUni)
                 {
                     modelError = new ModelError
                     {
@@ -191,16 +189,15 @@
             return true;
         }
 
-        public async Task<bool> IsPatientRegisterValid(PatientDto registerModel)
+        public async Task<bool> IsPatientRegisterValid(RegisterPatientDto registerModel)
         {
-           
-            User? userExistsByEgn = await dbContext.Users.FirstOrDefaultAsync(u => u.Egn == registerModel.Egn);
-            if (userExistsByEgn != null)
+            bool userExistsByEgn = await dbContext.Users.AnyAsync(u => u.Egn == registerModel.Egn);
+
+            if (userExistsByEgn)
             {
                 ModelError? modelError;
-             
 
-                if (userExistsByEgn != null)
+                if (userExistsByEgn)
                 {
                     modelError = new ModelError
                     {
@@ -210,15 +207,17 @@
 
                     ModelErrors.Add(modelError);
                 }
+
                 return false;
             }
+
             return true;
         }
 
         public async Task<bool> IsPatientLoginValid(LoginPatientDto loginModel)
         {
             User? userExistsByEgn = await dbContext.Users.FirstOrDefaultAsync(u => u.Egn == loginModel.Egn);
-            
+
             ModelError? modelError;
 
             if (userExistsByEgn == null)
@@ -254,8 +253,7 @@
 
         public async Task<bool> IsGpRegisterValid(RegisterGpDto registerModel)
         {
-            var userExistsByEgn = await dbContext.Users
-               .AnyAsync(u => u.Egn == registerModel.Egn);
+            var userExistsByEgn = await dbContext.Users.AnyAsync(u => u.Egn == registerModel.Egn);
             var userExistsByUINNumber = await dbContext.Users.AnyAsync(u => u.UinNumber == registerModel.UinNumber);
 
             ModelError modelError;
@@ -267,21 +265,19 @@
                 {
                     modelError = new ModelError
                     {
-                        ErrorPropName = "UserWithEgnExists",
+                        ErrorPropName = nameof(registerModel.Egn),
                         ErrorMessage = UserWithEgnExists
 
                     };
 
                     ModelErrors.Add(modelError);
-
                 }
 
                 if (userExistsByUINNumber)
                 {
-
                     modelError = new ModelError
                     {
-                        ErrorPropName = "UserWithUinNumberExists",
+                        ErrorPropName = nameof(registerModel.UinNumber),
                         ErrorMessage = UserWithUinNumberExists
 
                     };

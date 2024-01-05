@@ -54,7 +54,7 @@
 
             return string.Empty;
         }
-        public async Task<string?> RegisterPatient(PatientDto model)
+        public async Task<string?> RegisterPatient(RegisterPatientDto model)
         {
             using var memoryStream = new MemoryStream();
             await model.ProfilePicture.CopyToAsync(memoryStream);
