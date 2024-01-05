@@ -191,14 +191,13 @@
 
         public async Task<bool> IsPatientRegisterValid(PatientDto registerModel)
         {
+            bool userExistsByEgn = await dbContext.Users.AnyAsync(u => u.Egn == registerModel.Egn);
 
-            User? userExistsByEgn = await dbContext.Users.FirstOrDefaultAsync(u => u.Egn == registerModel.Egn);
-            if (userExistsByEgn != null)
+            if (userExistsByEgn)
             {
                 ModelError? modelError;
 
-
-                if (userExistsByEgn != null)
+                if (userExistsByEgn)
                 {
                     modelError = new ModelError
                     {
@@ -208,8 +207,10 @@
 
                     ModelErrors.Add(modelError);
                 }
+
                 return false;
             }
+
             return true;
         }
 

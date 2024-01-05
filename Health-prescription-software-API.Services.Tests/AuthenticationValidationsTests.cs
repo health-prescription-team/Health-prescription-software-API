@@ -7,6 +7,7 @@
     using Data.Entities.User;
     using Models.Authentication.Pharmacy;
     using Models.Authentication.Pharmacist;
+    using Models.Authentication.Patient;
 
     using ValidationServices;
 
@@ -507,6 +508,106 @@
             // Act
 
             var validationResult = await validationService.IsPharmacistLoginValid(loginModel);
+
+            var actualErrorPropName = validationService.ModelErrors.ToArray()[0].ErrorPropName;
+            var actualErrorMessage = validationService.ModelErrors.ToArray()[0].ErrorMessage;
+
+            // Assert
+
+            Assert.Multiple(() =>
+            {
+                Assert.That(validationResult, Is.False);
+                Assert.That(actual: validationService.ModelErrors.Count, Is.EqualTo(1));
+                Assert.That(actualErrorPropName, Is.EqualTo(expectedErrorPropName));
+                Assert.That(actualErrorMessage, Is.EqualTo(expectedErrorMessage));
+            });
+        }
+
+        [Test]
+        public async Task IsPatientLoginValidWithValidDataReturnsTrue()
+        {
+            // Arrange
+
+            var validationService = new ValidationAuthentication(dbContext.Object, userManager.Object);
+
+            LoginPatientDto loginModel = new()
+            {
+                Egn = "3333333333",
+                Password = "Parola1!"
+            };
+
+            userManager.Setup(m => m.IsInRoleAsync(It.IsAny<User>(), RoleConstants.Patient).Result).Returns(true);
+
+            // Act
+
+            bool validationResult = await validationService.IsPatientLoginValid(loginModel);
+
+            // Assert
+
+            Assert.Multiple(() =>
+            {
+                Assert.That(validationResult, Is.True);
+                Assert.That(actual: validationService.ModelErrors.Count, Is.EqualTo(0));
+            });
+        }
+
+        [Test]
+        public async Task IsPatientLoginValidWithValidDataAndWrongRoleReturnsFalse()
+        {
+            // Arrange
+
+            var validationService = new ValidationAuthentication(dbContext.Object, userManager.Object);
+
+            LoginPatientDto loginModel = new()
+            {
+                Egn = "3333333333",
+                Password = "Parola1!"
+            };
+
+            userManager.Setup(m => m.IsInRoleAsync(It.IsAny<User>(), RoleConstants.Patient).Result).Returns(false);
+
+            var expectedErrorPropName = RoleConstants.Patient;
+            var expectedErrorMessage = InvalidLogin;
+
+            // Act
+
+            var validationResult = await validationService.IsPatientLoginValid(loginModel);
+
+            var actualErrorPropName = validationService.ModelErrors.ToArray()[0].ErrorPropName;
+            var actualErrorMessage = validationService.ModelErrors.ToArray()[0].ErrorMessage;
+
+            // Assert
+
+            Assert.Multiple(() =>
+            {
+                Assert.That(validationResult, Is.False);
+                Assert.That(actual: validationService.ModelErrors.Count, Is.EqualTo(1));
+                Assert.That(actualErrorPropName, Is.EqualTo(expectedErrorPropName));
+                Assert.That(actualErrorMessage, Is.EqualTo(expectedErrorMessage));
+            });
+        }
+
+        [Test]
+        public async Task IsPatientLoginValidNonExistingUserReturnsFalse()
+        {
+            // Arrange
+
+            var validationService = new ValidationAuthentication(dbContext.Object, userManager.Object);
+
+            LoginPatientDto loginModel = new()
+            {
+                Egn = "9999999999",
+                Password = "Parola1!"
+            };
+
+            userManager.Setup(m => m.IsInRoleAsync(It.IsAny<User>(), RoleConstants.Patient).Result).Returns(true);
+
+            var expectedErrorPropName = nameof(loginModel.Egn);
+            var expectedErrorMessage = UserWithEgnDoesNotExist;
+
+            // Act
+
+            var validationResult = await validationService.IsPatientLoginValid(loginModel);
 
             var actualErrorPropName = validationService.ModelErrors.ToArray()[0].ErrorPropName;
             var actualErrorMessage = validationService.ModelErrors.ToArray()[0].ErrorMessage;
