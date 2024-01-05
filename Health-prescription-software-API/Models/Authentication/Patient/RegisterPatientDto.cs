@@ -4,7 +4,7 @@
 
     using static Common.EntityValidationConstants.User;
 
-    public class PatientDto
+    public class RegisterPatientDto
     {
         [Required]
         [StringLength(NameMaxLength, MinimumLength = NameMinLength)]

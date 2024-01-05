@@ -201,7 +201,7 @@
             // Arrange
             var authService = new AuthenticationService(dbContext.Object, configuration.Object, userManager.Object, signInManager.Object);
             
-            PatientDto formModel = new()
+            RegisterPatientDto formModel = new()
             {
                 FirstName = "Петър",
                 LastName = "Тестов",
@@ -227,7 +227,7 @@
             // Arrange
             var authService = new AuthenticationService(dbContext.Object, configuration.Object, userManager.Object, signInManager.Object);
 
-            PatientDto formModel = new()
+            RegisterPatientDto formModel = new()
             {
                 FirstName = "Петър",
                 LastName = "Тестов",

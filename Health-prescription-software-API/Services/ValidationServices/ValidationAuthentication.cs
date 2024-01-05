@@ -189,7 +189,7 @@
             return true;
         }
 
-        public async Task<bool> IsPatientRegisterValid(PatientDto registerModel)
+        public async Task<bool> IsPatientRegisterValid(RegisterPatientDto registerModel)
         {
             bool userExistsByEgn = await dbContext.Users.AnyAsync(u => u.Egn == registerModel.Egn);
 

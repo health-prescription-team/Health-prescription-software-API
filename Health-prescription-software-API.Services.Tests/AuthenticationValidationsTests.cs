@@ -622,5 +622,71 @@
                 Assert.That(actualErrorMessage, Is.EqualTo(expectedErrorMessage));
             });
         }
+
+        [Test]
+        public async Task IsPatientRegisterValidWithValidDataReturnsTrue()
+        {
+            // Arrange
+
+            var validationService = new ValidationAuthentication(dbContext.Object, userManager.Object);
+
+            RegisterPatientDto registerModel = new()
+            {
+                FirstName = "Пациент",
+                LastName = "Тестов",
+                Egn = "999999999",
+                PhoneNumber = "0888888888",
+                Password = "Parola1!"
+            };
+
+            // Act
+
+            var validationResult = await validationService.IsPatientRegisterValid(registerModel);
+
+            // Assert
+
+            Assert.Multiple(() =>
+            {
+                Assert.That(validationResult, Is.True);
+                Assert.That(actual: validationService.ModelErrors.Count, Is.EqualTo(0));
+            });
+        }
+
+        [Test]
+        public async Task IsPatientRegisterValidWithExistingEgnReturnsFalse()
+        {
+            // Arrange
+
+            var validationService = new ValidationAuthentication(dbContext.Object, userManager.Object);
+
+            RegisterPatientDto registerModel = new()
+            {
+                FirstName = "Пациент",
+                LastName = "Тестов",
+                Egn = "3333333333",
+                PhoneNumber = "0888888888",
+                Password = "Parola1!"
+            };
+
+            var expectedErrorPropName = nameof(registerModel.Egn);
+            var expectedErrorMessage = UserWithEgnExists;
+
+            // Act
+
+            var validationResult = await validationService.IsPatientRegisterValid(registerModel);
+
+            var actualErrorPropName = validationService.ModelErrors.ToArray()[0].ErrorPropName;
+            var actualErrorMessage = validationService.ModelErrors.ToArray()[0].ErrorMessage;
+
+            // Assert
+
+            Assert.Multiple(() =>
+            {
+                Assert.That(validationResult, Is.False);
+                Assert.That(actual: validationService.ModelErrors.Count, Is.EqualTo(1));
+                Assert.That(actualErrorPropName, Is.EqualTo(expectedErrorPropName));
+                Assert.That(actualErrorMessage, Is.EqualTo(expectedErrorMessage));
+            });
+        }
     }
 }
