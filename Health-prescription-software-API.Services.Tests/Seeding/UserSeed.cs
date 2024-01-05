@@ -84,6 +84,13 @@
                     LastName = "Тестов",
                     Egn = "2222222222",
                     PhoneNumber = "0888888888"
+                },
+                new User()
+                {
+                    Id = "31bcded4-bbe9-45a3-b235-2d24766cfdf3",
+                    Email = "pharmacy@test.bg",
+                    PharmacyName = "Аптека",
+                    PhoneNumber = "0888888888"
                 }
             ];
         }
