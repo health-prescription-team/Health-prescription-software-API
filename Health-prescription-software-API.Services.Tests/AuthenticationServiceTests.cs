@@ -577,18 +577,12 @@
             // Arrange
             var authService = new AuthenticationService(dbContext.Object, configuration.Object, userManager.Object, signInManager.Object);
 
-            // Act
+            // Act & Assert
 
             LoginPharmacistDto loginModel = new()
             {
                 Password = "Parola1!"
             };
-
-            // Act
-
-
-
-            // Assert
 
             Assert.ThrowsAsync<ArgumentException>(async () =>
             {

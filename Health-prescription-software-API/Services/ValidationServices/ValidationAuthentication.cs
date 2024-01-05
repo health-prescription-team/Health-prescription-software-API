@@ -106,10 +106,10 @@
         public async Task<bool> IsPharmacistRegisterValid(RegisterPharmacistDto registerModel)
         {
             bool isEmailPresent = await dbContext.Users.AnyAsync(u => u.Email == registerModel.Email);
-            User? userExistsByEgn = await dbContext.Users.FirstOrDefaultAsync(u => u.Egn == registerModel.Egn);
-            User? userExistsByUni = await dbContext.Users.FirstOrDefaultAsync(u => u.UinNumber == registerModel.UinNumber);
+            bool userExistsByEgn = await dbContext.Users.AnyAsync(u => u.Egn == registerModel.Egn);
+            bool userExistsByUni = await dbContext.Users.AnyAsync(u => u.UinNumber == registerModel.UinNumber);
 
-            if (isEmailPresent || userExistsByEgn != null || userExistsByUni != null)
+            if (isEmailPresent || userExistsByEgn || userExistsByUni)
             {
                 ModelError? modelError;
 
@@ -124,7 +124,7 @@
                     ModelErrors.Add(modelError);
                 }
 
-                if (userExistsByEgn != null)
+                if (userExistsByEgn)
                 {
                     modelError = new ModelError
                     {
@@ -135,7 +135,7 @@
                     ModelErrors.Add(modelError);
                 }
 
-                if (userExistsByUni != null)
+                if (userExistsByUni)
                 {
                     modelError = new ModelError
                     {
