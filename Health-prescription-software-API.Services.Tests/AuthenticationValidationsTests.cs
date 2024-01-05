@@ -795,5 +795,105 @@
                 Assert.That(actualErrorMessage, Is.EqualTo(expectedErrorMessage));
             });
         }
+
+        [Test]
+        public async Task IsGpLoginValidWithValidDataReturnsTrue()
+        {
+            // Arrange
+
+            var validationService = new ValidationAuthentication(dbContext.Object, userManager.Object);
+
+            LoginGpDto loginModel = new()
+            {
+                Egn = "5555555555",
+                Password = "Parola1!"
+            };
+
+            userManager.Setup(m => m.IsInRoleAsync(It.IsAny<User>(), RoleConstants.GP).Result).Returns(true);
+
+            // Act
+
+            bool validationResult = await validationService.IsGpLoginValid(loginModel);
+
+            // Assert
+
+            Assert.Multiple(() =>
+            {
+                Assert.That(validationResult, Is.True);
+                Assert.That(actual: validationService.ModelErrors.Count, Is.EqualTo(0));
+            });
+        }
+
+        [Test]
+        public async Task IsGpLoginValidWithValidDataAndWrongRoleReturnsFalse()
+        {
+            // Arrange
+
+            var validationService = new ValidationAuthentication(dbContext.Object, userManager.Object);
+
+            LoginGpDto loginModel = new()
+            {
+                Egn = "5555555555",
+                Password = "Parola1!"
+            };
+
+            userManager.Setup(m => m.IsInRoleAsync(It.IsAny<User>(), RoleConstants.GP).Result).Returns(false);
+
+            var expectedErrorPropName = RoleConstants.GP;
+            var expectedErrorMessage = InvalidLogin;
+
+            // Act
+
+            var validationResult = await validationService.IsGpLoginValid(loginModel);
+
+            var actualErrorPropName = validationService.ModelErrors.ToArray()[0].ErrorPropName;
+            var actualErrorMessage = validationService.ModelErrors.ToArray()[0].ErrorMessage;
+
+            // Assert
+
+            Assert.Multiple(() =>
+            {
+                Assert.That(validationResult, Is.False);
+                Assert.That(actual: validationService.ModelErrors.Count, Is.EqualTo(1));
+                Assert.That(actualErrorPropName, Is.EqualTo(expectedErrorPropName));
+                Assert.That(actualErrorMessage, Is.EqualTo(expectedErrorMessage));
+            });
+        }
+
+        [Test]
+        public async Task IsGpLoginValidNonExistingUserReturnsFalse()
+        {
+            // Arrange
+
+            var validationService = new ValidationAuthentication(dbContext.Object, userManager.Object);
+
+            LoginGpDto loginModel = new()
+            {
+                Egn = "9999999999",
+                Password = "Parola1!"
+            };
+
+            userManager.Setup(m => m.IsInRoleAsync(It.IsAny<User>(), RoleConstants.GP).Result).Returns(true);
+
+            var expectedErrorPropName = nameof(loginModel.Egn);
+            var expectedErrorMessage = UserWithEgnDoesNotExist;
+
+            // Act
+
+            var validationResult = await validationService.IsGpLoginValid(loginModel);
+
+            var actualErrorPropName = validationService.ModelErrors.ToArray()[0].ErrorPropName;
+            var actualErrorMessage = validationService.ModelErrors.ToArray()[0].ErrorMessage;
+
+            // Assert
+
+            Assert.Multiple(() =>
+            {
+                Assert.That(validationResult, Is.False);
+                Assert.That(actual: validationService.ModelErrors.Count, Is.EqualTo(1));
+                Assert.That(actualErrorPropName, Is.EqualTo(expectedErrorPropName));
+                Assert.That(actualErrorMessage, Is.EqualTo(expectedErrorMessage));
+            });
+        }
     }
 }
