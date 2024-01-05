@@ -8,6 +8,7 @@
     using Models.Authentication.Pharmacy;
     using Models.Authentication.Pharmacist;
     using Models.Authentication.Patient;
+    using Models.Authentication.GP;
 
     using ValidationServices;
 
@@ -674,6 +675,112 @@
             // Act
 
             var validationResult = await validationService.IsPatientRegisterValid(registerModel);
+
+            var actualErrorPropName = validationService.ModelErrors.ToArray()[0].ErrorPropName;
+            var actualErrorMessage = validationService.ModelErrors.ToArray()[0].ErrorMessage;
+
+            // Assert
+
+            Assert.Multiple(() =>
+            {
+                Assert.That(validationResult, Is.False);
+                Assert.That(actual: validationService.ModelErrors.Count, Is.EqualTo(1));
+                Assert.That(actualErrorPropName, Is.EqualTo(expectedErrorPropName));
+                Assert.That(actualErrorMessage, Is.EqualTo(expectedErrorMessage));
+            });
+        }
+
+        [Test]
+        public async Task IsGpRegisterValidWithValidDataReturnsTrue()
+        {
+            // Arrange
+
+            var validationService = new ValidationAuthentication(dbContext.Object, userManager.Object);
+
+            RegisterGpDto registerModel = new()
+            {
+                FirstName = "Доктор",
+                MiddleName = "Тестов",
+                LastName = "Тестов",
+                Egn = "9999999999",
+                UinNumber = "9999999999",
+                PhoneNumber = "0888888888"
+            };
+
+            // Act
+
+            var validationResult = await validationService.IsGpRegisterValid(registerModel);
+
+            // Assert
+
+            Assert.Multiple(() =>
+            {
+                Assert.That(validationResult, Is.True);
+                Assert.That(actual: validationService.ModelErrors.Count, Is.EqualTo(0));
+            });
+        }
+
+        [Test]
+        public async Task IsGpRegisterValidWithExistingEgnReturnsFalse()
+        {
+            // Arrange
+
+            var validationService = new ValidationAuthentication(dbContext.Object, userManager.Object);
+
+            RegisterGpDto registerModel = new()
+            {
+                FirstName = "Доктор",
+                MiddleName = "Тестов",
+                LastName = "Тестов",
+                Egn = "5555555555",
+                UinNumber = "9999999999",
+                PhoneNumber = "0888888888"
+            };
+
+            var expectedErrorPropName = nameof(registerModel.Egn);
+            var expectedErrorMessage = UserWithEgnExists;
+
+            // Act
+
+            var validationResult = await validationService.IsGpRegisterValid(registerModel);
+
+            var actualErrorPropName = validationService.ModelErrors.ToArray()[0].ErrorPropName;
+            var actualErrorMessage = validationService.ModelErrors.ToArray()[0].ErrorMessage;
+
+            // Assert
+
+            Assert.Multiple(() =>
+            {
+                Assert.That(validationResult, Is.False);
+                Assert.That(actual: validationService.ModelErrors.Count, Is.EqualTo(1));
+                Assert.That(actualErrorPropName, Is.EqualTo(expectedErrorPropName));
+                Assert.That(actualErrorMessage, Is.EqualTo(expectedErrorMessage));
+            });
+        }
+
+        [Test]
+        public async Task IsGpRegisterValidWithExistingUinReturnsFalse()
+        {
+            // Arrange
+
+            var validationService = new ValidationAuthentication(dbContext.Object, userManager.Object);
+
+            RegisterGpDto registerModel = new()
+            {
+                FirstName = "Доктор",
+                MiddleName = "Тестов",
+                LastName = "Тестов",
+                Egn = "9999999999",
+                UinNumber = "5555555555",
+                PhoneNumber = "0888888888"
+            };
+
+            var expectedErrorPropName = nameof(registerModel.UinNumber);
+            var expectedErrorMessage = UserWithUinNumberExists;
+
+            // Act
+
+            var validationResult = await validationService.IsGpRegisterValid(registerModel);
 
             var actualErrorPropName = validationService.ModelErrors.ToArray()[0].ErrorPropName;
             var actualErrorMessage = validationService.ModelErrors.ToArray()[0].ErrorMessage;

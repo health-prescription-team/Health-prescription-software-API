@@ -253,8 +253,7 @@
 
         public async Task<bool> IsGpRegisterValid(RegisterGpDto registerModel)
         {
-            var userExistsByEgn = await dbContext.Users
-               .AnyAsync(u => u.Egn == registerModel.Egn);
+            var userExistsByEgn = await dbContext.Users.AnyAsync(u => u.Egn == registerModel.Egn);
             var userExistsByUINNumber = await dbContext.Users.AnyAsync(u => u.UinNumber == registerModel.UinNumber);
 
             ModelError modelError;
@@ -266,21 +265,19 @@
                 {
                     modelError = new ModelError
                     {
-                        ErrorPropName = "UserWithEgnExists",
+                        ErrorPropName = nameof(registerModel.Egn),
                         ErrorMessage = UserWithEgnExists
 
                     };
 
                     ModelErrors.Add(modelError);
-
                 }
 
                 if (userExistsByUINNumber)
                 {
-
                     modelError = new ModelError
                     {
-                        ErrorPropName = "UserWithUinNumberExists",
+                        ErrorPropName = nameof(registerModel.UinNumber),
                         ErrorMessage = UserWithUinNumberExists
 
                     };
