@@ -66,6 +66,7 @@
 
             return true;
         }
+
         public async Task<bool> IsPharmacyRegisterValid(RegisterPharmacyDto registerModel)
         {
             bool isEmailPresent = await dbContext.Users
