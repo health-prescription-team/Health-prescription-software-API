@@ -421,5 +421,105 @@
                 Assert.That(actualErrorMessage, Is.EqualTo(expectedErrorMessage));
             });
         }
+
+        [Test]
+        public async Task IsPharmacistLoginValidWithValidDataReturnsTrue()
+        {
+            // Arrange
+
+            var validationService = new ValidationAuthentication(dbContext.Object, userManager.Object);
+
+            LoginPharmacistDto loginModel = new()
+            {
+                Egn = "4444444444",
+                Password = "Parola1!"
+            };
+
+            userManager.Setup(m => m.IsInRoleAsync(It.IsAny<User>(), RoleConstants.Pharmacist).Result).Returns(true);
+
+            // Act
+
+            bool validationResult = await validationService.IsPharmacistLoginValid(loginModel);
+
+            // Assert
+
+            Assert.Multiple(() =>
+            {
+                Assert.That(validationResult, Is.True);
+                Assert.That(actual: validationService.ModelErrors.Count, Is.EqualTo(0));
+            });
+        }
+
+        [Test]
+        public async Task IsPharmacistLoginValidWithValidDataAndWrongRoleReturnsFalse()
+        {
+            // Arrange
+
+            var validationService = new ValidationAuthentication(dbContext.Object, userManager.Object);
+
+            LoginPharmacistDto loginModel = new()
+            {
+                Egn = "4444444444",
+                Password = "Parola1!"
+            };
+
+            userManager.Setup(m => m.IsInRoleAsync(It.IsAny<User>(), RoleConstants.Pharmacist).Result).Returns(false);
+
+            var expectedErrorPropName = RoleConstants.Pharmacist;
+            var expectedErrorMessage = InvalidLogin;
+
+            // Act
+
+            var validationResult = await validationService.IsPharmacistLoginValid(loginModel);
+
+            var actualErrorPropName = validationService.ModelErrors.ToArray()[0].ErrorPropName;
+            var actualErrorMessage = validationService.ModelErrors.ToArray()[0].ErrorMessage;
+
+            // Assert
+
+            Assert.Multiple(() =>
+            {
+                Assert.That(validationResult, Is.False);
+                Assert.That(actual: validationService.ModelErrors.Count, Is.EqualTo(1));
+                Assert.That(actualErrorPropName, Is.EqualTo(expectedErrorPropName));
+                Assert.That(actualErrorMessage, Is.EqualTo(expectedErrorMessage));
+            });
+        }
+
+        [Test]
+        public async Task IsPharmacistLoginValidNonExistingUserReturnsFalse()
+        {
+            // Arrange
+
+            var validationService = new ValidationAuthentication(dbContext.Object, userManager.Object);
+
+            LoginPharmacistDto loginModel = new()
+            {
+                Egn = "9999999999",
+                Password = "Parola1!"
+            };
+
+            userManager.Setup(m => m.IsInRoleAsync(It.IsAny<User>(), RoleConstants.Pharmacist).Result).Returns(true);
+
+            var expectedErrorPropName = nameof(loginModel.Egn);
+            var expectedErrorMessage = UserWithEgnDoesNotExist;
+
+            // Act
+
+            var validationResult = await validationService.IsPharmacistLoginValid(loginModel);
+
+            var actualErrorPropName = validationService.ModelErrors.ToArray()[0].ErrorPropName;
+            var actualErrorMessage = validationService.ModelErrors.ToArray()[0].ErrorMessage;
+
+            // Assert
+
+            Assert.Multiple(() =>
+            {
+                Assert.That(validationResult, Is.False);
+                Assert.That(actual: validationService.ModelErrors.Count, Is.EqualTo(1));
+                Assert.That(actualErrorPropName, Is.EqualTo(expectedErrorPropName));
+                Assert.That(actualErrorMessage, Is.EqualTo(expectedErrorMessage));
+            });
+        }
     }
 }
