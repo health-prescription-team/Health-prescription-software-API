@@ -206,5 +206,54 @@
 
             Assert.That(finishPrescriptionResult, Is.False);
         }
+
+        [Test]
+        public async Task GetPatientPrescriptionsReturnsList()
+        {
+            // Arrange
+
+            var prescriptionService = new PrescriptionService(dbContext);
+
+            var patientEgn = "2222222222";
+
+            var actualPatientPrescriptions = dbContext.Prescriptions.Where(p => p.PatientEgn == patientEgn).ToArrayAsync().Result.Length;
+
+            // Act
+
+            var patientPrescriptions = await prescriptionService.GetPatientPrescriptions(patientEgn);
+
+            // Assert
+
+            Assert.Multiple(() =>
+            {
+                Assert.That(patientPrescriptions, Is.InstanceOf<IEnumerable<PatientPrescriptionsListDTO>>());
+                Assert.That(patientPrescriptions.Count(), Is.EqualTo(actualPatientPrescriptions));
+            });
+        }
+
+        [Test]
+        public async Task GetPrescriptionDetails()
+        {
+            // Arrange
+
+            var prescriptionService = new PrescriptionService(dbContext);
+
+            var prescriptionId = Guid.Parse("218537f0-2582-4d36-85f9-3f11859911c1");
+
+            var expectedPrescriptionDetails = await dbContext.Prescriptions.FindAsync(prescriptionId);
+
+            // Act
+
+            var prescriptionDetails = await prescriptionService.GetPrescriptionDetails(prescriptionId);
+
+            // Assert
+
+            Assert.Multiple(() =>
+            {
+                Assert.That(prescriptionDetails.PrescriptionDetails, Is.Not.Empty);
+                Assert.That(prescriptionDetails.PrescriptionDetails.Count, Is.EqualTo(expectedPrescriptionDetails!.PrescriptionDetails.Count));
+                Assert.That(prescriptionDetails.PatientEgn, Is.EqualTo(expectedPrescriptionDetails.PatientEgn));
+            });
+        }
     }
 }

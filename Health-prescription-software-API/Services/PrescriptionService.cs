@@ -140,6 +140,7 @@
                 Age = entity.Age,
                 Diagnosis = entity.Diagnosis,
                 IsFulfilled = entity.IsFulfilled,
+                FulfillmentDate = entity.FulfillmentDate.HasValue ? entity.FulfillmentDate.Value.ToString("yyyy-MM-dd") : null,
                 CreatedAt = entity.CreatedAt.ToString("yyyy-MM-dd"),
                 ExpiresAt = entity.ExpiresAt.HasValue ? entity.ExpiresAt.Value.ToString("yyyy-MM-dd") : null,
                 PrescriptionDetails = entity.PrescriptionDetails
