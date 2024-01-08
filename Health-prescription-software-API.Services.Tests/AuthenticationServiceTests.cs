@@ -36,10 +36,12 @@
 
             // Seed database
 
-            dbContext.AddRange(GenerateUsers());
-            dbContext.AddRange(GeneratePrescriptions());
-            dbContext.AddRange(GeneratePrescriptionDetails());
-            dbContext.AddRange(GenerateMedicine());
+            dbContext.Users.AddRange(GenerateUsers());
+            dbContext.Prescriptions.AddRange(GeneratePrescriptions());
+            dbContext.PrescriptionDetails.AddRange(GeneratePrescriptionDetails());
+            dbContext.Medicines.AddRange(GenerateMedicine());
+
+            dbContext.SaveChanges();
 
             // IConfiguration mock setup
 
@@ -95,7 +97,7 @@
             };
 
             userManager.Setup(m => m.CreateAsync(It.IsAny<User>(), formModel.Password).Result).Returns(IdentityResult.Success);
-            userManager.Setup(m => m.GetRolesAsync(It.IsAny<User>()).Result).Returns(new List<string> { "Pharmacist" });
+            userManager.Setup(m => m.AddToRolesAsync(It.IsAny<User>(), It.IsAny<string[]>()).Result).Returns(IdentityResult.Success);
 
             // Act
 
@@ -127,6 +129,7 @@
             };
 
             userManager.Setup(m => m.CreateAsync(It.IsAny<User>(), It.IsAny<string>())).ReturnsAsync(IdentityResult.Failed());
+            userManager.Setup(m => m.AddToRolesAsync(It.IsAny<User>(), It.IsAny<string[]>()).Result).Returns(IdentityResult.Failed());
 
             // Act
 
@@ -146,12 +149,11 @@
 
             LoginPharmacistDto loginModel = new()
             {
-                Egn = "0123456789",
+                Egn = "4444444444",
                 Password = "Parola1!"
             };
 
             signInManager.Setup(m => m.PasswordSignInAsync(It.IsAny<User>(), It.IsAny<string>(), false, false)).ReturnsAsync(SignInResult.Success);
-            userManager.Setup(m => m.GetRolesAsync(It.IsAny<User>()).Result).Returns(new List<string> { "Pharmacist" });
 
             // Act
 
@@ -176,7 +178,6 @@
             };
 
             signInManager.Setup(m => m.PasswordSignInAsync(It.IsAny<User>(), loginModel.Password, false, false)).ReturnsAsync(SignInResult.Failed);
-            userManager.Setup(m => m.GetRolesAsync(It.IsAny<User>()).Result).Returns(new List<string> { "Pharmacist" });
 
             // Act
 
@@ -225,7 +226,7 @@
                 Password = "Parola1!",                
             };
             userManager.Setup(m => m.CreateAsync(It.IsAny<User>(), formModel.Password).Result).Returns(IdentityResult.Success);
-            userManager.Setup(m => m.GetRolesAsync(It.IsAny<User>()).Result).Returns(new List<string> { "Patient" });
+            userManager.Setup(m => m.AddToRolesAsync(It.IsAny<User>(), It.IsAny<string[]>()).Result).Returns(IdentityResult.Success);
 
             // Act
 
@@ -235,6 +236,7 @@
 
             Assert.That(string.IsNullOrWhiteSpace(token), Is.False);
         }
+
         [Test]
         public async Task RegisterPatientWithInvalidData()
         {
@@ -252,6 +254,7 @@
             };
 
             userManager.Setup(m => m.CreateAsync(It.IsAny<User>(), It.IsAny<string>())).ReturnsAsync(IdentityResult.Failed());
+            userManager.Setup(m => m.AddToRolesAsync(It.IsAny<User>(), It.IsAny<string[]>()).Result).Returns(IdentityResult.Failed());
 
             // Act
 
@@ -261,6 +264,7 @@
 
             Assert.That(string.IsNullOrWhiteSpace(token), Is.True);
         }
+
         [Test]
         public async Task LoginPatientWithExistingUserReturnsToken()
         {
@@ -270,12 +274,11 @@
 
             LoginPatientDto loginModel = new()
             {
-                Egn = "0123456789",
+                Egn = "3333333333",
                 Password = "Parola1!"
             };
 
             signInManager.Setup(m => m.PasswordSignInAsync(It.IsAny<User>(), It.IsAny<string>(), false, false)).ReturnsAsync(SignInResult.Success);
-            userManager.Setup(m => m.GetRolesAsync(It.IsAny<User>()).Result).Returns(new List<string> { "Patient" });
 
             // Act
 
@@ -285,6 +288,7 @@
 
             Assert.That(string.IsNullOrWhiteSpace(token), Is.False);
         }
+
         [Test]
         public async Task LoginPatientWithExistingUserWrongPasswordReturnsEmpty()
         {
@@ -299,7 +303,6 @@
             };
 
             signInManager.Setup(m => m.PasswordSignInAsync(It.IsAny<User>(), loginModel.Password, false, false)).ReturnsAsync(SignInResult.Failed);
-            userManager.Setup(m => m.GetRolesAsync(It.IsAny<User>()).Result).Returns(new List<string> { "Patient" });
 
             // Act
 
@@ -309,6 +312,7 @@
 
             Assert.That(string.IsNullOrWhiteSpace(token), Is.True);
         }
+
         [Test]
         public async Task LoginPatientWithNonExistingUserReturnsEmpty()
         {
@@ -321,6 +325,8 @@
                 Egn = "9876543210",
                 Password = "Parola1!"
             };
+
+            signInManager.Setup(m => m.PasswordSignInAsync(It.IsAny<User>(), loginModel.Password, false, false)).ReturnsAsync(SignInResult.Failed);
 
             // Act
 
@@ -349,7 +355,7 @@
             };
 
             userManager.Setup(m => m.CreateAsync(It.IsAny<User>(), formModel.Password).Result).Returns(IdentityResult.Success);
-            userManager.Setup(m => m.GetRolesAsync(It.IsAny<User>()).Result).Returns(new List<string> { "GP" });
+            userManager.Setup(m => m.AddToRolesAsync(It.IsAny<User>(), It.IsAny<string[]>()).Result).Returns(IdentityResult.Success);
 
             // Act
 
@@ -378,6 +384,7 @@
             };
 
             userManager.Setup(m => m.CreateAsync(It.IsAny<User>(), It.IsAny<string>())).ReturnsAsync(IdentityResult.Failed());
+            userManager.Setup(m => m.AddToRolesAsync(It.IsAny<User>(), It.IsAny<string[]>()).Result).Returns(IdentityResult.Failed());
 
             // Act
 
@@ -397,12 +404,11 @@
 
             LoginGpDto loginModel = new()
             {
-                Egn = "0123456789",
+                Egn = "5555555555",
                 Password = "Parola1!"
             };
 
             signInManager.Setup(m => m.PasswordSignInAsync(It.IsAny<User>(), It.IsAny<string>(), false, false)).ReturnsAsync(SignInResult.Success);
-            userManager.Setup(m => m.GetRolesAsync(It.IsAny<User>()).Result).Returns(new List<string> { "GP" });
 
             // Act
 
@@ -422,12 +428,11 @@
 
             LoginGpDto loginModel = new()
             {
-                Egn = "0123456789",
+                Egn = "5555555555",
                 Password = "Parola"
             };
 
             signInManager.Setup(m => m.PasswordSignInAsync(It.IsAny<User>(), loginModel.Password, false, false)).ReturnsAsync(SignInResult.Failed);
-            userManager.Setup(m => m.GetRolesAsync(It.IsAny<User>()).Result).Returns(new List<string> { "GP" });
 
             // Act
 
@@ -460,8 +465,6 @@
             Assert.That(string.IsNullOrWhiteSpace(token), Is.True);
         }
 
-        //------------------------
-
         [Test]
         public async Task RegisterPharmacyWithValidData()
         {
@@ -477,7 +480,7 @@
             };
 
             userManager.Setup(m => m.CreateAsync(It.IsAny<User>(), formModel.Password).Result).Returns(IdentityResult.Success);
-            userManager.Setup(m => m.GetRolesAsync(It.IsAny<User>()).Result).Returns(new List<string> { "Pharmacy" });
+            userManager.Setup(m => m.AddToRolesAsync(It.IsAny<User>(), It.IsAny<string[]>()).Result).Returns(IdentityResult.Success);
 
             // Act
 
@@ -503,6 +506,7 @@
             };
 
             userManager.Setup(m => m.CreateAsync(It.IsAny<User>(), It.IsAny<string>())).ReturnsAsync(IdentityResult.Failed());
+            userManager.Setup(m => m.AddToRolesAsync(It.IsAny<User>(), It.IsAny<string[]>()).Result).Returns(IdentityResult.Failed());
 
             // Act
 
@@ -527,7 +531,6 @@
             };
 
             signInManager.Setup(m => m.PasswordSignInAsync(It.IsAny<User>(), It.IsAny<string>(), false, false)).ReturnsAsync(SignInResult.Success);
-            userManager.Setup(m => m.GetRolesAsync(It.IsAny<User>()).Result).Returns(new List<string> { "Pharmacy" });
 
             // Act
 
@@ -552,7 +555,6 @@
             };
 
             signInManager.Setup(m => m.PasswordSignInAsync(It.IsAny<User>(), loginModel.Password, false, false)).ReturnsAsync(SignInResult.Failed);
-            userManager.Setup(m => m.GetRolesAsync(It.IsAny<User>()).Result).Returns(new List<string> { "Pharmacy" });
 
             // Act
 

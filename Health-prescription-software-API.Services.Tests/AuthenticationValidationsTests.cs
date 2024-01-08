@@ -42,6 +42,8 @@
             dbContext.AddRange(GeneratePrescriptionDetails());
             dbContext.AddRange(GenerateMedicine());
 
+            dbContext.SaveChanges();
+
             userManager = new Mock<UserManager<User>>(Mock.Of<IUserStore<User>>(), null!, null!, null!, null!, null!, null!, null!, null!);
         }
 
@@ -75,7 +77,7 @@
             Assert.Multiple(() =>
             {
                 Assert.That(validationResult, Is.True);
-                Assert.That(actual: validationService.ModelErrors.Count, Is.EqualTo(0));
+                Assert.That(validationService.ModelErrors, Is.Empty);
             });
         }
 
@@ -109,7 +111,7 @@
             Assert.Multiple(() =>
             {
                 Assert.That(validationResult, Is.False);
-                Assert.That(actual: validationService.ModelErrors.Count, Is.EqualTo(1));
+                Assert.That(validationService.ModelErrors, Has.Count.EqualTo(1));
                 Assert.That(actualErrorPropName, Is.EqualTo(expectedErrorPropName));
                 Assert.That(actualErrorMessage, Is.EqualTo(expectedErrorMessage));
             });
@@ -145,7 +147,7 @@
             Assert.Multiple(() =>
             {
                 Assert.That(validationResult, Is.False);
-                Assert.That(actual: validationService.ModelErrors.Count, Is.EqualTo(1));
+                Assert.That(validationService.ModelErrors, Has.Count.EqualTo(1));
                 Assert.That(actualErrorPropName, Is.EqualTo(expectedErrorPropName));
                 Assert.That(actualErrorMessage, Is.EqualTo(expectedErrorMessage));
             });
@@ -175,7 +177,7 @@
             Assert.Multiple(() =>
             {
                 Assert.That(validationResult, Is.True);
-                Assert.That(actual: validationService.ModelErrors.Count, Is.EqualTo(0));
+                Assert.That(validationService.ModelErrors, Is.Empty);
             });
         }
 
@@ -209,7 +211,7 @@
             Assert.Multiple(() =>
             {
                 Assert.That(validationResult, Is.False);
-                Assert.That(actual: validationService.ModelErrors.Count, Is.EqualTo(1));
+                Assert.That(validationService.ModelErrors, Has.Count.EqualTo(1));
                 Assert.That(actualErrorPropName, Is.EqualTo(expectedErrorPropName));
                 Assert.That(actualErrorMessage, Is.EqualTo(expectedErrorMessage));
             });
@@ -245,7 +247,7 @@
             Assert.Multiple(() =>
             {
                 Assert.That(validationResult, Is.False);
-                Assert.That(actual: validationService.ModelErrors.Count, Is.EqualTo(1));
+                Assert.That(validationService.ModelErrors, Has.Count.EqualTo(1));
                 Assert.That(actualErrorPropName, Is.EqualTo(expectedErrorPropName));
                 Assert.That(actualErrorMessage, Is.EqualTo(expectedErrorMessage));
             });
@@ -287,7 +289,7 @@
             Assert.Multiple(() =>
             {
                 Assert.That(validationResult, Is.False);
-                Assert.That(actual: validationService.ModelErrors.Count, Is.EqualTo(2));
+                Assert.That(validationService.ModelErrors, Has.Count.EqualTo(2));
                 Assert.That(actualNameErrorPropName, Is.EqualTo(expectedNameErrorPropName));
                 Assert.That(actualNameErrorMessage, Is.EqualTo(expectedNameErrorMessage));
                 Assert.That(actualEmailErrorPropName, Is.EqualTo(expectedEmailErrorPropName));
@@ -321,7 +323,7 @@
             Assert.Multiple(() =>
             {
                 Assert.That(validationResult, Is.True);
-                Assert.That(actual: validationService.ModelErrors.Count, Is.EqualTo(0));
+                Assert.That(validationService.ModelErrors, Is.Empty);
             });
         }
 
@@ -357,7 +359,7 @@
             Assert.Multiple(() =>
             {
                 Assert.That(validationResult, Is.False);
-                Assert.That(actual: validationService.ModelErrors.Count, Is.EqualTo(1));
+                Assert.That(validationService.ModelErrors, Has.Count.EqualTo(1));
                 Assert.That(actualErrorPropName, Is.EqualTo(expectedErrorPropName));
                 Assert.That(actualErrorMessage, Is.EqualTo(expectedErrorMessage));
             });
@@ -395,7 +397,7 @@
             Assert.Multiple(() =>
             {
                 Assert.That(validationResult, Is.False);
-                Assert.That(actual: validationService.ModelErrors.Count, Is.EqualTo(1));
+                Assert.That(validationService.ModelErrors, Has.Count.EqualTo(1));
                 Assert.That(actualErrorPropName, Is.EqualTo(expectedErrorPropName));
                 Assert.That(actualErrorMessage, Is.EqualTo(expectedErrorMessage));
             });
@@ -433,7 +435,7 @@
             Assert.Multiple(() =>
             {
                 Assert.That(validationResult, Is.False);
-                Assert.That(actual: validationService.ModelErrors.Count, Is.EqualTo(1));
+                Assert.That(validationService.ModelErrors, Has.Count.EqualTo(1));
                 Assert.That(actualErrorPropName, Is.EqualTo(expectedErrorPropName));
                 Assert.That(actualErrorMessage, Is.EqualTo(expectedErrorMessage));
             });
@@ -463,7 +465,7 @@
             Assert.Multiple(() =>
             {
                 Assert.That(validationResult, Is.True);
-                Assert.That(actual: validationService.ModelErrors.Count, Is.EqualTo(0));
+                Assert.That(validationService.ModelErrors, Is.Empty);
             });
         }
 
@@ -497,7 +499,7 @@
             Assert.Multiple(() =>
             {
                 Assert.That(validationResult, Is.False);
-                Assert.That(actual: validationService.ModelErrors.Count, Is.EqualTo(1));
+                Assert.That(validationService.ModelErrors, Has.Count.EqualTo(1));
                 Assert.That(actualErrorPropName, Is.EqualTo(expectedErrorPropName));
                 Assert.That(actualErrorMessage, Is.EqualTo(expectedErrorMessage));
             });
@@ -533,7 +535,7 @@
             Assert.Multiple(() =>
             {
                 Assert.That(validationResult, Is.False);
-                Assert.That(actual: validationService.ModelErrors.Count, Is.EqualTo(1));
+                Assert.That(validationService.ModelErrors, Has.Count.EqualTo(1));
                 Assert.That(actualErrorPropName, Is.EqualTo(expectedErrorPropName));
                 Assert.That(actualErrorMessage, Is.EqualTo(expectedErrorMessage));
             });
@@ -563,7 +565,7 @@
             Assert.Multiple(() =>
             {
                 Assert.That(validationResult, Is.True);
-                Assert.That(actual: validationService.ModelErrors.Count, Is.EqualTo(0));
+                Assert.That(validationService.ModelErrors, Is.Empty);
             });
         }
 
@@ -597,7 +599,7 @@
             Assert.Multiple(() =>
             {
                 Assert.That(validationResult, Is.False);
-                Assert.That(actual: validationService.ModelErrors.Count, Is.EqualTo(1));
+                Assert.That(validationService.ModelErrors, Has.Count.EqualTo(1));
                 Assert.That(actualErrorPropName, Is.EqualTo(expectedErrorPropName));
                 Assert.That(actualErrorMessage, Is.EqualTo(expectedErrorMessage));
             });
@@ -633,7 +635,7 @@
             Assert.Multiple(() =>
             {
                 Assert.That(validationResult, Is.False);
-                Assert.That(actual: validationService.ModelErrors.Count, Is.EqualTo(1));
+                Assert.That(validationService.ModelErrors, Has.Count.EqualTo(1));
                 Assert.That(actualErrorPropName, Is.EqualTo(expectedErrorPropName));
                 Assert.That(actualErrorMessage, Is.EqualTo(expectedErrorMessage));
             });
@@ -664,7 +666,7 @@
             Assert.Multiple(() =>
             {
                 Assert.That(validationResult, Is.True);
-                Assert.That(actual: validationService.ModelErrors.Count, Is.EqualTo(0));
+                Assert.That(validationService.ModelErrors, Is.Empty);
             });
         }
 
@@ -699,7 +701,7 @@
             Assert.Multiple(() =>
             {
                 Assert.That(validationResult, Is.False);
-                Assert.That(actual: validationService.ModelErrors.Count, Is.EqualTo(1));
+                Assert.That(validationService.ModelErrors, Has.Count.EqualTo(1));
                 Assert.That(actualErrorPropName, Is.EqualTo(expectedErrorPropName));
                 Assert.That(actualErrorMessage, Is.EqualTo(expectedErrorMessage));
             });
@@ -731,7 +733,7 @@
             Assert.Multiple(() =>
             {
                 Assert.That(validationResult, Is.True);
-                Assert.That(actual: validationService.ModelErrors.Count, Is.EqualTo(0));
+                Assert.That(validationService.ModelErrors, Is.Empty);
             });
         }
 
@@ -767,7 +769,7 @@
             Assert.Multiple(() =>
             {
                 Assert.That(validationResult, Is.False);
-                Assert.That(actual: validationService.ModelErrors.Count, Is.EqualTo(1));
+                Assert.That(validationService.ModelErrors, Has.Count.EqualTo(1));
                 Assert.That(actualErrorPropName, Is.EqualTo(expectedErrorPropName));
                 Assert.That(actualErrorMessage, Is.EqualTo(expectedErrorMessage));
             });
@@ -805,7 +807,7 @@
             Assert.Multiple(() =>
             {
                 Assert.That(validationResult, Is.False);
-                Assert.That(actual: validationService.ModelErrors.Count, Is.EqualTo(1));
+                Assert.That(validationService.ModelErrors, Has.Count.EqualTo(1));
                 Assert.That(actualErrorPropName, Is.EqualTo(expectedErrorPropName));
                 Assert.That(actualErrorMessage, Is.EqualTo(expectedErrorMessage));
             });
@@ -835,7 +837,7 @@
             Assert.Multiple(() =>
             {
                 Assert.That(validationResult, Is.True);
-                Assert.That(actual: validationService.ModelErrors.Count, Is.EqualTo(0));
+                Assert.That(validationService.ModelErrors, Is.Empty);
             });
         }
 
@@ -869,7 +871,7 @@
             Assert.Multiple(() =>
             {
                 Assert.That(validationResult, Is.False);
-                Assert.That(actual: validationService.ModelErrors.Count, Is.EqualTo(1));
+                Assert.That(validationService.ModelErrors, Has.Count.EqualTo(1));
                 Assert.That(actualErrorPropName, Is.EqualTo(expectedErrorPropName));
                 Assert.That(actualErrorMessage, Is.EqualTo(expectedErrorMessage));
             });
@@ -905,7 +907,7 @@
             Assert.Multiple(() =>
             {
                 Assert.That(validationResult, Is.False);
-                Assert.That(actual: validationService.ModelErrors.Count, Is.EqualTo(1));
+                Assert.That(validationService.ModelErrors, Has.Count.EqualTo(1));
                 Assert.That(actualErrorPropName, Is.EqualTo(expectedErrorPropName));
                 Assert.That(actualErrorMessage, Is.EqualTo(expectedErrorMessage));
             });

@@ -1,17 +1,18 @@
 ﻿namespace Health_prescription_software_API.Services.ValidationServices
 {
-    using Common.Roles;
-    using Health_prescription_software_API.Contracts.Validations;
-    using Health_prescription_software_API.Data;
-    using Health_prescription_software_API.Data.Entities.User;
-    using Health_prescription_software_API.Models.Authentication.GP;
-    using Health_prescription_software_API.Models.Authentication.Patient;
-    using Health_prescription_software_API.Models.Authentication.Pharmacist;
-    using Health_prescription_software_API.Models.Authentication.Pharmacy;
     using Microsoft.AspNetCore.Identity;
     using Microsoft.EntityFrameworkCore;
     using System.Collections.Generic;
-    using System.Threading.Tasks;
+
+    using Data;
+    using Data.Entities.User;
+    using Models.Authentication.GP;
+    using Models.Authentication.Patient;
+    using Models.Authentication.Pharmacist;
+    using Models.Authentication.Pharmacy;
+
+    using Common.Roles;
+    using Contracts.Validations;
 
     using static Common.EntityValidationErrorMessages.User;
     using static Common.EntityValidationErrorMessages.Authentication;

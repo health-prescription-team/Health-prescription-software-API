@@ -54,6 +54,7 @@
 
             return string.Empty;
         }
+
         public async Task<string?> RegisterPatient(RegisterPatientDto model)
         {
             using var memoryStream = new MemoryStream();
