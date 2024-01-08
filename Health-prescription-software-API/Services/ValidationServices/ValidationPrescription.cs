@@ -139,7 +139,7 @@
                 return false;
             }
 
-            if (prescription.PrescriptionDetails.Count == 0)
+            if (model.PrescriptionDetails.Count == 0)
             {
                 var modelError = new ModelError
                 {
