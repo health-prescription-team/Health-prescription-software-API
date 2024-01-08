@@ -12,28 +12,43 @@
 
     using ValidationServices;
 
-    using static Utilities.MockQueryableDbSet;
     using static Seeding.UserSeed;
+    using static Seeding.PrescriptionSeed;
+    using static Seeding.MedicineSeed;
 
     using static Common.EntityValidationErrorMessages.User;
     using static Common.EntityValidationErrorMessages.Authentication;
 
     public class AuthenticationValidationsTests
     {
-        private Mock<HealthPrescriptionDbContext> dbContext;
-        private Mock<DbSet<User>> usersDbSet;
+        private HealthPrescriptionDbContext dbContext;
         private Mock<UserManager<User>> userManager;
 
         [SetUp]
         public void Setup()
         {
-            dbContext = new Mock<HealthPrescriptionDbContext>(new DbContextOptions<DbContext>());
+            // In memory database setup
 
-            usersDbSet = MockDbSet(GenerateUsers());
+            var options = new DbContextOptionsBuilder<HealthPrescriptionDbContext>()
+                .UseInMemoryDatabase(databaseName: "InMemoryHealthDB")
+                .Options;
 
-            dbContext.Setup(m => m.Users).Returns(usersDbSet.Object);
+            dbContext = new HealthPrescriptionDbContext(options);
+
+            // Seed database
+
+            dbContext.AddRange(GenerateUsers());
+            dbContext.AddRange(GeneratePrescriptions());
+            dbContext.AddRange(GeneratePrescriptionDetails());
+            dbContext.AddRange(GenerateMedicine());
 
             userManager = new Mock<UserManager<User>>(Mock.Of<IUserStore<User>>(), null!, null!, null!, null!, null!, null!, null!, null!);
+        }
+
+        [TearDown]
+        public void TearDown()
+        {
+            dbContext.Database.EnsureDeleted();
         }
 
         [Test]
@@ -41,7 +56,7 @@
         {
             // Arrange
 
-            var validationService = new ValidationAuthentication(dbContext.Object, userManager.Object);
+            var validationService = new ValidationAuthentication(dbContext, userManager.Object);
 
             LoginPharmacyDto loginModel = new()
             {
@@ -69,7 +84,7 @@
         {
             // Arrange
 
-            var validationService = new ValidationAuthentication(dbContext.Object, userManager.Object);
+            var validationService = new ValidationAuthentication(dbContext, userManager.Object);
 
             LoginPharmacyDto loginModel = new()
             {
@@ -105,7 +120,7 @@
         {
             // Arrange
 
-            var validationService = new ValidationAuthentication(dbContext.Object, userManager.Object);
+            var validationService = new ValidationAuthentication(dbContext, userManager.Object);
 
             LoginPharmacyDto loginModel = new()
             {
@@ -141,7 +156,7 @@
         {
             // Arrange
 
-            var validationService = new ValidationAuthentication(dbContext.Object, userManager.Object);
+            var validationService = new ValidationAuthentication(dbContext, userManager.Object);
 
             RegisterPharmacyDto registerModel = new()
             {
@@ -169,7 +184,7 @@
         {
             // Arrange
 
-            var validationService = new ValidationAuthentication(dbContext.Object, userManager.Object);
+            var validationService = new ValidationAuthentication(dbContext, userManager.Object);
 
             RegisterPharmacyDto registerModel = new()
             {
@@ -205,7 +220,7 @@
         {
             // Arrange
 
-            var validationService = new ValidationAuthentication(dbContext.Object, userManager.Object);
+            var validationService = new ValidationAuthentication(dbContext, userManager.Object);
 
             RegisterPharmacyDto registerModel = new()
             {
@@ -241,7 +256,7 @@
         {
             // Arrange
 
-            var validationService = new ValidationAuthentication(dbContext.Object, userManager.Object);
+            var validationService = new ValidationAuthentication(dbContext, userManager.Object);
 
             RegisterPharmacyDto registerModel = new()
             {
@@ -285,7 +300,7 @@
         {
             // Arrange
 
-            var validationService = new ValidationAuthentication(dbContext.Object, userManager.Object);
+            var validationService = new ValidationAuthentication(dbContext, userManager.Object);
 
             RegisterPharmacistDto registerModel = new()
             {
@@ -315,7 +330,7 @@
         {
             // Arrange
 
-            var validationService = new ValidationAuthentication(dbContext.Object, userManager.Object);
+            var validationService = new ValidationAuthentication(dbContext, userManager.Object);
 
             RegisterPharmacistDto registerModel = new()
             {
@@ -353,7 +368,7 @@
         {
             // Arrange
 
-            var validationService = new ValidationAuthentication(dbContext.Object, userManager.Object);
+            var validationService = new ValidationAuthentication(dbContext, userManager.Object);
 
             RegisterPharmacistDto registerModel = new()
             {
@@ -391,7 +406,7 @@
         {
             // Arrange
 
-            var validationService = new ValidationAuthentication(dbContext.Object, userManager.Object);
+            var validationService = new ValidationAuthentication(dbContext, userManager.Object);
 
             RegisterPharmacistDto registerModel = new()
             {
@@ -429,7 +444,7 @@
         {
             // Arrange
 
-            var validationService = new ValidationAuthentication(dbContext.Object, userManager.Object);
+            var validationService = new ValidationAuthentication(dbContext, userManager.Object);
 
             LoginPharmacistDto loginModel = new()
             {
@@ -457,7 +472,7 @@
         {
             // Arrange
 
-            var validationService = new ValidationAuthentication(dbContext.Object, userManager.Object);
+            var validationService = new ValidationAuthentication(dbContext, userManager.Object);
 
             LoginPharmacistDto loginModel = new()
             {
@@ -493,7 +508,7 @@
         {
             // Arrange
 
-            var validationService = new ValidationAuthentication(dbContext.Object, userManager.Object);
+            var validationService = new ValidationAuthentication(dbContext  , userManager.Object);
 
             LoginPharmacistDto loginModel = new()
             {
@@ -529,7 +544,7 @@
         {
             // Arrange
 
-            var validationService = new ValidationAuthentication(dbContext.Object, userManager.Object);
+            var validationService = new ValidationAuthentication(dbContext, userManager.Object);
 
             LoginPatientDto loginModel = new()
             {
@@ -557,7 +572,7 @@
         {
             // Arrange
 
-            var validationService = new ValidationAuthentication(dbContext.Object, userManager.Object);
+            var validationService = new ValidationAuthentication(dbContext, userManager.Object);
 
             LoginPatientDto loginModel = new()
             {
@@ -593,7 +608,7 @@
         {
             // Arrange
 
-            var validationService = new ValidationAuthentication(dbContext.Object, userManager.Object);
+            var validationService = new ValidationAuthentication(dbContext, userManager.Object);
 
             LoginPatientDto loginModel = new()
             {
@@ -629,7 +644,7 @@
         {
             // Arrange
 
-            var validationService = new ValidationAuthentication(dbContext.Object, userManager.Object);
+            var validationService = new ValidationAuthentication(dbContext, userManager.Object);
 
             RegisterPatientDto registerModel = new()
             {
@@ -658,7 +673,7 @@
         {
             // Arrange
 
-            var validationService = new ValidationAuthentication(dbContext.Object, userManager.Object);
+            var validationService = new ValidationAuthentication(dbContext, userManager.Object);
 
             RegisterPatientDto registerModel = new()
             {
@@ -695,7 +710,7 @@
         {
             // Arrange
 
-            var validationService = new ValidationAuthentication(dbContext.Object, userManager.Object);
+            var validationService = new ValidationAuthentication(dbContext, userManager.Object);
 
             RegisterGpDto registerModel = new()
             {
@@ -725,7 +740,7 @@
         {
             // Arrange
 
-            var validationService = new ValidationAuthentication(dbContext.Object, userManager.Object);
+            var validationService = new ValidationAuthentication(dbContext, userManager.Object);
 
             RegisterGpDto registerModel = new()
             {
@@ -763,7 +778,7 @@
         {
             // Arrange
 
-            var validationService = new ValidationAuthentication(dbContext.Object, userManager.Object);
+            var validationService = new ValidationAuthentication(dbContext, userManager.Object);
 
             RegisterGpDto registerModel = new()
             {
@@ -801,7 +816,7 @@
         {
             // Arrange
 
-            var validationService = new ValidationAuthentication(dbContext.Object, userManager.Object);
+            var validationService = new ValidationAuthentication(dbContext, userManager.Object);
 
             LoginGpDto loginModel = new()
             {
@@ -829,7 +844,7 @@
         {
             // Arrange
 
-            var validationService = new ValidationAuthentication(dbContext.Object, userManager.Object);
+            var validationService = new ValidationAuthentication(dbContext, userManager.Object);
 
             LoginGpDto loginModel = new()
             {
@@ -865,7 +880,7 @@
         {
             // Arrange
 
-            var validationService = new ValidationAuthentication(dbContext.Object, userManager.Object);
+            var validationService = new ValidationAuthentication(dbContext, userManager.Object);
 
             LoginGpDto loginModel = new()
             {

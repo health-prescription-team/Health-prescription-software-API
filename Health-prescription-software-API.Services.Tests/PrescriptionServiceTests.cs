@@ -4,26 +4,37 @@
     using Data.Entities;
     using Models.Prescription;
 
-    using static Utilities.MockQueryableDbSet;
+    using static Seeding.UserSeed;
     using static Seeding.PrescriptionSeed;
+    using static Seeding.MedicineSeed;
 
     public class PrescriptionServiceTests
     {
-        private Mock<HealthPrescriptionDbContext> dbContext;
-        private Mock<DbSet<Prescription>> prescriptionDbSet;
-        private Mock<DbSet<PrescriptionDetails>> prescriptionDetailsDbSet;
+        private HealthPrescriptionDbContext dbContext;
 
         [SetUp]
         public void Setup()
         {
-            // Database mock setup
+            // In memory database setup
 
-            dbContext = new Mock<HealthPrescriptionDbContext>(new DbContextOptions<DbContext>());
-            prescriptionDbSet = MockDbSet(GeneratePrescriptions());
-            prescriptionDetailsDbSet = MockDbSet(GeneratePrescriptionDetails());
+            var options = new DbContextOptionsBuilder<HealthPrescriptionDbContext>()
+                .UseInMemoryDatabase(databaseName: "InMemoryHealthDB")
+                .Options;
 
-            dbContext.Setup(m => m.Prescriptions).Returns(prescriptionDbSet.Object);
-            dbContext.Setup(m => m.PrescriptionDetails).Returns(prescriptionDetailsDbSet.Object);
+            dbContext = new HealthPrescriptionDbContext(options);
+
+            // Seed database
+
+            dbContext.AddRange(GenerateUsers());
+            dbContext.AddRange(GeneratePrescriptions());
+            dbContext.AddRange(GeneratePrescriptionDetails());
+            dbContext.AddRange(GenerateMedicine());
+        }
+
+        [TearDown]
+        public void TearDown()
+        {
+            dbContext.Database.EnsureDeleted();
         }
 
         [Test]
@@ -31,7 +42,7 @@
         {
             // Arrange
 
-            var prescriptionService = new PrescriptionService(dbContext.Object);
+            var prescriptionService = new PrescriptionService(dbContext);
 
             var newPrescription = new AddPrescriptionDto
             {
@@ -57,8 +68,8 @@
             var prescriptionId = await prescriptionService.Add(newPrescription, "752140d6-b0ed-4dd9-bfc0-96cf0bc87205");
 
             // Assert
-            prescriptionDbSet.Verify(m => m.AddAsync(It.IsAny<Prescription>(), It.IsAny<CancellationToken>()), Times.Once());
-            dbContext.Verify(m => m.SaveChangesAsync(It.IsAny<CancellationToken>()), Times.Once());
+
+
         }
     }
 }

@@ -12,12 +12,13 @@
     using Models.Authentication.GP;
     using Models.Authentication.Pharmacy;
 
-    using static Utilities.MockQueryableDbSet;
     using static Seeding.UserSeed;
+    using static Seeding.PrescriptionSeed;
+    using static Seeding.MedicineSeed;
 
     public class AuthenticationServiceTests
     {
-        private Mock<HealthPrescriptionDbContext> dbContext;
+        private HealthPrescriptionDbContext dbContext;
         private Mock<IConfiguration> configuration;
         private Mock<UserManager<User>> userManager;
         private Mock<SignInManager<User>> signInManager;
@@ -25,13 +26,20 @@
         [SetUp]
         public void Setup()
         {
-            // Database mock setup
+            // In memory database setup
 
-            var usersDbSet = MockDbSet(GenerateUsers());
+            var options = new DbContextOptionsBuilder<HealthPrescriptionDbContext>()
+                .UseInMemoryDatabase(databaseName: "InMemoryHealthDB")
+                .Options;
 
-            dbContext = new Mock<HealthPrescriptionDbContext>(new DbContextOptions<DbContext>());
+            dbContext = new HealthPrescriptionDbContext(options);
 
-            dbContext.Setup(m => m.Users).Returns(usersDbSet.Object);
+            // Seed database
+
+            dbContext.AddRange(GenerateUsers());
+            dbContext.AddRange(GeneratePrescriptions());
+            dbContext.AddRange(GeneratePrescriptionDetails());
+            dbContext.AddRange(GenerateMedicine());
 
             // IConfiguration mock setup
 
@@ -60,11 +68,17 @@
                 null!);
         }
 
+        [TearDown]
+        public void TearDown()
+        {
+            dbContext.Database.EnsureDeleted();
+        }
+
         [Test]
         public async Task RegisterPharmacistWithValidData()
         {
             // Arrange
-            var authService = new AuthenticationService(dbContext.Object, configuration.Object, userManager.Object, signInManager.Object);
+            var authService = new AuthenticationService(dbContext, configuration.Object, userManager.Object, signInManager.Object);
 
             RegisterPharmacistDto formModel = new()
             {
@@ -96,7 +110,7 @@
         public async Task RegisterPharmacistWithInvalidData()
         {
             // Arrange
-            var authService = new AuthenticationService(dbContext.Object, configuration.Object, userManager.Object, signInManager.Object);
+            var authService = new AuthenticationService(dbContext, configuration.Object, userManager.Object, signInManager.Object);
 
             RegisterPharmacistDto formModel = new()
             {
@@ -128,7 +142,7 @@
         {
             // Arrange
 
-            var authService = new AuthenticationService(dbContext.Object, configuration.Object, userManager.Object, signInManager.Object);
+            var authService = new AuthenticationService(dbContext, configuration.Object, userManager.Object, signInManager.Object);
 
             LoginPharmacistDto loginModel = new()
             {
@@ -153,7 +167,7 @@
         {
             // Arrange
 
-            var authService = new AuthenticationService(dbContext.Object, configuration.Object, userManager.Object, signInManager.Object);
+            var authService = new AuthenticationService(dbContext, configuration.Object, userManager.Object, signInManager.Object);
 
             LoginPharmacistDto loginModel = new()
             {
@@ -178,7 +192,7 @@
         {
             // Arrange
 
-            var authService = new AuthenticationService(dbContext.Object, configuration.Object, userManager.Object, signInManager.Object);
+            var authService = new AuthenticationService(dbContext, configuration.Object, userManager.Object, signInManager.Object);
 
             LoginPharmacistDto loginModel = new()
             {
@@ -199,7 +213,7 @@
         public async Task RegisterPatientWithValidData()
         {
             // Arrange
-            var authService = new AuthenticationService(dbContext.Object, configuration.Object, userManager.Object, signInManager.Object);
+            var authService = new AuthenticationService(dbContext, configuration.Object, userManager.Object, signInManager.Object);
             
             RegisterPatientDto formModel = new()
             {
@@ -225,7 +239,7 @@
         public async Task RegisterPatientWithInvalidData()
         {
             // Arrange
-            var authService = new AuthenticationService(dbContext.Object, configuration.Object, userManager.Object, signInManager.Object);
+            var authService = new AuthenticationService(dbContext, configuration.Object, userManager.Object, signInManager.Object);
 
             RegisterPatientDto formModel = new()
             {
@@ -252,7 +266,7 @@
         {
             // Arrange
 
-            var authService = new AuthenticationService(dbContext.Object, configuration.Object, userManager.Object, signInManager.Object);
+            var authService = new AuthenticationService(dbContext, configuration.Object, userManager.Object, signInManager.Object);
 
             LoginPatientDto loginModel = new()
             {
@@ -276,7 +290,7 @@
         {
             // Arrange
 
-            var authService = new AuthenticationService(dbContext.Object, configuration.Object, userManager.Object, signInManager.Object);
+            var authService = new AuthenticationService(dbContext, configuration.Object, userManager.Object, signInManager.Object);
 
             LoginPatientDto loginModel = new()
             {
@@ -300,7 +314,7 @@
         {
             // Arrange
 
-            var authService = new AuthenticationService(dbContext.Object, configuration.Object, userManager.Object, signInManager.Object);
+            var authService = new AuthenticationService(dbContext, configuration.Object, userManager.Object, signInManager.Object);
 
             LoginPatientDto loginModel = new()
             {
@@ -321,7 +335,7 @@
         public async Task RegisterGpWithValidData()
         {
             // Arrange
-            var authService = new AuthenticationService(dbContext.Object, configuration.Object, userManager.Object, signInManager.Object);
+            var authService = new AuthenticationService(dbContext, configuration.Object, userManager.Object, signInManager.Object);
 
             RegisterGpDto formModel = new()
             {
@@ -350,7 +364,7 @@
         public async Task RegisterGpWithInvalidData()
         {
             // Arrange
-            var authService = new AuthenticationService(dbContext.Object, configuration.Object, userManager.Object, signInManager.Object);
+            var authService = new AuthenticationService(dbContext, configuration.Object, userManager.Object, signInManager.Object);
 
             RegisterGpDto formModel = new()
             {
@@ -379,7 +393,7 @@
         {
             // Arrange
 
-            var authService = new AuthenticationService(dbContext.Object, configuration.Object, userManager.Object, signInManager.Object);
+            var authService = new AuthenticationService(dbContext, configuration.Object, userManager.Object, signInManager.Object);
 
             LoginGpDto loginModel = new()
             {
@@ -404,7 +418,7 @@
         {
             // Arrange
 
-            var authService = new AuthenticationService(dbContext.Object, configuration.Object, userManager.Object, signInManager.Object);
+            var authService = new AuthenticationService(dbContext, configuration.Object, userManager.Object, signInManager.Object);
 
             LoginGpDto loginModel = new()
             {
@@ -429,7 +443,7 @@
         {
             // Arrange
 
-            var authService = new AuthenticationService(dbContext.Object, configuration.Object, userManager.Object, signInManager.Object);
+            var authService = new AuthenticationService(dbContext, configuration.Object, userManager.Object, signInManager.Object);
 
             LoginGpDto loginModel = new()
             {
@@ -452,7 +466,7 @@
         public async Task RegisterPharmacyWithValidData()
         {
             // Arrange
-            var authService = new AuthenticationService(dbContext.Object, configuration.Object, userManager.Object, signInManager.Object);
+            var authService = new AuthenticationService(dbContext, configuration.Object, userManager.Object, signInManager.Object);
 
             RegisterPharmacyDto formModel = new()
             {
@@ -478,7 +492,7 @@
         public async Task RegisterPharmacyWithInvalidData()
         {
             // Arrange
-            var authService = new AuthenticationService(dbContext.Object, configuration.Object, userManager.Object, signInManager.Object);
+            var authService = new AuthenticationService(dbContext, configuration.Object, userManager.Object, signInManager.Object);
 
             RegisterPharmacyDto formModel = new()
             {
@@ -504,7 +518,7 @@
         {
             // Arrange
 
-            var authService = new AuthenticationService(dbContext.Object, configuration.Object, userManager.Object, signInManager.Object);
+            var authService = new AuthenticationService(dbContext, configuration.Object, userManager.Object, signInManager.Object);
 
             LoginPharmacyDto loginModel = new()
             {
@@ -529,7 +543,7 @@
         {
             // Arrange
 
-            var authService = new AuthenticationService(dbContext.Object, configuration.Object, userManager.Object, signInManager.Object);
+            var authService = new AuthenticationService(dbContext, configuration.Object, userManager.Object, signInManager.Object);
 
             LoginPharmacyDto loginModel = new()
             {
@@ -554,7 +568,7 @@
         {
             // Arrange
 
-            var authService = new AuthenticationService(dbContext.Object, configuration.Object, userManager.Object, signInManager.Object);
+            var authService = new AuthenticationService(dbContext, configuration.Object, userManager.Object, signInManager.Object);
 
             LoginPharmacyDto loginModel = new()
             {
@@ -575,7 +589,7 @@
         public void GetUserByEgnThrows()
         {
             // Arrange
-            var authService = new AuthenticationService(dbContext.Object, configuration.Object, userManager.Object, signInManager.Object);
+            var authService = new AuthenticationService(dbContext, configuration.Object, userManager.Object, signInManager.Object);
 
             // Act & Assert
 
