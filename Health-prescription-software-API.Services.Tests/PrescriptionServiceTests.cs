@@ -1,7 +1,6 @@
 ﻿namespace Health_prescription_software_API.Services.Tests
 {
     using Data;
-    using Data.Entities;
     using Models.Prescription;
 
     using static Seeding.UserSeed;
