@@ -183,7 +183,6 @@
 
                 if (!validEgn)
                 {
-
                     modelError = new ModelError
                     {
                         ErrorPropName = "EGN",

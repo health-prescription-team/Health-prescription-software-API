@@ -218,5 +218,81 @@
                 Assert.That(actualModelErrorMessage, Is.EqualTo(InvalidMedicineId));
             });
         }
+
+        [Test]
+        public async Task IsDeletePrescriptionValidWithValidIdReturnsTrue()
+        {
+            // Arrange
+
+            var validationService = new ValidationPrescription(dbContext);
+
+            var prescriptionId = Guid.Parse("218537f0-2582-4d36-85f9-3f11859911c1");
+
+            // Act
+
+            bool actualResult = await validationService.IsDeletePrescriptionValid(prescriptionId);
+
+            // Assert
+
+            Assert.That(actualResult, Is.True);
+        }
+
+        [Test]
+        public async Task IsDeletePrescriptionValidWithNonExistingIdReturnsFalse()
+        {
+            // Arrange
+
+            var validationService = new ValidationPrescription(dbContext);
+
+            var prescriptionId = Guid.Parse("218537f0-2582-4d36-85f9-3f11859911c5");
+
+            // Act
+
+            bool actualResult = await validationService.IsDeletePrescriptionValid(prescriptionId);
+
+            var modelErrorsCount = validationService.ModelErrors.Count;
+
+            var actualModelErrorPropName = validationService.ModelErrors.ToArray()[0].ErrorPropName;
+            var actualModelErrorMessage = validationService.ModelErrors.ToArray()[0].ErrorMessage;
+
+            // Assert
+
+            Assert.Multiple(() =>
+            {
+                Assert.That(actualResult, Is.False);
+                Assert.That(modelErrorsCount, Is.EqualTo(1));
+                Assert.That(actualModelErrorPropName, Is.EqualTo("Id"));
+                Assert.That(actualModelErrorMessage, Is.EqualTo(PrescriptionDoesNotExist));
+            });
+        }
+
+        [Test]
+        public async Task IsDeletePrescriptionValidWithExistingFulfilledPrescriptionReturnsFalse()
+        {
+            // Arrange
+
+            var validationService = new ValidationPrescription(dbContext);
+
+            var prescriptionId = Guid.Parse("cb015cdd-c17a-4eb0-8de7-0a53ca017037");
+
+            // Act
+
+            bool actualResult = await validationService.IsDeletePrescriptionValid(prescriptionId);
+
+            var modelErrorsCount = validationService.ModelErrors.Count;
+
+            var actualModelErrorPropName = validationService.ModelErrors.ToArray()[0].ErrorPropName;
+            var actualModelErrorMessage = validationService.ModelErrors.ToArray()[0].ErrorMessage;
+
+            // Assert
+
+            Assert.Multiple(() =>
+            {
+                Assert.That(actualResult, Is.False);
+                Assert.That(modelErrorsCount, Is.EqualTo(1));
+                Assert.That(actualModelErrorPropName, Is.EqualTo("IsFulfilled"));
+                Assert.That(actualModelErrorMessage, Is.EqualTo(CantDeletePrescription));
+            });
+        }
     }
 }
