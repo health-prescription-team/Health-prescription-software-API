@@ -66,7 +66,20 @@
         {
             var prescription = await dbContext.Prescriptions.FindAsync(prescriptionId);
 
-            if (prescription != null)
+            if (prescription == null)
+            {
+                var modelError = new ModelError
+                {
+                    ErrorPropName = nameof(prescription.Id),
+                    ErrorMessage = PrescriptionDoesNotExist
+                };
+
+                ModelErrors.Add(modelError);
+
+                return false;
+            }
+
+            if (prescription.IsFulfilled)
             {
                 var modelError = new ModelError
                 {
@@ -86,31 +99,28 @@
         {
             var prescription = await dbContext.Prescriptions.FindAsync(model.Id);
 
-            if (prescription == null || prescription.IsFulfilled)
+            if (prescription == null)
             {
-                ModelError? modelError;
-
-                if (prescription == null)
+                var modelError = new ModelError
                 {
-                    modelError = new ModelError
-                    {
-                        ErrorPropName = nameof(prescription.Id),
-                        ErrorMessage = PrescriptionDoesNotExist
-                    };
+                    ErrorPropName = nameof(prescription.Id),
+                    ErrorMessage = PrescriptionDoesNotExist
+                };
 
-                    ModelErrors.Add(modelError);
-                }
+                ModelErrors.Add(modelError);
 
-                if (prescription!.IsFulfilled)
+                return false;
+            }
+
+            if (prescription.IsFulfilled)
+            {
+                var modelError = new ModelError
                 {
-                    modelError = new ModelError
-                    {
-                        ErrorPropName = nameof(prescription.IsFulfilled),
-                        ErrorMessage = CantEditPrescription
-                    };
+                    ErrorPropName = nameof(prescription.IsFulfilled),
+                    ErrorMessage = CantEditPrescription
+                };
 
-                    ModelErrors.Add(modelError);
-                }
+                ModelErrors.Add(modelError);
 
                 return false;
             }
