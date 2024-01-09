@@ -74,7 +74,7 @@ namespace Health_prescription_software_API.Services
             medicine!.Name = model.Name;
             medicine!.Price = model.Price;
             medicine!.MedicineCompany = model.MedicineCompany;
-            medicine!.MedicineDetails = model.MedicineDetails;            
+            medicine!.MedicineDetails = model.MedicineDetails;
             medicine!.Ingredients = model.Ingredients;
 
             await this.context.SaveChangesAsync();

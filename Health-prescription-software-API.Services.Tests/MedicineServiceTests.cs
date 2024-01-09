@@ -104,5 +104,81 @@
                 Assert.That(medicineDetailsDto.Ingredients, Is.EqualTo(expectedIngredients));
             });
         }
+
+        [Test]
+        public async Task EditByIdReturnsEditedMedicineIdWithNullImage()
+        {
+            // Arrange
+
+            var medicineService = new MedicineService(dbContext);
+
+            var medicineId = Guid.Parse("b7540da6-da0f-40b0-bd8c-259e42e3af8d");
+
+            EditMedicineDTO editMedicineDTO = new()
+            {
+                Name = "Аспирин Edited",
+                MedicineImage = null,
+                Price = 1000,
+                MedicineCompany = "Edited",
+                MedicineDetails = "Edited Details",
+                Ingredients = "Ingredients Edited"
+            };
+
+            // Act
+
+            var editedMedicineId = await medicineService.EditByIdAsync(medicineId, editMedicineDTO);
+
+            // Assert
+
+            var editedEntity = await dbContext.Medicines.FindAsync(medicineId);
+
+            Assert.Multiple(() =>
+            {
+                Assert.That(editedMedicineId, Is.EqualTo(medicineId));
+                Assert.That(editedEntity!.Name, Is.EqualTo(editMedicineDTO.Name));
+                Assert.That(editedEntity!.Price, Is.EqualTo(editMedicineDTO.Price));
+                Assert.That(editedEntity!.MedicineCompany, Is.EqualTo(editMedicineDTO.MedicineCompany));
+                Assert.That(editedEntity!.MedicineDetails, Is.EqualTo(editMedicineDTO.MedicineDetails));
+                Assert.That(editedEntity!.Ingredients, Is.EqualTo(editMedicineDTO.Ingredients));
+            });
+        }
+
+        [Test]
+        public async Task EditByIdReturnsEditedMedicineIdWithImage()
+        {
+            // Arrange
+
+            var medicineService = new MedicineService(dbContext);
+
+            var medicineId = Guid.Parse("b7540da6-da0f-40b0-bd8c-259e42e3af8d");
+
+            EditMedicineDTO editMedicineDTO = new()
+            {
+                Name = "Аспирин Edited",
+                MedicineImage = new FormFile(new MemoryStream(), 0, 321654, "test", "test.png"),
+                Price = 1000,
+                MedicineCompany = "Edited",
+                MedicineDetails = "Edited Details",
+                Ingredients = "Ingredients Edited"
+            };
+
+            // Act
+
+            var editedMedicineId = await medicineService.EditByIdAsync(medicineId, editMedicineDTO);
+
+            // Assert
+
+            var editedEntity = await dbContext.Medicines.FindAsync(medicineId);
+
+            Assert.Multiple(() =>
+            {
+                Assert.That(editedMedicineId, Is.EqualTo(medicineId));
+                Assert.That(editedEntity!.Name, Is.EqualTo(editMedicineDTO.Name));
+                Assert.That(editedEntity!.Price, Is.EqualTo(editMedicineDTO.Price));
+                Assert.That(editedEntity!.MedicineCompany, Is.EqualTo(editMedicineDTO.MedicineCompany));
+                Assert.That(editedEntity!.MedicineDetails, Is.EqualTo(editMedicineDTO.MedicineDetails));
+                Assert.That(editedEntity!.Ingredients, Is.EqualTo(editMedicineDTO.Ingredients));
+            });
+        }
     }
 }
