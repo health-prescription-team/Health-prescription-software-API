@@ -463,5 +463,100 @@
                 Assert.That(actualModelErrorMessage, Is.EqualTo(PrescriptionDetailsAreRequired));
             });
         }
+
+        [Test]
+        public async Task IsGpThePrescriberReturnsTrueWithValidData()
+        {
+            // Arrange
+
+            var validationService = new ValidationPrescription(dbContext);
+
+            var validGpId = "752140d6-b0ed-4dd9-bfc0-96cf0bc87205";
+            var validPrescriptionId = Guid.Parse("203168cc-aa64-478c-86c5-7a87dcee6b6e");
+
+            // Act
+
+            bool actualResult = await validationService.IsGpThePrescriber(validGpId, validPrescriptionId);
+
+            // Assert
+
+            Assert.That(actualResult, Is.True);
+        }
+
+        [Test]
+        public async Task IsGpThePrescriberValidPrescriptionGoNotPrescriberReturnsFalse()
+        {
+            // Arrange
+
+            var validationService = new ValidationPrescription(dbContext);
+
+            var validGpId = "0fb3a33a-9796-4f4b-8349-192a93a136dc";
+            var validPrescriptionId = Guid.Parse("203168cc-aa64-478c-86c5-7a87dcee6b6e");
+
+            // Act
+
+            bool actualResult = await validationService.IsGpThePrescriber(validGpId, validPrescriptionId);
+
+            // Assert
+
+            Assert.That(actualResult, Is.False);
+        }
+
+        [Test]
+        public async Task IsGpThePrescriberWithNonExistingGpId()
+        {
+            // Arrange
+
+            var validationService = new ValidationPrescription(dbContext);
+
+            var validGpId = "0fb3a33a-9796-4f4b-8349-192a93a136d5";
+            var validPrescriptionId = Guid.Parse("203168cc-aa64-478c-86c5-7a87dcee6b6e");
+
+            // Act
+
+            bool actualResult = await validationService.IsGpThePrescriber(validGpId, validPrescriptionId);
+
+            // Assert
+
+            Assert.That(actualResult, Is.False);
+        }
+
+        [Test]
+        public async Task IsGpThePrescriberWithNonExistingPrescriptionId()
+        {
+            // Arrange
+
+            var validationService = new ValidationPrescription(dbContext);
+
+            var validGpId = "0fb3a33a-9796-4f4b-8349-192a93a136dc";
+            var validPrescriptionId = Guid.Parse("203168cc-aa64-478c-86c5-7a87dcee6b6a");
+
+            // Act
+
+            bool actualResult = await validationService.IsGpThePrescriber(validGpId, validPrescriptionId);
+
+            // Assert
+
+            Assert.That(actualResult, Is.False);
+        }
+
+        [Test]
+        public async Task IsGpThePrescriberWithNonExistingPrescriptionAndGpId()
+        {
+            // Arrange
+
+            var validationService = new ValidationPrescription(dbContext);
+
+            var validGpId = "0fb3a33a-9796-4f4b-8349-192a93a136d5";
+            var validPrescriptionId = Guid.Parse("203168cc-aa64-478c-86c5-7a87dcee6b65");
+
+            // Act
+
+            bool actualResult = await validationService.IsGpThePrescriber(validGpId, validPrescriptionId);
+
+            // Assert
+
+            Assert.That(actualResult, Is.False);
+        }
     }
 }
