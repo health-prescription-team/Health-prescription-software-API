@@ -655,5 +655,52 @@
                 Assert.That(actualModelErrorMessage, Is.EqualTo(PatientDoesNotExist));
             });
         }
+
+        [Test]
+        public async Task IsPrescriptionValidWithExistingPrescriptionReturnsTrue()
+        {
+            // Arrange
+
+            var validationService = new ValidationPrescription(dbContext);
+
+            var prescriptionId = Guid.Parse("203168cc-aa64-478c-86c5-7a87dcee6b6e");
+
+            // Act
+
+            bool actualResult = await validationService.IsPrescriptionValid(prescriptionId);
+
+            // Assert
+
+            Assert.That(actualResult, Is.True);
+        }
+
+        [Test]
+        public async Task IsPrescriptionValidWithNonExistingPrescriptionReturnsFalse()
+        {
+            // Arrange
+
+            var validationService = new ValidationPrescription(dbContext);
+
+            var prescriptionId = Guid.Parse("203168cc-aa64-478c-86c5-7a87dcee6b65");
+
+            // Act
+
+            bool actualResult = await validationService.IsPrescriptionValid(prescriptionId);
+
+            var modelErrorsCount = validationService.ModelErrors.Count;
+
+            var actualModelErrorPropName = validationService.ModelErrors.ToArray()[0].ErrorPropName;
+            var actualModelErrorMessage = validationService.ModelErrors.ToArray()[0].ErrorMessage;
+
+            // Assert
+
+            Assert.Multiple(() =>
+            {
+                Assert.That(actualResult, Is.False);
+                Assert.That(modelErrorsCount, Is.EqualTo(1));
+                Assert.That(actualModelErrorPropName, Is.EqualTo("Id"));
+                Assert.That(actualModelErrorMessage, Is.EqualTo(PrescriptionDoesNotExist));
+            });
+        }
     }
 }
