@@ -254,5 +254,25 @@
                 Assert.That(medicines.MedicinesCount, Is.EqualTo(2));
             });
         }
+
+        [Test]
+        public async Task GetAllMinimal()
+        {
+            // Arrange
+
+            var medicineService = new MedicineService(dbContext);
+
+            // Act
+
+            var allMedicinesMinimal = await medicineService.GetAllMinimalAsync();
+
+            // Assert
+
+            Assert.Multiple(() =>
+            {
+                Assert.That(allMedicinesMinimal, Is.Not.Empty);
+                Assert.That(allMedicinesMinimal.Count(), Is.EqualTo(3));
+            });
+        }
     }
 }
