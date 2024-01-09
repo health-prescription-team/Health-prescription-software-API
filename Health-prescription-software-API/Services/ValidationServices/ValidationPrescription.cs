@@ -175,33 +175,31 @@
             }
 
             var validEgn = Regex.Match(patientEgn, EgnRegexPattern).Success;
+
+            if (!validEgn)
+            {
+                var modelError = new ModelError
+                {
+                    ErrorPropName = "EGN",
+                    ErrorMessage = InvalidEgnErrorMessage
+                };
+
+                ModelErrors.Add(modelError);
+
+                return false;
+            }
+
             var patientExist = await dbContext.Users.AnyAsync(u => u.Egn == patientEgn);
 
-            if (!validEgn || !patientExist)
+            if (!patientExist)
             {
-                ModelError? modelError;
-
-                if (!validEgn)
+                var modelError = new ModelError
                 {
-                    modelError = new ModelError
-                    {
-                        ErrorPropName = "EGN",
-                        ErrorMessage = InvalidEgnErrorMessage
-                    };
+                    ErrorPropName = "EGN",
+                    ErrorMessage = PatientDoesNotExist
+                };
 
-                    ModelErrors.Add(modelError);
-                }
-
-                if (!patientExist)
-                {
-                    modelError = new ModelError
-                    {
-                        ErrorPropName = "EGN",
-                        ErrorMessage = PatientDoesNotExist
-                    };
-
-                    ModelErrors.Add(modelError);
-                }
+                ModelErrors.Add(modelError);
 
                 return false;
             }
