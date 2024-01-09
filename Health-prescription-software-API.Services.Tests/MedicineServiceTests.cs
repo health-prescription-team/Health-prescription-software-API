@@ -180,5 +180,79 @@
                 Assert.That(editedEntity!.Ingredients, Is.EqualTo(editMedicineDTO.Ingredients));
             });
         }
+
+        [Test]
+        public async Task GetAllAsyncWithNullQuery()
+        {
+            // Arrange
+
+            var medicineService = new MedicineService(dbContext);
+
+            QueryMedicineDTO? medicineQuery = null;
+
+            // Act
+
+            var medicines = await medicineService.GetAllAsync(medicineQuery);
+
+            // Assert
+
+            Assert.Multiple(() =>
+            {
+                Assert.That(medicines.Medicines, Is.Not.Empty);
+                Assert.That(medicines.MedicinesCount, Is.EqualTo(dbContext.Medicines.Count()));
+            });
+        }
+
+        [Test]
+        public async Task GetAllAsyncWithSearchTermOnly()
+        {
+            // Arrange
+
+            var medicineService = new MedicineService(dbContext);
+
+            QueryMedicineDTO? medicineQuery = new ()
+            {
+                SearchTerm = "Асп"
+            };
+
+            // Act
+
+            var medicines = await medicineService.GetAllAsync(medicineQuery);
+
+            // Assert
+
+            Assert.Multiple(() =>
+            {
+                Assert.That(medicines.Medicines, Is.Not.Empty);
+                Assert.That(medicines.MedicinesCount, Is.EqualTo(1));
+            });
+        }
+
+        [Test]
+        public async Task GetAllAsyncWithEntriesPerPage()
+        {
+            // Arrange
+
+            var medicineService = new MedicineService(dbContext);
+
+            QueryMedicineDTO? medicineQuery = new()
+            {
+                SearchTerm = "А",
+                EntriesPerPage = 1,
+                PageNumber = 1
+            };
+
+            // Act
+
+            var medicines = await medicineService.GetAllAsync(medicineQuery);
+
+            // Assert
+
+            Assert.Multiple(() =>
+            {
+                Assert.That(medicines.Medicines, Is.Not.Empty);
+                Assert.That(medicines.MedicinesCount, Is.EqualTo(2));
+            });
+        }
     }
 }
