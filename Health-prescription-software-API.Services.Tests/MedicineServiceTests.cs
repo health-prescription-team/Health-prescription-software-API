@@ -274,5 +274,23 @@
                 Assert.That(allMedicinesMinimal.Count(), Is.EqualTo(3));
             });
         }
+
+        [Test]
+        public async Task DeleteMedicine()
+        {
+            // Arrange
+
+            var medicineService = new MedicineService(dbContext);
+
+            var medicineId = Guid.Parse("b7540da6-da0f-40b0-bd8c-259e42e3af8d");
+
+            // Act
+
+            await medicineService.Delete(medicineId);
+
+            // Assert
+
+            Assert.That(dbContext.Medicines.Count(), Is.EqualTo(2));
+        }
     }
 }
