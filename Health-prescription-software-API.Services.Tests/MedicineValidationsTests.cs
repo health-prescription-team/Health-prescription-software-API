@@ -113,5 +113,69 @@
 
             Assert.That(actualResult, Is.False);
         }
+
+        [Test]
+        public async Task IsQueryValidWithNullQueryDtoReturnsTrue()
+        {
+            // Arrange
+
+            var validationService = new ValidationMedicine(dbContext);
+
+            // Act
+
+            bool actualResult = await validationService.IsQueryValid(null);
+
+            // Asset
+
+            Assert.That(actualResult, Is.True);
+        }
+
+        [Test]
+        public async Task IsQueryValidWithValidPageNumberReturnsTrue()
+        {
+            // Arrange
+
+            var validationService = new ValidationMedicine(dbContext);
+
+            QueryMedicineDTO query = new()
+            {
+                PageNumber = 1
+            };
+
+            // Act
+
+            bool actualResult = await validationService.IsQueryValid(query);
+
+            // Asset
+
+            Assert.That(actualResult, Is.True);
+        }
+
+        [Test]
+        public async Task IsQueryValidWithInvalidPageNumberReturnsFalse()
+        {
+            // Arrange
+
+            var validationService = new ValidationMedicine(dbContext);
+
+            QueryMedicineDTO query = new()
+            {
+                PageNumber = 2
+            };
+
+            // Act
+
+            bool actualResult = await validationService.IsQueryValid(query);
+
+            var errorsCount = validationService.ModelErrors.Count;
+
+            // Asset
+
+            Assert.Multiple(() =>
+            {
+                Assert.That(actualResult, Is.False);
+                Assert.That(errorsCount, Is.EqualTo(2));
+            });
+        }
     }
 }
