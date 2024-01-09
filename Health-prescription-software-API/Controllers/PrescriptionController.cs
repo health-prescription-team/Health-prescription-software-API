@@ -134,7 +134,7 @@
 
                 prescriptionService.Delete(id);
 
-                return Ok("Deleted successfully");
+                return NoContent();
             }
             catch (Exception)
             {
