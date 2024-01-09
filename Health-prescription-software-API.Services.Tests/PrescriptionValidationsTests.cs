@@ -11,6 +11,8 @@
     using static Common.EntityValidationErrorMessages.Prescription;
     using static Common.EntityValidationErrorMessages.Medicine;
 
+    using static Common.EntityValidationConstants.User;
+
     public class PrescriptionValidationsTests
     {
         private HealthPrescriptionDbContext dbContext;
@@ -557,6 +559,101 @@
             // Assert
 
             Assert.That(actualResult, Is.False);
+        }
+
+        [Test]
+        public async Task IsPatientPrescriptionsValidWithValidEgnReturnsTrue()
+        {
+            // Arrange
+
+            var validationService = new ValidationPrescription(dbContext);
+
+            var patientEgn = "2222222222";
+
+            // Act
+
+            bool actualResult = await validationService.IsPatientPrescriptionsValid(patientEgn);
+
+            // Assert
+
+            Assert.That(actualResult, Is.True);
+        }
+
+        [Test]
+        [TestCase(null)]
+        [TestCase(" ")]
+        [TestCase("")]
+        public async Task IsPatientPrescriptionsValidWithNullOrWhiteSpaceEgn(string patientEgn)
+        {
+            // Arrange
+
+            var validationService = new ValidationPrescription(dbContext);
+
+            // Act
+
+            bool actualResult = await validationService.IsPatientPrescriptionsValid(patientEgn);
+
+            // Assert
+
+            Assert.That(actualResult, Is.False);
+        }
+
+        [Test]
+        [TestCase("000000000")] // 9 symbols
+        [TestCase("000000000A")] // 10 symbols with a character
+        public async Task IsPatientPrescriptionsValidWithInvalidEgnFormat(string patientEgn)
+        {
+            // Arrange
+
+            var validationService = new ValidationPrescription(dbContext);
+
+            // Act
+
+            bool actualResult = await validationService.IsPatientPrescriptionsValid(patientEgn);
+
+            var modelErrorsCount = validationService.ModelErrors.Count;
+
+            var actualModelErrorPropName = validationService.ModelErrors.ToArray()[0].ErrorPropName;
+            var actualModelErrorMessage = validationService.ModelErrors.ToArray()[0].ErrorMessage;
+
+            // Assert
+
+            Assert.Multiple(() =>
+            {
+                Assert.That(actualResult, Is.False);
+                Assert.That(modelErrorsCount, Is.EqualTo(1));
+                Assert.That(actualModelErrorPropName, Is.EqualTo("EGN"));
+                Assert.That(actualModelErrorMessage, Is.EqualTo(InvalidEgnErrorMessage));
+            });
+        }
+
+        [Test]
+        public async Task IsPatientPrescriptionsValidWithNonExistingEgn()
+        {
+            // Arrange
+
+            var validationService = new ValidationPrescription(dbContext);
+
+            var patientEgn = "9999999999";
+
+            // Act
+
+            bool actualResult = await validationService.IsPatientPrescriptionsValid(patientEgn);
+
+            var modelErrorsCount = validationService.ModelErrors.Count;
+
+            var actualModelErrorPropName = validationService.ModelErrors.ToArray()[0].ErrorPropName;
+            var actualModelErrorMessage = validationService.ModelErrors.ToArray()[0].ErrorMessage;
+
+            // Assert
+
+            Assert.Multiple(() =>
+            {
+                Assert.That(actualResult, Is.False);
+                Assert.That(modelErrorsCount, Is.EqualTo(1));
+                Assert.That(actualModelErrorPropName, Is.EqualTo("EGN"));
+                Assert.That(actualModelErrorMessage, Is.EqualTo(PatientDoesNotExist));
+            });
         }
     }
 }
