@@ -12,28 +12,45 @@
 
     using ValidationServices;
 
-    using static Utilities.MockQueryableDbSet;
     using static Seeding.UserSeed;
+    using static Seeding.PrescriptionSeed;
+    using static Seeding.MedicineSeed;
 
     using static Common.EntityValidationErrorMessages.User;
     using static Common.EntityValidationErrorMessages.Authentication;
 
     public class AuthenticationValidationsTests
     {
-        private Mock<HealthPrescriptionDbContext> dbContext;
-        private Mock<DbSet<User>> usersDbSet;
+        private HealthPrescriptionDbContext dbContext;
         private Mock<UserManager<User>> userManager;
 
         [SetUp]
         public void Setup()
         {
-            dbContext = new Mock<HealthPrescriptionDbContext>(new DbContextOptions<DbContext>());
+            // In memory database setup
 
-            usersDbSet = MockDbSet(GenerateUsers());
+            var options = new DbContextOptionsBuilder<HealthPrescriptionDbContext>()
+                .UseInMemoryDatabase(databaseName: "InMemoryHealthDB")
+                .Options;
 
-            dbContext.Setup(m => m.Users).Returns(usersDbSet.Object);
+            dbContext = new HealthPrescriptionDbContext(options);
+
+            // Seed database
+
+            dbContext.AddRange(GenerateUsers());
+            dbContext.AddRange(GeneratePrescriptions());
+            dbContext.AddRange(GeneratePrescriptionDetails());
+            dbContext.AddRange(GenerateMedicine());
+
+            dbContext.SaveChanges();
 
             userManager = new Mock<UserManager<User>>(Mock.Of<IUserStore<User>>(), null!, null!, null!, null!, null!, null!, null!, null!);
+        }
+
+        [TearDown]
+        public void TearDown()
+        {
+            dbContext.Database.EnsureDeleted();
         }
 
         [Test]
@@ -41,7 +58,7 @@
         {
             // Arrange
 
-            var validationService = new ValidationAuthentication(dbContext.Object, userManager.Object);
+            var validationService = new ValidationAuthentication(dbContext, userManager.Object);
 
             LoginPharmacyDto loginModel = new()
             {
@@ -60,7 +77,7 @@
             Assert.Multiple(() =>
             {
                 Assert.That(validationResult, Is.True);
-                Assert.That(actual: validationService.ModelErrors.Count, Is.EqualTo(0));
+                Assert.That(validationService.ModelErrors, Is.Empty);
             });
         }
 
@@ -69,7 +86,7 @@
         {
             // Arrange
 
-            var validationService = new ValidationAuthentication(dbContext.Object, userManager.Object);
+            var validationService = new ValidationAuthentication(dbContext, userManager.Object);
 
             LoginPharmacyDto loginModel = new()
             {
@@ -94,7 +111,7 @@
             Assert.Multiple(() =>
             {
                 Assert.That(validationResult, Is.False);
-                Assert.That(actual: validationService.ModelErrors.Count, Is.EqualTo(1));
+                Assert.That(validationService.ModelErrors, Has.Count.EqualTo(1));
                 Assert.That(actualErrorPropName, Is.EqualTo(expectedErrorPropName));
                 Assert.That(actualErrorMessage, Is.EqualTo(expectedErrorMessage));
             });
@@ -105,7 +122,7 @@
         {
             // Arrange
 
-            var validationService = new ValidationAuthentication(dbContext.Object, userManager.Object);
+            var validationService = new ValidationAuthentication(dbContext, userManager.Object);
 
             LoginPharmacyDto loginModel = new()
             {
@@ -130,7 +147,7 @@
             Assert.Multiple(() =>
             {
                 Assert.That(validationResult, Is.False);
-                Assert.That(actual: validationService.ModelErrors.Count, Is.EqualTo(1));
+                Assert.That(validationService.ModelErrors, Has.Count.EqualTo(1));
                 Assert.That(actualErrorPropName, Is.EqualTo(expectedErrorPropName));
                 Assert.That(actualErrorMessage, Is.EqualTo(expectedErrorMessage));
             });
@@ -141,7 +158,7 @@
         {
             // Arrange
 
-            var validationService = new ValidationAuthentication(dbContext.Object, userManager.Object);
+            var validationService = new ValidationAuthentication(dbContext, userManager.Object);
 
             RegisterPharmacyDto registerModel = new()
             {
@@ -160,7 +177,7 @@
             Assert.Multiple(() =>
             {
                 Assert.That(validationResult, Is.True);
-                Assert.That(actual: validationService.ModelErrors.Count, Is.EqualTo(0));
+                Assert.That(validationService.ModelErrors, Is.Empty);
             });
         }
 
@@ -169,7 +186,7 @@
         {
             // Arrange
 
-            var validationService = new ValidationAuthentication(dbContext.Object, userManager.Object);
+            var validationService = new ValidationAuthentication(dbContext, userManager.Object);
 
             RegisterPharmacyDto registerModel = new()
             {
@@ -194,7 +211,7 @@
             Assert.Multiple(() =>
             {
                 Assert.That(validationResult, Is.False);
-                Assert.That(actual: validationService.ModelErrors.Count, Is.EqualTo(1));
+                Assert.That(validationService.ModelErrors, Has.Count.EqualTo(1));
                 Assert.That(actualErrorPropName, Is.EqualTo(expectedErrorPropName));
                 Assert.That(actualErrorMessage, Is.EqualTo(expectedErrorMessage));
             });
@@ -205,7 +222,7 @@
         {
             // Arrange
 
-            var validationService = new ValidationAuthentication(dbContext.Object, userManager.Object);
+            var validationService = new ValidationAuthentication(dbContext, userManager.Object);
 
             RegisterPharmacyDto registerModel = new()
             {
@@ -230,7 +247,7 @@
             Assert.Multiple(() =>
             {
                 Assert.That(validationResult, Is.False);
-                Assert.That(actual: validationService.ModelErrors.Count, Is.EqualTo(1));
+                Assert.That(validationService.ModelErrors, Has.Count.EqualTo(1));
                 Assert.That(actualErrorPropName, Is.EqualTo(expectedErrorPropName));
                 Assert.That(actualErrorMessage, Is.EqualTo(expectedErrorMessage));
             });
@@ -241,7 +258,7 @@
         {
             // Arrange
 
-            var validationService = new ValidationAuthentication(dbContext.Object, userManager.Object);
+            var validationService = new ValidationAuthentication(dbContext, userManager.Object);
 
             RegisterPharmacyDto registerModel = new()
             {
@@ -272,7 +289,7 @@
             Assert.Multiple(() =>
             {
                 Assert.That(validationResult, Is.False);
-                Assert.That(actual: validationService.ModelErrors.Count, Is.EqualTo(2));
+                Assert.That(validationService.ModelErrors, Has.Count.EqualTo(2));
                 Assert.That(actualNameErrorPropName, Is.EqualTo(expectedNameErrorPropName));
                 Assert.That(actualNameErrorMessage, Is.EqualTo(expectedNameErrorMessage));
                 Assert.That(actualEmailErrorPropName, Is.EqualTo(expectedEmailErrorPropName));
@@ -285,7 +302,7 @@
         {
             // Arrange
 
-            var validationService = new ValidationAuthentication(dbContext.Object, userManager.Object);
+            var validationService = new ValidationAuthentication(dbContext, userManager.Object);
 
             RegisterPharmacistDto registerModel = new()
             {
@@ -306,7 +323,7 @@
             Assert.Multiple(() =>
             {
                 Assert.That(validationResult, Is.True);
-                Assert.That(actual: validationService.ModelErrors.Count, Is.EqualTo(0));
+                Assert.That(validationService.ModelErrors, Is.Empty);
             });
         }
 
@@ -315,7 +332,7 @@
         {
             // Arrange
 
-            var validationService = new ValidationAuthentication(dbContext.Object, userManager.Object);
+            var validationService = new ValidationAuthentication(dbContext, userManager.Object);
 
             RegisterPharmacistDto registerModel = new()
             {
@@ -342,7 +359,7 @@
             Assert.Multiple(() =>
             {
                 Assert.That(validationResult, Is.False);
-                Assert.That(actual: validationService.ModelErrors.Count, Is.EqualTo(1));
+                Assert.That(validationService.ModelErrors, Has.Count.EqualTo(1));
                 Assert.That(actualErrorPropName, Is.EqualTo(expectedErrorPropName));
                 Assert.That(actualErrorMessage, Is.EqualTo(expectedErrorMessage));
             });
@@ -353,7 +370,7 @@
         {
             // Arrange
 
-            var validationService = new ValidationAuthentication(dbContext.Object, userManager.Object);
+            var validationService = new ValidationAuthentication(dbContext, userManager.Object);
 
             RegisterPharmacistDto registerModel = new()
             {
@@ -380,7 +397,7 @@
             Assert.Multiple(() =>
             {
                 Assert.That(validationResult, Is.False);
-                Assert.That(actual: validationService.ModelErrors.Count, Is.EqualTo(1));
+                Assert.That(validationService.ModelErrors, Has.Count.EqualTo(1));
                 Assert.That(actualErrorPropName, Is.EqualTo(expectedErrorPropName));
                 Assert.That(actualErrorMessage, Is.EqualTo(expectedErrorMessage));
             });
@@ -391,7 +408,7 @@
         {
             // Arrange
 
-            var validationService = new ValidationAuthentication(dbContext.Object, userManager.Object);
+            var validationService = new ValidationAuthentication(dbContext, userManager.Object);
 
             RegisterPharmacistDto registerModel = new()
             {
@@ -418,7 +435,7 @@
             Assert.Multiple(() =>
             {
                 Assert.That(validationResult, Is.False);
-                Assert.That(actual: validationService.ModelErrors.Count, Is.EqualTo(1));
+                Assert.That(validationService.ModelErrors, Has.Count.EqualTo(1));
                 Assert.That(actualErrorPropName, Is.EqualTo(expectedErrorPropName));
                 Assert.That(actualErrorMessage, Is.EqualTo(expectedErrorMessage));
             });
@@ -429,7 +446,7 @@
         {
             // Arrange
 
-            var validationService = new ValidationAuthentication(dbContext.Object, userManager.Object);
+            var validationService = new ValidationAuthentication(dbContext, userManager.Object);
 
             LoginPharmacistDto loginModel = new()
             {
@@ -448,7 +465,7 @@
             Assert.Multiple(() =>
             {
                 Assert.That(validationResult, Is.True);
-                Assert.That(actual: validationService.ModelErrors.Count, Is.EqualTo(0));
+                Assert.That(validationService.ModelErrors, Is.Empty);
             });
         }
 
@@ -457,7 +474,7 @@
         {
             // Arrange
 
-            var validationService = new ValidationAuthentication(dbContext.Object, userManager.Object);
+            var validationService = new ValidationAuthentication(dbContext, userManager.Object);
 
             LoginPharmacistDto loginModel = new()
             {
@@ -482,7 +499,7 @@
             Assert.Multiple(() =>
             {
                 Assert.That(validationResult, Is.False);
-                Assert.That(actual: validationService.ModelErrors.Count, Is.EqualTo(1));
+                Assert.That(validationService.ModelErrors, Has.Count.EqualTo(1));
                 Assert.That(actualErrorPropName, Is.EqualTo(expectedErrorPropName));
                 Assert.That(actualErrorMessage, Is.EqualTo(expectedErrorMessage));
             });
@@ -493,7 +510,7 @@
         {
             // Arrange
 
-            var validationService = new ValidationAuthentication(dbContext.Object, userManager.Object);
+            var validationService = new ValidationAuthentication(dbContext  , userManager.Object);
 
             LoginPharmacistDto loginModel = new()
             {
@@ -518,7 +535,7 @@
             Assert.Multiple(() =>
             {
                 Assert.That(validationResult, Is.False);
-                Assert.That(actual: validationService.ModelErrors.Count, Is.EqualTo(1));
+                Assert.That(validationService.ModelErrors, Has.Count.EqualTo(1));
                 Assert.That(actualErrorPropName, Is.EqualTo(expectedErrorPropName));
                 Assert.That(actualErrorMessage, Is.EqualTo(expectedErrorMessage));
             });
@@ -529,7 +546,7 @@
         {
             // Arrange
 
-            var validationService = new ValidationAuthentication(dbContext.Object, userManager.Object);
+            var validationService = new ValidationAuthentication(dbContext, userManager.Object);
 
             LoginPatientDto loginModel = new()
             {
@@ -548,7 +565,7 @@
             Assert.Multiple(() =>
             {
                 Assert.That(validationResult, Is.True);
-                Assert.That(actual: validationService.ModelErrors.Count, Is.EqualTo(0));
+                Assert.That(validationService.ModelErrors, Is.Empty);
             });
         }
 
@@ -557,7 +574,7 @@
         {
             // Arrange
 
-            var validationService = new ValidationAuthentication(dbContext.Object, userManager.Object);
+            var validationService = new ValidationAuthentication(dbContext, userManager.Object);
 
             LoginPatientDto loginModel = new()
             {
@@ -582,7 +599,7 @@
             Assert.Multiple(() =>
             {
                 Assert.That(validationResult, Is.False);
-                Assert.That(actual: validationService.ModelErrors.Count, Is.EqualTo(1));
+                Assert.That(validationService.ModelErrors, Has.Count.EqualTo(1));
                 Assert.That(actualErrorPropName, Is.EqualTo(expectedErrorPropName));
                 Assert.That(actualErrorMessage, Is.EqualTo(expectedErrorMessage));
             });
@@ -593,7 +610,7 @@
         {
             // Arrange
 
-            var validationService = new ValidationAuthentication(dbContext.Object, userManager.Object);
+            var validationService = new ValidationAuthentication(dbContext, userManager.Object);
 
             LoginPatientDto loginModel = new()
             {
@@ -618,7 +635,7 @@
             Assert.Multiple(() =>
             {
                 Assert.That(validationResult, Is.False);
-                Assert.That(actual: validationService.ModelErrors.Count, Is.EqualTo(1));
+                Assert.That(validationService.ModelErrors, Has.Count.EqualTo(1));
                 Assert.That(actualErrorPropName, Is.EqualTo(expectedErrorPropName));
                 Assert.That(actualErrorMessage, Is.EqualTo(expectedErrorMessage));
             });
@@ -629,7 +646,7 @@
         {
             // Arrange
 
-            var validationService = new ValidationAuthentication(dbContext.Object, userManager.Object);
+            var validationService = new ValidationAuthentication(dbContext, userManager.Object);
 
             RegisterPatientDto registerModel = new()
             {
@@ -649,7 +666,7 @@
             Assert.Multiple(() =>
             {
                 Assert.That(validationResult, Is.True);
-                Assert.That(actual: validationService.ModelErrors.Count, Is.EqualTo(0));
+                Assert.That(validationService.ModelErrors, Is.Empty);
             });
         }
 
@@ -658,7 +675,7 @@
         {
             // Arrange
 
-            var validationService = new ValidationAuthentication(dbContext.Object, userManager.Object);
+            var validationService = new ValidationAuthentication(dbContext, userManager.Object);
 
             RegisterPatientDto registerModel = new()
             {
@@ -684,7 +701,7 @@
             Assert.Multiple(() =>
             {
                 Assert.That(validationResult, Is.False);
-                Assert.That(actual: validationService.ModelErrors.Count, Is.EqualTo(1));
+                Assert.That(validationService.ModelErrors, Has.Count.EqualTo(1));
                 Assert.That(actualErrorPropName, Is.EqualTo(expectedErrorPropName));
                 Assert.That(actualErrorMessage, Is.EqualTo(expectedErrorMessage));
             });
@@ -695,7 +712,7 @@
         {
             // Arrange
 
-            var validationService = new ValidationAuthentication(dbContext.Object, userManager.Object);
+            var validationService = new ValidationAuthentication(dbContext, userManager.Object);
 
             RegisterGpDto registerModel = new()
             {
@@ -716,7 +733,7 @@
             Assert.Multiple(() =>
             {
                 Assert.That(validationResult, Is.True);
-                Assert.That(actual: validationService.ModelErrors.Count, Is.EqualTo(0));
+                Assert.That(validationService.ModelErrors, Is.Empty);
             });
         }
 
@@ -725,7 +742,7 @@
         {
             // Arrange
 
-            var validationService = new ValidationAuthentication(dbContext.Object, userManager.Object);
+            var validationService = new ValidationAuthentication(dbContext, userManager.Object);
 
             RegisterGpDto registerModel = new()
             {
@@ -752,7 +769,7 @@
             Assert.Multiple(() =>
             {
                 Assert.That(validationResult, Is.False);
-                Assert.That(actual: validationService.ModelErrors.Count, Is.EqualTo(1));
+                Assert.That(validationService.ModelErrors, Has.Count.EqualTo(1));
                 Assert.That(actualErrorPropName, Is.EqualTo(expectedErrorPropName));
                 Assert.That(actualErrorMessage, Is.EqualTo(expectedErrorMessage));
             });
@@ -763,7 +780,7 @@
         {
             // Arrange
 
-            var validationService = new ValidationAuthentication(dbContext.Object, userManager.Object);
+            var validationService = new ValidationAuthentication(dbContext, userManager.Object);
 
             RegisterGpDto registerModel = new()
             {
@@ -790,7 +807,7 @@
             Assert.Multiple(() =>
             {
                 Assert.That(validationResult, Is.False);
-                Assert.That(actual: validationService.ModelErrors.Count, Is.EqualTo(1));
+                Assert.That(validationService.ModelErrors, Has.Count.EqualTo(1));
                 Assert.That(actualErrorPropName, Is.EqualTo(expectedErrorPropName));
                 Assert.That(actualErrorMessage, Is.EqualTo(expectedErrorMessage));
             });
@@ -801,7 +818,7 @@
         {
             // Arrange
 
-            var validationService = new ValidationAuthentication(dbContext.Object, userManager.Object);
+            var validationService = new ValidationAuthentication(dbContext, userManager.Object);
 
             LoginGpDto loginModel = new()
             {
@@ -820,7 +837,7 @@
             Assert.Multiple(() =>
             {
                 Assert.That(validationResult, Is.True);
-                Assert.That(actual: validationService.ModelErrors.Count, Is.EqualTo(0));
+                Assert.That(validationService.ModelErrors, Is.Empty);
             });
         }
 
@@ -829,7 +846,7 @@
         {
             // Arrange
 
-            var validationService = new ValidationAuthentication(dbContext.Object, userManager.Object);
+            var validationService = new ValidationAuthentication(dbContext, userManager.Object);
 
             LoginGpDto loginModel = new()
             {
@@ -854,7 +871,7 @@
             Assert.Multiple(() =>
             {
                 Assert.That(validationResult, Is.False);
-                Assert.That(actual: validationService.ModelErrors.Count, Is.EqualTo(1));
+                Assert.That(validationService.ModelErrors, Has.Count.EqualTo(1));
                 Assert.That(actualErrorPropName, Is.EqualTo(expectedErrorPropName));
                 Assert.That(actualErrorMessage, Is.EqualTo(expectedErrorMessage));
             });
@@ -865,7 +882,7 @@
         {
             // Arrange
 
-            var validationService = new ValidationAuthentication(dbContext.Object, userManager.Object);
+            var validationService = new ValidationAuthentication(dbContext, userManager.Object);
 
             LoginGpDto loginModel = new()
             {
@@ -890,7 +907,7 @@
             Assert.Multiple(() =>
             {
                 Assert.That(validationResult, Is.False);
-                Assert.That(actual: validationService.ModelErrors.Count, Is.EqualTo(1));
+                Assert.That(validationService.ModelErrors, Has.Count.EqualTo(1));
                 Assert.That(actualErrorPropName, Is.EqualTo(expectedErrorPropName));
                 Assert.That(actualErrorMessage, Is.EqualTo(expectedErrorMessage));
             });

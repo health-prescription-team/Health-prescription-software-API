@@ -86,7 +86,7 @@
         public async Task<bool> FinishPrescription(Guid id)
         {
             var prescriptionsList = await context.Prescriptions
-                . FirstOrDefaultAsync(x => x.Id ==  id);
+                .FirstOrDefaultAsync(x => x.Id == id);
 
             if (prescriptionsList is null)
             {
@@ -94,7 +94,7 @@
             }
 
             prescriptionsList.FulfillmentDate = DateTime.Now;
-            prescriptionsList.IsFulfilled =  true;
+            prescriptionsList.IsFulfilled = true;
             await context.SaveChangesAsync();
 
             return true;
@@ -140,6 +140,7 @@
                 Age = entity.Age,
                 Diagnosis = entity.Diagnosis,
                 IsFulfilled = entity.IsFulfilled,
+                FulfillmentDate = entity.FulfillmentDate.HasValue ? entity.FulfillmentDate.Value.ToString("yyyy-MM-dd") : null,
                 CreatedAt = entity.CreatedAt.ToString("yyyy-MM-dd"),
                 ExpiresAt = entity.ExpiresAt.HasValue ? entity.ExpiresAt.Value.ToString("yyyy-MM-dd") : null,
                 PrescriptionDetails = entity.PrescriptionDetails
