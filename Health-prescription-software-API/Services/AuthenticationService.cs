@@ -205,7 +205,11 @@
         public async Task<string?> RegisterPharmacist(RegisterPharmacistDto model)
         {
             using var memoryStream = new MemoryStream();
-            await model.ProfilePicture.CopyToAsync(memoryStream);
+
+            if (model.ProfilePicture is not null)
+            {
+                await model.ProfilePicture.CopyToAsync(memoryStream);
+            }
 
             var user = new User
             {
@@ -213,7 +217,7 @@
                 MiddleName = model.MiddleName,
                 LastName = model.LastName,
                 UinNumber = model.UinNumber,
-                ProfilePicture = memoryStream.ToArray(),
+                ProfilePicture = model.ProfilePicture is null ? null : memoryStream.ToArray(),
                 Egn = model.Egn,
                 Email = model.Email,
                 UserName = model.Egn,
