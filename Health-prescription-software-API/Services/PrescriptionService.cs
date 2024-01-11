@@ -100,7 +100,7 @@
             return true;
         }
 
-        public async Task<IEnumerable<PatientPrescriptionsListDTO>> GetPatientPrescriptions(string patientEgn)
+        public async Task<PatientPrescriptionsDTO> GetPatientPrescriptions(string patientEgn)
         {
             var patient = await context.Users.FirstOrDefaultAsync(p => p.Egn == patientEgn);
 
@@ -109,8 +109,6 @@
                 .Select(p => new PatientPrescriptionsListDTO
                 {
                     PrescriptionId = p.Id,
-                    PatientEGN = patientEgn,
-                    PatientNames = $"{patient!.FirstName} {(string.IsNullOrEmpty(patient.MiddleName) ? "" : patient.MiddleName + " ")}{patient.LastName}",
                     CreatedAt = p.CreatedAt.ToString("yyyy-MM-dd"),
                     ExpiresAt = p.ExpiresAt.HasValue ? p.ExpiresAt.Value.ToString("yyyy-MM-dd") : null,
                     IsFulfilled = p.IsFulfilled,
@@ -120,7 +118,15 @@
                 })
                 .ToListAsync();
 
-            return prescriptionsList;
+            var patientPrescriptions = new PatientPrescriptionsDTO
+            {
+                PatientEGN = patientEgn,
+                PatientNames = $"{patient!.FirstName} {(string.IsNullOrEmpty(patient.MiddleName) ? "" : patient.MiddleName + " ")}{patient.LastName}",
+                ProfileImage = patient.ProfilePicture,
+                PatientPrescriptions = prescriptionsList
+            };
+
+            return patientPrescriptions;
         }
 
         public async Task<PrescriptionDTO> GetPrescriptionDetails(Guid prescriptionId)

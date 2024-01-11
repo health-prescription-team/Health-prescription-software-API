@@ -6,7 +6,7 @@
     {
         Task<Guid> Add(AddPrescriptionDto prescriptionModel, string GpId);
 
-        Task<IEnumerable<PatientPrescriptionsListDTO>> GetPatientPrescriptions(string patientEgn);
+        Task<PatientPrescriptionsDTO> GetPatientPrescriptions(string patientEgn);
 
         Task<PrescriptionDTO> GetPrescriptionDetails(Guid prescriptionId);
 

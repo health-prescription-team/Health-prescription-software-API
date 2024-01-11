@@ -225,8 +225,8 @@
 
             Assert.Multiple(() =>
             {
-                Assert.That(patientPrescriptions, Is.InstanceOf<IEnumerable<PatientPrescriptionsListDTO>>());
-                Assert.That(patientPrescriptions.Count(), Is.EqualTo(actualPatientPrescriptions));
+                Assert.That(patientPrescriptions, Is.InstanceOf<PatientPrescriptionsDTO>());
+                Assert.That(patientPrescriptions.PatientPrescriptions.Count(), Is.EqualTo(actualPatientPrescriptions));
             });
         }
 
