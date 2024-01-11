@@ -32,6 +32,7 @@ Pharmacists ensure the safe and timely dispensing of medications:
 
 - **Frontend:**
   - **Angular:** A modern and responsive user interface for an intuitive experience.
+  - There you can find the FE repository -> https://github.com/NikolaMadzharov/health-prescription-software-FE
 
 - **Backend:**
    - **Entity Framework Core**
