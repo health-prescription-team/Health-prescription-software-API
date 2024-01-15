@@ -1,10 +1,12 @@
 ﻿namespace Health_prescription_software_API.Services.ValidationServices
 {
-    using Health_prescription_software_API.Contracts.Validations;
-    using Health_prescription_software_API.Data;
-    using Health_prescription_software_API.Models.Prescription;
     using Microsoft.EntityFrameworkCore;
     using System.Text.RegularExpressions;
+
+    using Data;
+    using Models.Prescription;
+    using Contracts.Validations;
+
     using static Common.EntityValidationErrorMessages.Medicine;
     using static Common.EntityValidationErrorMessages.Prescription;
     using static Common.EntityValidationConstants.User;
@@ -33,10 +35,22 @@
                 {
                     ErrorPropName = nameof(prescriptionModel.PatientEgn),
                     ErrorMessage = PatientDoesNotExist
-
                 };
 
                 ModelErrors.Add(notFoundPatient);
+
+                return false;
+            }
+
+            if (prescriptionModel.PrescriptionDetails.Count == 0)
+            {
+                var emptyDetails = new ModelError
+                {
+                    ErrorPropName = nameof(prescriptionModel.PrescriptionDetails),
+                    ErrorMessage = PrescriptionDetailsAreRequired
+                };
+
+                ModelErrors.Add(emptyDetails);
 
                 return false;
             }
@@ -66,7 +80,20 @@
         {
             var prescription = await dbContext.Prescriptions.FindAsync(prescriptionId);
 
-            if (prescription != null)
+            if (prescription == null)
+            {
+                var modelError = new ModelError
+                {
+                    ErrorPropName = nameof(prescription.Id),
+                    ErrorMessage = PrescriptionDoesNotExist
+                };
+
+                ModelErrors.Add(modelError);
+
+                return false;
+            }
+
+            if (prescription.IsFulfilled)
             {
                 var modelError = new ModelError
                 {
@@ -86,31 +113,41 @@
         {
             var prescription = await dbContext.Prescriptions.FindAsync(model.Id);
 
-            if (prescription == null || prescription.IsFulfilled)
+            if (prescription == null)
             {
-                ModelError? modelError;
-
-                if (prescription == null)
+                var modelError = new ModelError
                 {
-                    modelError = new ModelError
-                    {
-                        ErrorPropName = nameof(prescription.Id),
-                        ErrorMessage = PrescriptionDoesNotExist
-                    };
+                    ErrorPropName = nameof(prescription.Id),
+                    ErrorMessage = PrescriptionDoesNotExist
+                };
 
-                    ModelErrors.Add(modelError);
-                }
+                ModelErrors.Add(modelError);
 
-                if (prescription!.IsFulfilled)
+                return false;
+            }
+
+            if (prescription.IsFulfilled)
+            {
+                var modelError = new ModelError
                 {
-                    modelError = new ModelError
-                    {
-                        ErrorPropName = nameof(prescription.IsFulfilled),
-                        ErrorMessage = CantEditPrescription
-                    };
+                    ErrorPropName = nameof(prescription.IsFulfilled),
+                    ErrorMessage = CantEditPrescription
+                };
 
-                    ModelErrors.Add(modelError);
-                }
+                ModelErrors.Add(modelError);
+
+                return false;
+            }
+
+            if (model.PrescriptionDetails.Count == 0)
+            {
+                var modelError = new ModelError
+                {
+                    ErrorPropName = nameof(prescription.PrescriptionDetails),
+                    ErrorMessage = PrescriptionDetailsAreRequired
+                };
+
+                ModelErrors.Add(modelError);
 
                 return false;
             }
@@ -138,34 +175,31 @@
             }
 
             var validEgn = Regex.Match(patientEgn, EgnRegexPattern).Success;
+
+            if (!validEgn)
+            {
+                var modelError = new ModelError
+                {
+                    ErrorPropName = "EGN",
+                    ErrorMessage = InvalidEgnErrorMessage
+                };
+
+                ModelErrors.Add(modelError);
+
+                return false;
+            }
+
             var patientExist = await dbContext.Users.AnyAsync(u => u.Egn == patientEgn);
 
-            if (!validEgn || !patientExist)
+            if (!patientExist)
             {
-                ModelError? modelError;
-
-                if (!validEgn)
+                var modelError = new ModelError
                 {
+                    ErrorPropName = "EGN",
+                    ErrorMessage = PatientDoesNotExist
+                };
 
-                    modelError = new ModelError
-                    {
-                        ErrorPropName = "EGN",
-                        ErrorMessage = InvalidEgnErrorMessage
-                    };
-
-                    ModelErrors.Add(modelError);
-                }
-
-                if (!patientExist)
-                {
-                    modelError = new ModelError
-                    {
-                        ErrorPropName = "EGN",
-                        ErrorMessage = PatientDoesNotExist
-                    };
-
-                    ModelErrors.Add(modelError);
-                }
+                ModelErrors.Add(modelError);
 
                 return false;
             }

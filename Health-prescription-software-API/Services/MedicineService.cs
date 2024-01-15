@@ -63,14 +63,18 @@ namespace Health_prescription_software_API.Services
         {
             var medicine = await this.context.Medicines.FindAsync(id);
 
-            using var memoryStream = new MemoryStream();
-            await model.MedicineImage.CopyToAsync(memoryStream);
+            if (model.MedicineImage != null)
+            {
+                using var memoryStream = new MemoryStream();
+                await model.MedicineImage.CopyToAsync(memoryStream);
+
+                medicine!.MedicineImageBytes = memoryStream.ToArray();
+            }
 
             medicine!.Name = model.Name;
             medicine!.Price = model.Price;
             medicine!.MedicineCompany = model.MedicineCompany;
             medicine!.MedicineDetails = model.MedicineDetails;
-            medicine!.MedicineImageBytes = memoryStream.ToArray();
             medicine!.Ingredients = model.Ingredients;
 
             await this.context.SaveChangesAsync();

@@ -1,13 +1,15 @@
 ﻿namespace Health_prescription_software_API.Services.ValidationServices
 {
-    using Health_prescription_software_API.Data;
-    using Health_prescription_software_API.Models.Medicine;
+    using System;
+    using System.Collections.Generic;
     using Microsoft.EntityFrameworkCore;
+
+    using Data;
+    using Models.Medicine;
+    using Contracts.Validations;
+
     using static Common.GeneralConstants;
     using static Common.EntityValidationErrorMessages.Medicine;
-    using Health_prescription_software_API.Contracts.Validations;
-    using System.Collections.Generic;
-    using System;
 
     public class ValidationMedicine : IValidationMedicine
     {

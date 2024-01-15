@@ -83,7 +83,24 @@
             return entity.Id;
         }
 
-        public async Task<IEnumerable<PatientPrescriptionsListDTO>> GetPatientPrescriptions(string patientEgn)
+        public async Task<bool> FinishPrescription(Guid id)
+        {
+            var prescriptionsList = await context.Prescriptions
+                .FirstOrDefaultAsync(x => x.Id == id);
+
+            if (prescriptionsList is null)
+            {
+                return false;
+            }
+
+            prescriptionsList.FulfillmentDate = DateTime.Now;
+            prescriptionsList.IsFulfilled = true;
+            await context.SaveChangesAsync();
+
+            return true;
+        }
+
+        public async Task<PatientPrescriptionsDTO> GetPatientPrescriptions(string patientEgn)
         {
             var patient = await context.Users.FirstOrDefaultAsync(p => p.Egn == patientEgn);
 
@@ -92,8 +109,6 @@
                 .Select(p => new PatientPrescriptionsListDTO
                 {
                     PrescriptionId = p.Id,
-                    PatientEGN = patientEgn,
-                    PatientNames = $"{patient!.FirstName} {(string.IsNullOrEmpty(patient.MiddleName) ? "" : patient.MiddleName + " ")}{patient.LastName}",
                     CreatedAt = p.CreatedAt.ToString("yyyy-MM-dd"),
                     ExpiresAt = p.ExpiresAt.HasValue ? p.ExpiresAt.Value.ToString("yyyy-MM-dd") : null,
                     IsFulfilled = p.IsFulfilled,
@@ -103,7 +118,15 @@
                 })
                 .ToListAsync();
 
-            return prescriptionsList;
+            var patientPrescriptions = new PatientPrescriptionsDTO
+            {
+                PatientEGN = patientEgn,
+                PatientNames = $"{patient!.FirstName} {(string.IsNullOrEmpty(patient.MiddleName) ? "" : patient.MiddleName + " ")}{patient.LastName}",
+                ProfileImage = patient.ProfilePicture,
+                PatientPrescriptions = prescriptionsList
+            };
+
+            return patientPrescriptions;
         }
 
         public async Task<PrescriptionDTO> GetPrescriptionDetails(Guid prescriptionId)
@@ -123,6 +146,7 @@
                 Age = entity.Age,
                 Diagnosis = entity.Diagnosis,
                 IsFulfilled = entity.IsFulfilled,
+                FulfillmentDate = entity.FulfillmentDate.HasValue ? entity.FulfillmentDate.Value.ToString("yyyy-MM-dd") : null,
                 CreatedAt = entity.CreatedAt.ToString("yyyy-MM-dd"),
                 ExpiresAt = entity.ExpiresAt.HasValue ? entity.ExpiresAt.Value.ToString("yyyy-MM-dd") : null,
                 PrescriptionDetails = entity.PrescriptionDetails

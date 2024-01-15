@@ -95,7 +95,7 @@ namespace Health_prescription_software_API.Controllers
         }
 
         [HttpPost("Register/Patient")]
-        public async Task<IActionResult> RegisterPatient([FromForm] PatientDto PatientUser)
+        public async Task<IActionResult> RegisterPatient([FromForm] RegisterPatientDto PatientUser)
         {
 
             try
