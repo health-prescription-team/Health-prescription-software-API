@@ -2,6 +2,7 @@ using Health_prescription_software_API.Contracts;
 using Health_prescription_software_API.Contracts.Validations;
 using Health_prescription_software_API.Data;
 using Health_prescription_software_API.Data.Entities.User;
+using Health_prescription_software_API.Hubs;
 using Health_prescription_software_API.Services;
 using Health_prescription_software_API.Services.ValidationServices;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -65,6 +66,7 @@ builder.Services
 
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+builder.Services.AddSignalR();
 
 builder.Services.AddScoped<IMedicineService, MedicineService>();
 builder.Services.AddScoped<IAuthenticationService, AuthenticationService>();
@@ -72,6 +74,7 @@ builder.Services.AddScoped<IValidationMedicine, ValidationMedicine>();
 builder.Services.AddScoped<IValidationAuthentication, ValidationAuthentication>();
 builder.Services.AddScoped<IPrescriptionService, PrescriptionService>();
 builder.Services.AddScoped<IValidationPrescription, ValidationPrescription>();
+builder.Services.AddScoped<IChatService, ChatService>();
 
 var app = builder.Build();
 
@@ -85,5 +88,5 @@ app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
-
+app.MapHub<ChatHub>("/chatHub");
 app.Run();

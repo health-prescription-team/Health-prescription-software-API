@@ -19,6 +19,8 @@ namespace Health_prescription_software_API.Data
 
         public virtual DbSet<PrescriptionDetails> PrescriptionDetails { get; set; }
 
+        public virtual DbSet<ChatMessage> ChatMessages { get; set; }
+
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
