@@ -15,7 +15,9 @@
                     MedicineImageBytes = [],
                     MedicineCompany = "Fake Pharma",
                     MedicineDetails = "Аспирин 50 мг.",
-                    Price = 12.33m
+                    Price = 12.33m,
+                    Ingredients = "Кора от дърво?",
+                    OwnerId = "31bcded4-bbe9-45a3-b235-2d24766cfdf3"
                 },
                 new Medicine()
                 {
@@ -24,7 +26,9 @@
                     MedicineImageBytes = [],
                     MedicineCompany = "Лекарства ООД",
                     MedicineDetails = "Парацетамол 14 мг.",
-                    Price = 4.33m
+                    Price = 4.33m,
+                    Ingredients = null,
+                    OwnerId = "31bcded4-bbe9-45a3-b235-2d24766cfdf3"
                 },
                 new Medicine()
                 {
@@ -33,7 +37,9 @@
                     MedicineImageBytes = [],
                     MedicineCompany = "Unknown",
                     MedicineDetails = "Gives random super powers.",
-                    Price = 4.33m
+                    Price = 4.33m,
+                    Ingredients = "J-23A-14Y",
+                    OwnerId = "31bcded4-bbe9-45a3-b235-2d24766cfdf3"
                 }
             ];
         }

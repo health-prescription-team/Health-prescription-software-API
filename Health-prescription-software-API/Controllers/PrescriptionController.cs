@@ -9,7 +9,6 @@
     using System.Security.Claims;
 
     using static Common.Roles.RoleConstants;
-    using static System.Runtime.InteropServices.JavaScript.JSType;
 
     [Route("api/[controller]")]
     public class PrescriptionController : Controller
@@ -29,7 +28,7 @@
         }
 
         [HttpPost]
-       // [Authorize(Roles = GP)]
+        [Authorize(Roles = GP)]
         public async Task<IActionResult> Add([FromBody] AddPrescriptionDto prescriptionModel)
         {
             try
@@ -59,7 +58,7 @@
         }
 
         [HttpGet]
-       // [Authorize(Roles = Patient)]
+        [Authorize]
         public async Task<IActionResult> GetAll(string patientEgn)
         {
             try
@@ -85,7 +84,7 @@
         }
 
         [HttpGet("{id}")]
-        //[Authorize]
+        [Authorize]
         public async Task<IActionResult> Details(Guid id)
         {
             try
@@ -109,10 +108,10 @@
                 return StatusCode(500);
             }
         }
-        
+
         [HttpDelete("{id}")]
         [Authorize(Roles = GP)]
-        public async Task<IActionResult> Delete(Guid id) 
+        public async Task<IActionResult> Delete(Guid id)
         {
             try
             {
@@ -135,7 +134,7 @@
 
                 prescriptionService.Delete(id);
 
-                return Ok("Deleted successfully");
+                return NoContent();
             }
             catch (Exception)
             {
@@ -175,17 +174,17 @@
                 return StatusCode(500);
             }
         }
+
         [HttpPost("Complete/{id}")]
+        [Authorize(Roles = $"{Pharmacy}, {Pharmacist}")]
         public async Task<IActionResult> Finish(Guid id)
         {
-
             try
             {
-
                 var prescriptionResult = await prescriptionService.FinishPrescription(id);
                 if (prescriptionResult  is false)
                 {
-                    ModelState.AddModelError("Prescription is not found",$"Cannot finish the prescriont with this Id {id}");
+                    ModelState.AddModelError("Prescription is not found",$"Cannot finish the prescription with this Id {id}");
                     return apiBehaviorOptions.Value.InvalidModelStateResponseFactory(ControllerContext);
                 }
 

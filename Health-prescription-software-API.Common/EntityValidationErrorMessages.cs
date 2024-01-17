@@ -44,6 +44,8 @@ namespace Health_prescription_software_API.Common
 			public const string CantEditPrescription = "Fulfilled prescriptions can't be edited.";
 
 			public const string CantDeletePrescription = "Fulfilled prescriptions can't be deleted.";
+
+			public const string PrescriptionDetailsAreRequired = "At least one medicine needs to be added";
         }
 	}
 }
