@@ -310,7 +310,7 @@
             return tokenToString;
         }
 
-        private async Task<User?> GetUserByEgn(string egn)
+        public async Task<User?> GetUserByEgn(string egn)
         {
             if (egn == null)
             {

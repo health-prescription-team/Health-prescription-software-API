@@ -2,6 +2,7 @@ using Health_prescription_software_API.Contracts;
 using Health_prescription_software_API.Contracts.Validations;
 using Health_prescription_software_API.Data;
 using Health_prescription_software_API.Data.Entities.User;
+using Health_prescription_software_API.Hubs;
 using Health_prescription_software_API.Services;
 using Health_prescription_software_API.Services.ValidationServices;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -13,6 +14,7 @@ using System.Text;
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddControllers();
+builder.Services.AddSignalRCore();
 
 builder.Services.AddCors(options =>
 {
@@ -61,6 +63,24 @@ builder.Services
             ValidIssuer = builder.Configuration["Jwt:Issuer"],
             IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"]!))
         };
+
+        //options.Authority = "";
+
+        options.Events = new JwtBearerEvents
+        {
+            OnMessageReceived = context =>
+            {
+                var accessToken = context.Request.Query["access_token"];
+
+                var path = context.HttpContext.Request.Path;
+                if (!string.IsNullOrEmpty(accessToken) &&
+                    (path.StartsWithSegments("/hubs/chat")))
+                {
+                    context.Token = accessToken;
+                }
+                return Task.CompletedTask;
+            }
+        };
     });
 
 builder.Services.AddEndpointsApiExplorer();
@@ -85,5 +105,6 @@ app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
+app.MapHub<ChatHub>("/chatHub");
 
 app.Run();

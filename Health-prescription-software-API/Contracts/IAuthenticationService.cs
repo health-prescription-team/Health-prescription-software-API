@@ -3,6 +3,7 @@ using Health_prescription_software_API.Models.Authentication.Pharmacy;
 using Health_prescription_software_API.Models.Authentication.Pharmacist;
 using Microsoft.IdentityModel.Tokens;
 using Health_prescription_software_API.Models.Authentication.Patient;
+using Health_prescription_software_API.Data.Entities.User;
 
 namespace Health_prescription_software_API.Contracts
 {
@@ -24,6 +25,7 @@ namespace Health_prescription_software_API.Contracts
 
         public Task<string> LoginPharmacist(LoginPharmacistDto model);
 
+        Task<User?> GetUserByEgn(string egn);
     }
 
 }
