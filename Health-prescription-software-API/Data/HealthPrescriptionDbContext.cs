@@ -2,6 +2,7 @@
 namespace Health_prescription_software_API.Data
 {
     using Data.Entities;
+    using Health_prescription_software_API.Data.Entities.Chat;
     using Health_prescription_software_API.Data.Entities.User;
     using Microsoft.AspNetCore.Identity;
     using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
@@ -18,6 +19,10 @@ namespace Health_prescription_software_API.Data
         public virtual DbSet<Prescription> Prescriptions { get; set; }
 
         public virtual DbSet<PrescriptionDetails> PrescriptionDetails { get; set; }
+
+        public virtual DbSet<Conversation> Conversations { get; set; }
+
+        public virtual DbSet<ChatMessage> Messages { get; set; }
 
 
         protected override void OnModelCreating(ModelBuilder builder)
