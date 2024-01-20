@@ -14,14 +14,16 @@ using System.Text;
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddControllers();
-builder.Services.AddSignalRCore();
+builder.Services.AddSignalR();
 
 builder.Services.AddCors(options =>
 {
     options.AddPolicy(name: "CORSPolicy", p =>
     {
-        p.WithOrigins("http://localhost:3000",
-                      "https://localhost:3000");
+        p.WithOrigins("http://localhost:3000", "https://localhost:3000")
+            .AllowAnyHeader()
+            .AllowAnyMethod()
+            .AllowCredentials();
     });
 });
 
@@ -74,7 +76,7 @@ builder.Services
 
                 var path = context.HttpContext.Request.Path;
                 if (!string.IsNullOrEmpty(accessToken) &&
-                    (path.StartsWithSegments("/hubs/chat")))
+                    (path.StartsWithSegments("/chatHub")))
                 {
                     context.Token = accessToken;
                 }
