@@ -7,7 +7,7 @@
     [Authorize]
     public class ChatHub : Hub
     {
-        private IAuthenticationService authenticationService;
+        private readonly IAuthenticationService authenticationService;
 
         public ChatHub(IAuthenticationService authenticationService)
         {

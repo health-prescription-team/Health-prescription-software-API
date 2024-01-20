@@ -14,6 +14,6 @@
 
         public string UserTwoId { get; set; } = null!;
 
-        public virtual IEnumerable<ChatMessage> Messages { get; set; }
+        public virtual ICollection<ChatMessage> Messages { get; set; }
     }
 }
