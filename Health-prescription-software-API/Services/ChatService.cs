@@ -3,6 +3,7 @@
     using Contracts;
     using Data;
     using Data.Entities.Chat;
+    using Models.Chat;
     using Microsoft.EntityFrameworkCore;
     using System;
     using System.Collections.Generic;
@@ -34,14 +35,23 @@
             await dbContext.SaveChangesAsync();
         }
 
-        public async Task<IEnumerable<ChatMessage>> GetChatMessages(string userOneId, string userTwoId)
+        public async Task<IEnumerable<ChatMessageDTO>> GetChatMessages(string userOneId, string userTwoId)
         {
             var conversation = await this.GetConversation(userOneId, userTwoId);
 
-            return conversation?.Messages ?? [];
+            var messages = conversation?.Messages
+                .Select(m => new ChatMessageDTO
+                {
+                    Message = m.Message,
+                    MessageTime = m.MessageTime.ToString("yyyy-MM-dd HH:mm"),
+                    AuthorId = m.AuthorId,
+                    IsRead = m.IsRead
+                }).ToArray();
+
+            return messages ?? [];
         }
 
-        public async Task<Conversation?> GetConversation(string userOneId, string userTwoId)
+        private async Task<Conversation?> GetConversation(string userOneId, string userTwoId)
         {
             return await dbContext.Conversations
                 .Include(c => c.Messages)
