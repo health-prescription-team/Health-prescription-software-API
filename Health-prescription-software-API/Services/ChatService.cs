@@ -1,8 +1,8 @@
 ﻿namespace Health_prescription_software_API.Services
 {
-    using Health_prescription_software_API.Contracts;
-    using Health_prescription_software_API.Data;
-    using Health_prescription_software_API.Data.Entities.Chat;
+    using Contracts;
+    using Data;
+    using Data.Entities.Chat;
     using Microsoft.EntityFrameworkCore;
     using System;
     using System.Collections.Generic;
@@ -19,7 +19,7 @@
 
         public async Task AddMessage(string userOneId, string userTwoId, string senderId, DateTime messageTime, string message)
         {
-            var conversation = await dbContext.Conversations.FindAsync(userOneId, userTwoId) ?? 
+            var conversation = await this.GetConversation(userOneId, userTwoId) ??
                                await this.CreateConversation(userOneId, userTwoId);
 
             ChatMessage chatMessage = new()
@@ -34,14 +34,19 @@
             await dbContext.SaveChangesAsync();
         }
 
-        public Task<IEnumerable<ChatMessage>> GetChatMessages(string userOneId, string userTwoId)
+        public async Task<IEnumerable<ChatMessage>> GetChatMessages(string userOneId, string userTwoId)
         {
-            throw new NotImplementedException();
+            var conversation = await this.GetConversation(userOneId, userTwoId);
+
+            return conversation?.Messages ?? [];
         }
 
-        public Task<Conversation?> GetConversation(string userOneId, string userTwoId)
+        public async Task<Conversation?> GetConversation(string userOneId, string userTwoId)
         {
-            throw new NotImplementedException();
+            return await dbContext.Conversations
+                .Include(c => c.Messages)
+                .FirstOrDefaultAsync(c => c.UserOneId == userOneId && c.UserTwoId == userTwoId ||
+                                          c.UserOneId == userTwoId && c.UserTwoId == userOneId);
         }
 
         private async Task<Conversation> CreateConversation(string userOneId, string userTwoId)
