@@ -66,8 +66,6 @@ builder.Services
             IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"]!))
         };
 
-        //options.Authority = "";
-
         options.Events = new JwtBearerEvents
         {
             OnMessageReceived = context =>
@@ -94,6 +92,7 @@ builder.Services.AddScoped<IValidationMedicine, ValidationMedicine>();
 builder.Services.AddScoped<IValidationAuthentication, ValidationAuthentication>();
 builder.Services.AddScoped<IPrescriptionService, PrescriptionService>();
 builder.Services.AddScoped<IValidationPrescription, ValidationPrescription>();
+builder.Services.AddScoped<IChatService, ChatService>();
 
 var app = builder.Build();
 
