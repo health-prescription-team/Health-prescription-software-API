@@ -40,8 +40,10 @@
             var conversation = await this.GetConversation(userOneId, userTwoId);
 
             var messages = conversation?.Messages
+                .OrderByDescending(m => m.MessageTime)
                 .Select(m => new ChatMessageDTO
                 {
+                    Id = m.Id,
                     Message = m.Message,
                     MessageTime = m.MessageTime.ToString("yyyy-MM-dd HH:mm"),
                     AuthorId = m.AuthorId,
@@ -49,6 +51,31 @@
                 }).ToArray();
 
             return messages ?? [];
+        }
+
+        public async Task<string?> GetUserIdByEgn(string egn)
+        {
+            var user = await dbContext.Users.FirstOrDefaultAsync(u => u.Egn == egn);
+
+            return user?.Id;
+        }
+
+        public async Task<bool> UserHasUnreadMessages(string userId)
+        {
+            var conversations = dbContext.Conversations
+                .Include(c => c.Messages)
+                .Where(c => c.UserOneId == userId || c.UserTwoId == userId);
+
+            return await conversations.AnyAsync(c => c.Messages.Any(m => m.IsRead == false));
+        }
+
+        public async Task SetMessageIsRead(string messageId)
+        {
+            var message = await dbContext.Messages.FindAsync(Guid.Parse(messageId));
+
+            message!.IsRead = true;
+
+            await dbContext.SaveChangesAsync();
         }
 
         private async Task<Conversation?> GetConversation(string userOneId, string userTwoId)
