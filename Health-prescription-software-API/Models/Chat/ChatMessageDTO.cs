@@ -2,6 +2,8 @@
 {
     public class ChatMessageDTO
     {
+        public Guid Id { get; set; }
+
         public string Message { get; set; } = null!;
 
         public string MessageTime { get; set; } = null!;
