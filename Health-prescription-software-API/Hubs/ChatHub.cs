@@ -4,7 +4,9 @@
     using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.SignalR;
 
-    [Authorize]
+    using static Common.Roles.RoleConstants;
+
+    [Authorize(Roles = $"{GP}, {Patient}")]
     public class ChatHub : Hub
     {
         private readonly IAuthenticationService authenticationService;
