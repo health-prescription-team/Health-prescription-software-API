@@ -143,6 +143,7 @@
             {
                 PatientEgn = entity!.PatientEgn,
                 GpFullName = gpFullName,
+                GpEgn = entity.Gp.Egn!,
                 Age = entity.Age,
                 Diagnosis = entity.Diagnosis,
                 IsFulfilled = entity.IsFulfilled,
