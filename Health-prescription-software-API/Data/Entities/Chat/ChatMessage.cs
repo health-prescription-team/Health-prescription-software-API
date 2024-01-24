@@ -22,6 +22,11 @@
         public string AuthorId { get; set; } = null!;
         public virtual User Author { get; set; } = null!;
 
+        [Required]
+        [ForeignKey(nameof(RecipientId))]
+        public string RecipientId { get; set; } = null!;
+        public virtual User Recipient { get; set; } = null!;
+
         [DefaultValue(false)]
         public bool IsRead { get; set; }
     }

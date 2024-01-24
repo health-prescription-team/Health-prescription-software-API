@@ -32,12 +32,6 @@ namespace Health_prescription_software_API.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<string>("ConversationUserOneId")
-                        .HasColumnType("text");
-
-                    b.Property<string>("ConversationUserTwoId")
-                        .HasColumnType("text");
-
                     b.Property<bool>("IsRead")
                         .HasColumnType("boolean");
 
@@ -49,26 +43,17 @@ namespace Health_prescription_software_API.Migrations
                     b.Property<DateTime>("MessageTime")
                         .HasColumnType("Timestamp");
 
+                    b.Property<string>("RecipientId")
+                        .IsRequired()
+                        .HasColumnType("text");
+
                     b.HasKey("Id");
 
                     b.HasIndex("AuthorId");
 
-                    b.HasIndex("ConversationUserOneId", "ConversationUserTwoId");
+                    b.HasIndex("RecipientId");
 
                     b.ToTable("Messages");
-                });
-
-            modelBuilder.Entity("Health_prescription_software_API.Data.Entities.Chat.Conversation", b =>
-                {
-                    b.Property<string>("UserOneId")
-                        .HasColumnType("text");
-
-                    b.Property<string>("UserTwoId")
-                        .HasColumnType("text");
-
-                    b.HasKey("UserOneId", "UserTwoId");
-
-                    b.ToTable("Conversations");
                 });
 
             modelBuilder.Entity("Health_prescription_software_API.Data.Entities.Medicine", b =>
@@ -452,11 +437,15 @@ namespace Health_prescription_software_API.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Health_prescription_software_API.Data.Entities.Chat.Conversation", null)
-                        .WithMany("Messages")
-                        .HasForeignKey("ConversationUserOneId", "ConversationUserTwoId");
+                    b.HasOne("Health_prescription_software_API.Data.Entities.User.User", "Recipient")
+                        .WithMany()
+                        .HasForeignKey("RecipientId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.Navigation("Author");
+
+                    b.Navigation("Recipient");
                 });
 
             modelBuilder.Entity("Health_prescription_software_API.Data.Entities.Medicine", b =>
@@ -549,11 +538,6 @@ namespace Health_prescription_software_API.Migrations
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-                });
-
-            modelBuilder.Entity("Health_prescription_software_API.Data.Entities.Chat.Conversation", b =>
-                {
-                    b.Navigation("Messages");
                 });
 
             modelBuilder.Entity("Health_prescription_software_API.Data.Entities.Prescription", b =>

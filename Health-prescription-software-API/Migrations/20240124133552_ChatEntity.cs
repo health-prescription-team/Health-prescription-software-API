@@ -6,23 +6,11 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace Health_prescription_software_API.Migrations
 {
     /// <inheritdoc />
-    public partial class ChatEntities : Migration
+    public partial class ChatEntity : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.CreateTable(
-                name: "Conversations",
-                columns: table => new
-                {
-                    UserOneId = table.Column<string>(type: "text", nullable: false),
-                    UserTwoId = table.Column<string>(type: "text", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Conversations", x => new { x.UserOneId, x.UserTwoId });
-                });
-
             migrationBuilder.CreateTable(
                 name: "Messages",
                 columns: table => new
@@ -31,9 +19,8 @@ namespace Health_prescription_software_API.Migrations
                     Message = table.Column<string>(type: "character varying(500)", maxLength: 500, nullable: false),
                     MessageTime = table.Column<DateTime>(type: "Timestamp", nullable: false),
                     AuthorId = table.Column<string>(type: "text", nullable: false),
-                    IsRead = table.Column<bool>(type: "boolean", nullable: false),
-                    ConversationUserOneId = table.Column<string>(type: "text", nullable: true),
-                    ConversationUserTwoId = table.Column<string>(type: "text", nullable: true)
+                    RecipientId = table.Column<string>(type: "text", nullable: false),
+                    IsRead = table.Column<bool>(type: "boolean", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -45,10 +32,11 @@ namespace Health_prescription_software_API.Migrations
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_Messages_Conversations_ConversationUserOneId_ConversationUs~",
-                        columns: x => new { x.ConversationUserOneId, x.ConversationUserTwoId },
-                        principalTable: "Conversations",
-                        principalColumns: new[] { "UserOneId", "UserTwoId" });
+                        name: "FK_Messages_AspNetUsers_RecipientId",
+                        column: x => x.RecipientId,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateIndex(
@@ -57,9 +45,9 @@ namespace Health_prescription_software_API.Migrations
                 column: "AuthorId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Messages_ConversationUserOneId_ConversationUserTwoId",
+                name: "IX_Messages_RecipientId",
                 table: "Messages",
-                columns: new[] { "ConversationUserOneId", "ConversationUserTwoId" });
+                column: "RecipientId");
         }
 
         /// <inheritdoc />
@@ -67,9 +55,6 @@ namespace Health_prescription_software_API.Migrations
         {
             migrationBuilder.DropTable(
                 name: "Messages");
-
-            migrationBuilder.DropTable(
-                name: "Conversations");
         }
     }
 }
