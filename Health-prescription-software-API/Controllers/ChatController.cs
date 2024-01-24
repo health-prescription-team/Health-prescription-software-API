@@ -32,7 +32,7 @@
                 var targetUserId = await chatService.GetUserIdByEgn(targetUserEgn);
                 string userId = User.FindFirstValue(ClaimTypes.NameIdentifier)!;
 
-                if (targetUserId is null )
+                if (targetUserId is null)
                 {
                     ModelState.AddModelError("TargetUserEgn", "User does not exist.");
 

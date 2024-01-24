@@ -19,17 +19,17 @@
             this.chatService = chatService;
         }
 
-        public async Task SendMessage(string receiverEgn, string message)
+        public async Task SendMessage(string recipientEgn, string message)
         {
             try
             {
                 var senderId = Context.UserIdentifier;
-                var receiver = await authenticationService.GetUserByEgn(receiverEgn);
+                var recipient = await authenticationService.GetUserByEgn(recipientEgn);
                 var time = DateTime.Now;
 
-                await chatService.AddMessage(senderId!, receiver!.Id, senderId!, time, message);
+                await chatService.AddMessage(senderId!, recipient!.Id, time, message);
 
-                await Clients.User(receiver!.Id).SendAsync("ReceiveMessage", senderId, message, time.ToString("yyyy-MM-dd HH:mm"));
+                await Clients.User(recipient!.Id).SendAsync("ReceiveMessage", senderId, message, time.ToString("yyyy-MM-dd HH:mm"));
             }
             catch (Exception)
             {
