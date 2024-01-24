@@ -10,6 +10,8 @@
 
         public string AuthorId { get; set; } = null!;
 
+        public string RecipientId { get; set; } = null!;
+
         public bool IsRead { get; set; }
     }
 }

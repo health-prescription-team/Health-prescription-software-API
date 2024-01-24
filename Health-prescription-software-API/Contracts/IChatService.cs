@@ -4,7 +4,7 @@
 
     public interface IChatService
     {
-        Task AddMessage(string userOneId, string userTwoId, string senderId, DateTime messageTime, string message);
+        Task AddMessage(string senderId, string recipientId, DateTime messageTime, string message);
 
         Task<IEnumerable<ChatMessageDTO>> GetChatMessages(string userOneId, string userTwoId);
 

@@ -18,28 +18,31 @@
             this.dbContext = dbContext;
         }
 
-        public async Task AddMessage(string userOneId, string userTwoId, string senderId, DateTime messageTime, string message)
+        public async Task AddMessage(string senderId, string recipientId, DateTime messageTime, string message)
         {
-            var conversation = await this.GetConversation(userOneId, userTwoId) ??
-                               await this.CreateConversation(userOneId, userTwoId);
-
             ChatMessage chatMessage = new()
             {
                 AuthorId = senderId,
+                RecipientId = recipientId,
                 MessageTime = messageTime,
                 Message = message
             };
 
-            conversation.Messages.Add(chatMessage);
+            await dbContext.Messages.AddAsync(chatMessage);
 
             await dbContext.SaveChangesAsync();
         }
 
         public async Task<IEnumerable<ChatMessageDTO>> GetChatMessages(string userOneId, string userTwoId)
         {
-            var conversation = await this.GetConversation(userOneId, userTwoId);
+            var conversation = dbContext.Messages
+                .Where(m => m.AuthorId == userOneId && m.RecipientId == userTwoId ||
+                       m.AuthorId == userTwoId && m.RecipientId == userOneId);
 
-            var messages = conversation?.Messages
+            await conversation.Where(m => m.AuthorId != userOneId)
+                .ExecuteUpdateAsync(m => m.SetProperty(p => p.IsRead, p => true));
+
+            var messages = await conversation
                 .OrderByDescending(m => m.MessageTime)
                 .Select(m => new ChatMessageDTO
                 {
@@ -47,8 +50,9 @@
                     Message = m.Message,
                     MessageTime = m.MessageTime.ToString("yyyy-MM-dd HH:mm"),
                     AuthorId = m.AuthorId,
+                    RecipientId = m.RecipientId,
                     IsRead = m.IsRead
-                }).ToArray();
+                }).ToArrayAsync();
 
             return messages ?? [];
         }
@@ -62,11 +66,10 @@
 
         public async Task<bool> UserHasUnreadMessages(string userId)
         {
-            var conversations = dbContext.Conversations
-                .Include(c => c.Messages)
-                .Where(c => c.UserOneId == userId || c.UserTwoId == userId);
+            var messages = dbContext.Messages
+                .Where(m => m.RecipientId == userId);
 
-            return await conversations.AnyAsync(c => c.Messages.Any(m => m.IsRead == false));
+            return await messages.AnyAsync(m => m.IsRead == false);
         }
 
         public async Task SetMessageIsRead(string messageId)
@@ -76,28 +79,6 @@
             message!.IsRead = true;
 
             await dbContext.SaveChangesAsync();
-        }
-
-        private async Task<Conversation?> GetConversation(string userOneId, string userTwoId)
-        {
-            return await dbContext.Conversations
-                .Include(c => c.Messages)
-                .FirstOrDefaultAsync(c => c.UserOneId == userOneId && c.UserTwoId == userTwoId ||
-                                          c.UserOneId == userTwoId && c.UserTwoId == userOneId);
-        }
-
-        private async Task<Conversation> CreateConversation(string userOneId, string userTwoId)
-        {
-            Conversation conversation = new()
-            {
-                UserOneId = userOneId,
-                UserTwoId = userTwoId
-            };
-
-            await dbContext.Conversations.AddAsync(conversation);
-            await dbContext.SaveChangesAsync();
-
-            return conversation;
         }
     }
 }
