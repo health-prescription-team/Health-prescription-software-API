@@ -93,6 +93,7 @@ builder.Services.AddScoped<IValidationAuthentication, ValidationAuthentication>(
 builder.Services.AddScoped<IPrescriptionService, PrescriptionService>();
 builder.Services.AddScoped<IValidationPrescription, ValidationPrescription>();
 builder.Services.AddScoped<IChatService, ChatService>();
+builder.Services.AddScoped<IChatValidation, ChatValidation>();
 
 var app = builder.Build();
 

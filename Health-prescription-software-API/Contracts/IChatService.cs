@@ -10,7 +10,7 @@
 
         Task<ChatUserDetailsDTO> GetUserDetailsByEgn(string egn);
 
-        Task<string?> GetUserIdByEgn(string egn);
+        Task<string> GetUserIdByEgn(string egn);
 
         Task<bool> UserHasUnreadMessages(string userId);
 

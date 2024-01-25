@@ -57,11 +57,11 @@
             return messages ?? [];
         }
 
-        public async Task<string?> GetUserIdByEgn(string egn)
+        public async Task<string> GetUserIdByEgn(string egn)
         {
             var user = await dbContext.Users.FirstOrDefaultAsync(u => u.Egn == egn);
 
-            return user?.Id;
+            return user!.Id;
         }
 
         public async Task<bool> UserHasUnreadMessages(string userId)
