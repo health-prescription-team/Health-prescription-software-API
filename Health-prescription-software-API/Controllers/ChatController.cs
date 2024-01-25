@@ -49,6 +49,21 @@
             }
         }
 
+        [HttpGet("{egn}")]
+        public async Task<IActionResult> GetUserDetails(string egn)
+        {
+            try
+            {
+                var userDetails = await chatService.GetUserDetailsByEgn(egn);
+
+                return Ok(userDetails);
+            }
+            catch (Exception)
+            {
+                return StatusCode(500);
+            }
+        }
+
         [HttpGet("CheckMessages")]
         public async Task<IActionResult> HasUnreadMessages()
         {

@@ -80,5 +80,17 @@
 
             await dbContext.SaveChangesAsync();
         }
+
+        public async Task<ChatUserDetailsDTO> GetUserDetailsByEgn(string egn)
+        {
+            var user = await dbContext.Users.FirstOrDefaultAsync(u => u.Egn == egn);
+
+            return new ChatUserDetailsDTO
+            {
+                UserId = user!.Id,
+                FullName = $"{user.FirstName} {(string.IsNullOrEmpty(user.MiddleName) ? "" : user.MiddleName + " ")}{user.LastName}",
+                UserImage = user.ProfilePicture!
+            };
+        }
     }
 }
