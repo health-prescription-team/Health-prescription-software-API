@@ -3,6 +3,7 @@ using System;
 using Health_prescription_software_API.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -11,9 +12,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Health_prescription_software_API.Migrations
 {
     [DbContext(typeof(HealthPrescriptionDbContext))]
-    partial class HealthPrescriptionDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240124133552_ChatEntity")]
+    partial class ChatEntity
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

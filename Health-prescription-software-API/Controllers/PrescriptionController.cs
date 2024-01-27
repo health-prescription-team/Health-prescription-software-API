@@ -10,6 +10,7 @@
 
     using static Common.Roles.RoleConstants;
 
+    [ApiController]
     [Route("api/[controller]")]
     public class PrescriptionController : Controller
     {
