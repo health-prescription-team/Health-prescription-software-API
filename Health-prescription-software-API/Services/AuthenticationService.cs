@@ -261,6 +261,16 @@
             return string.Empty;
         }
 
+        public async Task<User?> GetUserByEgn(string egn)
+        {
+            if (egn == null)
+            {
+                throw new ArgumentException("Egn cannot be null!");
+            }
+
+            return await _context.Users.FirstOrDefaultAsync(x => x.Egn == egn);
+        }
+
         private string GenerateToken(User user, params string[] loginRoles)
         {
             var tokenHandler = new JwtSecurityTokenHandler();
@@ -308,16 +318,6 @@
             var tokenToString = tokenHandler.WriteToken(token);
 
             return tokenToString;
-        }
-
-        private async Task<User?> GetUserByEgn(string egn)
-        {
-            if (egn == null)
-            {
-                throw new ArgumentException("Egn cannot be null!");
-            }
-
-            return await _context.Users.FirstOrDefaultAsync(x => x.Egn == egn);
         }
 
         private async Task<User?> GetUserByEmailAsync(string email)

@@ -1,29 +1,30 @@
-using Health_prescription_software_API.Models.Authentication.GP;
-using Health_prescription_software_API.Models.Authentication.Pharmacy;
-using Health_prescription_software_API.Models.Authentication.Pharmacist;
-using Microsoft.IdentityModel.Tokens;
-using Health_prescription_software_API.Models.Authentication.Patient;
-
 namespace Health_prescription_software_API.Contracts
 {
+    using Data.Entities.User;
+    using Models.Authentication.GP;
+    using Models.Authentication.Patient;
+    using Models.Authentication.Pharmacist;
+    using Models.Authentication.Pharmacy;
+
     public interface IAuthenticationService
     {
-        public Task<string?> LoginPatient(LoginPatientDto model);
-        public Task<string?> RegisterPatient(RegisterPatientDto model);
+        Task<string?> LoginPatient(LoginPatientDto model);
 
-        public Task<string?> RegisterGp(RegisterGpDto model);
+        Task<string?> RegisterPatient(RegisterPatientDto model);
 
-        public Task<string?> LoginGp(LoginGpDto model);
+        Task<string?> RegisterGp(RegisterGpDto model);
 
+        Task<string?> LoginGp(LoginGpDto model);
 
-		public Task<string?> RegisterPharmacy(RegisterPharmacyDto pharmacyUser);
+		Task<string?> RegisterPharmacy(RegisterPharmacyDto pharmacyUser);
 
-		public Task<string?> LoginPharmacy(LoginPharmacyDto pharmacyUser);
+		Task<string?> LoginPharmacy(LoginPharmacyDto pharmacyUser);
 
-        public Task<string?> RegisterPharmacist(RegisterPharmacistDto model);
+        Task<string?> RegisterPharmacist(RegisterPharmacistDto model);
 
-        public Task<string> LoginPharmacist(LoginPharmacistDto model);
+        Task<string> LoginPharmacist(LoginPharmacistDto model);
 
+        Task<User?> GetUserByEgn(string egn);
     }
 
 }

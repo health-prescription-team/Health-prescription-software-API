@@ -9,6 +9,8 @@
 
         public string GpFullName { get; set; } = null!;
 
+        public string GpEgn { get; set; } = null!;
+
         public string PatientEgn { get; set; } = null!;
 
         public int Age { get; set; }
