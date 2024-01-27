@@ -35,11 +35,8 @@ builder.Services.AddDbContext<HealthPrescriptionDbContext>(options =>
 builder.Services.AddIdentity<User, IdentityRole>(options =>
 {
     options.SignIn.RequireConfirmedAccount = false;
-    options.Password.RequireNonAlphanumeric = true;
     options.Password.RequiredLength = 6;
     options.User.RequireUniqueEmail = false;
-    options.Password.RequireDigit = true;
-    options.Password.RequireLowercase = true;
     options.SignIn.RequireConfirmedPhoneNumber = false;
 
 })
