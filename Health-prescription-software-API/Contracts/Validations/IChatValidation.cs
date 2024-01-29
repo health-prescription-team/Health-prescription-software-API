@@ -3,5 +3,7 @@
     public interface IChatValidation : IValidationErrorMessage
     {
         Task<bool> IsEngValid(string egn);
+
+        bool IsMsgLengthValid(string msg);
     }
 }

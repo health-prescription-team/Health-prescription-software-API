@@ -8,6 +8,8 @@
 
     using static Common.EntityValidationConstants.User;
     using static Common.EntityValidationErrorMessages.User;
+    using static Common.EntityValidationConstants.Chat;
+    using static Common.EntityValidationErrorMessages.Chat;
 
     public class ChatValidation : IChatValidation
     {
@@ -42,6 +44,24 @@
                 {
                     ErrorPropName = "EGN",
                     ErrorMessage = UserWithEgnDoesNotExist
+                };
+
+                ModelErrors.Add(modelError);
+
+                return false;
+            }
+
+            return true;
+        }
+
+        public bool IsMsgLengthValid(string msg)
+        {
+            if (!(msg.Length >= MsgMinLength && msg.Length <= MsgMaxLength))
+            {
+                var modelError = new ModelError
+                {
+                    ErrorPropName = "MSG",
+                    ErrorMessage = string.Format(InvalidMsgLength, MsgMinLength, MsgMaxLength)
                 };
 
                 ModelErrors.Add(modelError);

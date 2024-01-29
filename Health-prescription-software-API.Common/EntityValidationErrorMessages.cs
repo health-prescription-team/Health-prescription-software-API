@@ -1,7 +1,7 @@
-﻿using System.Xml.Linq;
-
-namespace Health_prescription_software_API.Common
+﻿namespace Health_prescription_software_API.Common
 {
+	using static Common.EntityValidationConstants.Chat;
+
 	public static class EntityValidationErrorMessages
 	{
 		public static class Medicine
@@ -46,6 +46,13 @@ namespace Health_prescription_software_API.Common
 			public const string CantDeletePrescription = "Fulfilled prescriptions can't be deleted.";
 
 			public const string PrescriptionDetailsAreRequired = "At least one medicine needs to be added";
+        }
+
+		public static class Chat
+		{
+			public const string InvalidMsgLength = "Message must be between {1} and {2} characters.";
+
+			public const string ServerErrorMessage = "Server encountered an unexpected error. Please try again later.";
         }
 	}
 }
