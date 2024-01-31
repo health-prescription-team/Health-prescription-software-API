@@ -2,7 +2,11 @@
 using Health_prescription_software_API.Hubs;
 var builder = WebApplication.CreateBuilder(args);
 
+
 ServiceRegistration.RegisterServices(builder.Services);
+
+
+
 
 var app = builder.Build();
 
