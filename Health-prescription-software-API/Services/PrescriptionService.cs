@@ -5,15 +5,14 @@
     using Health_prescription_software_API.Data.Entities;
     using Health_prescription_software_API.Models.Prescription;
     using Microsoft.EntityFrameworkCore;
-    using System.Collections.Generic;
 
     public class PrescriptionService : IPrescriptionService
     {
-        private readonly HealthPrescriptionDbContext context;
+        private readonly HealthPrescriptionDbContext _context;
 
         public PrescriptionService(HealthPrescriptionDbContext context)
         {
-            this.context = context;
+            this._context = context;
         }
 
         public async Task<Guid> Add(AddPrescriptionDto prescriptionModel, string GpId)
@@ -42,23 +41,23 @@
                 });
             }
 
-            await context.Prescriptions.AddAsync(prescriptionEntity);
-            await context.SaveChangesAsync();
+            await _context.Prescriptions.AddAsync(prescriptionEntity);
+            await _context.SaveChangesAsync();
 
             return prescriptionEntity.Id;
         }
 
         public void Delete(Guid id)
         {
-            var modelDb = context.Prescriptions.Find(id);
+            var modelDb = _context.Prescriptions.Find(id);
 
-            context.Prescriptions.Remove(modelDb!);
-            context.SaveChanges();
+            _context.Prescriptions.Remove(modelDb!);
+            _context.SaveChanges();
         }
 
         public async Task<Guid> Edit(EditPrescriptionDTO prescriptionModel, string GpId)
         {
-            var entity = await context.Prescriptions
+            var entity = await _context.Prescriptions
                 .Include(p => p.PrescriptionDetails)
                 .FirstOrDefaultAsync(p => p.Id == prescriptionModel.Id);
 
@@ -78,14 +77,14 @@
                 })
                 .ToHashSet();
 
-            await context.SaveChangesAsync();
+            await _context.SaveChangesAsync();
 
             return entity.Id;
         }
 
         public async Task<bool> FinishPrescription(Guid id)
         {
-            var prescriptionsList = await context.Prescriptions
+            var prescriptionsList = await _context.Prescriptions
                 .FirstOrDefaultAsync(x => x.Id == id);
 
             if (prescriptionsList is null)
@@ -95,16 +94,16 @@
 
             prescriptionsList.FulfillmentDate = DateTime.Now;
             prescriptionsList.IsFulfilled = true;
-            await context.SaveChangesAsync();
+            await _context.SaveChangesAsync();
 
             return true;
         }
 
         public async Task<PatientPrescriptionsDTO> GetPatientPrescriptions(string patientEgn)
         {
-            var patient = await context.Users.FirstOrDefaultAsync(p => p.Egn == patientEgn);
+            var patient = await _context.Users.FirstOrDefaultAsync(p => p.Egn == patientEgn);
 
-            var prescriptionsList = await context.Prescriptions
+            var prescriptionsList = await _context.Prescriptions
                 .Where(p => p.PatientEgn == patientEgn)
                 .Select(p => new PatientPrescriptionsListDTO
                 {
@@ -131,7 +130,7 @@
 
         public async Task<PrescriptionDTO> GetPrescriptionDetails(Guid prescriptionId)
         {
-            var entity = await context.Prescriptions
+            var entity = await _context.Prescriptions
                 .Include(p => p.Gp)
                 .Include(p => p.PrescriptionDetails)
                 .ThenInclude(pd => pd.Medicine)

@@ -11,11 +11,11 @@ namespace Health_prescription_software_API.Services
 
     public class MedicineService : IMedicineService
     {
-        private readonly HealthPrescriptionDbContext context;
+        private readonly HealthPrescriptionDbContext _context;
 
         public MedicineService(HealthPrescriptionDbContext context)
         {
-            this.context = context;
+            this._context = context;
         }
 
         public async Task<Guid> Add(AddMedicineDTO model, string creatorId)
@@ -34,15 +34,15 @@ namespace Health_prescription_software_API.Services
                 OwnerId = creatorId
             };
 
-            await context.Medicines.AddAsync(medicine);
-            await context.SaveChangesAsync();
+            await _context.Medicines.AddAsync(medicine);
+            await _context.SaveChangesAsync();
 
             return medicine.Id;
         }
 
         public async Task<MedicineDetailsDTO> GetById(Guid id)
         {
-            var medicine = await context.Medicines.Include(m => m.Owner).FirstOrDefaultAsync(m => m.Id == id);
+            var medicine = await _context.Medicines.Include(m => m.Owner).FirstOrDefaultAsync(m => m.Id == id);
 
             var medicineDTO = new MedicineDetailsDTO
             {
@@ -61,7 +61,7 @@ namespace Health_prescription_software_API.Services
 
         public async Task<Guid> EditByIdAsync(Guid id, EditMedicineDTO model)
         {
-            var medicine = await this.context.Medicines.FindAsync(id);
+            var medicine = await this._context.Medicines.FindAsync(id);
 
             if (model.MedicineImage != null)
             {
@@ -77,14 +77,14 @@ namespace Health_prescription_software_API.Services
             medicine!.MedicineDetails = model.MedicineDetails;
             medicine!.Ingredients = model.Ingredients;
 
-            await this.context.SaveChangesAsync();
+            await this._context.SaveChangesAsync();
 
             return id;
         }
 
         public async Task<AllMedicineServiceModel> GetAllAsync(QueryMedicineDTO? query)
         {
-            IQueryable<Medicine> medicineQuery = context.Medicines
+            IQueryable<Medicine> medicineQuery = _context.Medicines
                 .AsQueryable()
                 .AsNoTracking();
 
@@ -135,7 +135,7 @@ namespace Health_prescription_software_API.Services
 
         public async Task<IEnumerable<AllMedicineMinimalDTO>> GetAllMinimalAsync()
         {
-            var modelDb = await context.Medicines
+            var modelDb = await _context.Medicines
                 .AsNoTracking()
                 .Select(x => new AllMedicineMinimalDTO
                 {
@@ -148,10 +148,10 @@ namespace Health_prescription_software_API.Services
 
         public async Task Delete(Guid id)
         {
-            var medicine = await context.Medicines.FindAsync(id);
+            var medicine = await _context.Medicines.FindAsync(id);
 
-            context.Medicines.Remove(medicine!);
-            await context.SaveChangesAsync();
+            _context.Medicines.Remove(medicine!);
+            await _context.SaveChangesAsync();
         }
     }
 }

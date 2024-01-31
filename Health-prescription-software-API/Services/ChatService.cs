@@ -11,11 +11,11 @@
 
     public class ChatService : IChatService
     {
-        private readonly HealthPrescriptionDbContext dbContext;
+        private readonly HealthPrescriptionDbContext _context;
 
         public ChatService(HealthPrescriptionDbContext dbContext)
         {
-            this.dbContext = dbContext;
+            this._context = dbContext;
         }
 
         public async Task AddMessage(string senderId, string recipientId, DateTime messageTime, string message)
@@ -28,14 +28,14 @@
                 Message = message
             };
 
-            await dbContext.Messages.AddAsync(chatMessage);
+            await _context.Messages.AddAsync(chatMessage);
 
-            await dbContext.SaveChangesAsync();
+            await _context.SaveChangesAsync();
         }
 
         public async Task<IEnumerable<ChatMessageDTO>> GetChatMessages(string userOneId, string userTwoId)
         {
-            var conversation = dbContext.Messages
+            var conversation = _context.Messages
                 .Where(m => m.AuthorId == userOneId && m.RecipientId == userTwoId ||
                        m.AuthorId == userTwoId && m.RecipientId == userOneId);
 
@@ -59,14 +59,14 @@
 
         public async Task<string> GetUserIdByEgn(string egn)
         {
-            var user = await dbContext.Users.FirstOrDefaultAsync(u => u.Egn == egn);
+            var user = await _context.Users.FirstOrDefaultAsync(u => u.Egn == egn);
 
             return user!.Id;
         }
 
         public async Task<bool> UserHasUnreadMessages(string userId)
         {
-            var messages = dbContext.Messages
+            var messages = _context.Messages
                 .Where(m => m.RecipientId == userId);
 
             return await messages.AnyAsync(m => m.IsRead == false);
@@ -74,16 +74,16 @@
 
         public async Task SetMessageIsRead(string messageId)
         {
-            var message = await dbContext.Messages.FindAsync(Guid.Parse(messageId));
+            var message = await _context.Messages.FindAsync(Guid.Parse(messageId));
 
             message!.IsRead = true;
 
-            await dbContext.SaveChangesAsync();
+            await _context.SaveChangesAsync();
         }
 
         public async Task<ChatUserDetailsDTO> GetUserDetailsByEgn(string egn)
         {
-            var user = await dbContext.Users.FirstOrDefaultAsync(u => u.Egn == egn);
+            var user = await _context.Users.FirstOrDefaultAsync(u => u.Egn == egn);
 
             return new ChatUserDetailsDTO
             {

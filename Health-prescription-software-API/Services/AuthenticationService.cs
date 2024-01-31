@@ -39,9 +39,9 @@
 
         public async Task<string?> LoginPatient(LoginPatientDto model)
         {
-            User? user = await GetUserByEgn(model.Egn);
+            var user = await GetUserByEgn(model.Egn);
 
-            if (user != null)
+            if (user is not null)
             {
                 var result = await _signInManager.PasswordSignInAsync(user, model.Password, false, false);
 
@@ -133,7 +133,7 @@
         {
             var user = await GetUserByEgn(model.Egn);
 
-            if (user != null)
+            if (user is not null)
             {
                 var result = await _signInManager.PasswordSignInAsync(user, model.Password, false, false);
 
@@ -151,7 +151,7 @@
         public async Task<string?> RegisterPharmacy(RegisterPharmacyDto model)
         {
 
-            User pharmacyUser = new User
+            var pharmacyUser = new User
             {
                 FirstName = null,
                 MiddleName = null,
@@ -166,13 +166,13 @@
                 PharmacyName = model.PharmacyName
             };
 
-            IdentityResult? result = await _userManager.CreateAsync(pharmacyUser, model.Password);
+            var result = await _userManager.CreateAsync(pharmacyUser, model.Password);
 
             if (result.Succeeded)
             {
                 await _signInManager.SignInAsync(pharmacyUser, isPersistent: false);
 
-                User? user = await GetUserByEmailAsync(pharmacyUser.Email);
+                var user = await GetUserByEmailAsync(pharmacyUser.Email);
 
                 await _userManager.AddToRoleAsync(user!, RoleConstants.Pharmacy);
 
@@ -187,8 +187,9 @@
 
         public async Task<string?> LoginPharmacy(LoginPharmacyDto model)
         {
-            User? pharmacyUser = await GetUserByEmailAsync(model.Email);
-            if (pharmacyUser != null)
+            var pharmacyUser = await GetUserByEmailAsync(model.Email);
+
+            if (pharmacyUser is not null)
             {
                 var result = await _signInManager.PasswordSignInAsync(pharmacyUser, model.Password, false, false);
 
@@ -247,7 +248,7 @@
         {
             var user = await GetUserByEgn(model.Egn);
 
-            if (user != null)
+            if (user is not null)
             {
                 var result = await _signInManager.PasswordSignInAsync(user, model.Password, false, false);
 
@@ -263,7 +264,7 @@
 
         public async Task<User?> GetUserByEgn(string egn)
         {
-            if (egn == null)
+            if (egn is null)
             {
                 throw new ArgumentException("Egn cannot be null!");
             }
@@ -279,7 +280,7 @@
             string nameClaim;
             List<Claim> claims = [];
 
-            //  Adding role specific claims
+          
             if (loginRoles.Contains(RoleConstants.Pharmacy))
             {
                 nameClaim = user.PharmacyName!;
@@ -291,7 +292,7 @@
                 claims.Add(new Claim("EGN", user.Egn!));
             }
 
-            // Adding shared claims
+         
             claims.AddRange(new[]
             {
                 new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
@@ -299,7 +300,7 @@
                 new Claim("PhoneNumber", user.PhoneNumber!)
             });
 
-            // Adding role claims
+        
             foreach (var role in loginRoles)
             {
                 claims.Add(new Claim(ClaimTypes.Role, role));
@@ -322,7 +323,7 @@
 
         private async Task<User?> GetUserByEmailAsync(string email)
         {
-            User? user = await _context.Users.FirstOrDefaultAsync(u => u.Email == email);
+            var user = await _context.Users.FirstOrDefaultAsync(u => u.Email == email);
 
             return user;
         }
