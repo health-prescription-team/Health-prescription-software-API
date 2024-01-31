@@ -5,8 +5,6 @@ var builder = WebApplication.CreateBuilder(args);
 
 ServiceRegistration.RegisterServices(builder.Services);
 
-
-
 var app = builder.Build();
 
 app.UseSwagger();
