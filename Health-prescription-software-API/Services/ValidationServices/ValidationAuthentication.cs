@@ -73,7 +73,9 @@
             bool isEmailPresent = await dbContext.Users.AnyAsync(u => u.Email == registerModel.Email);
             bool pharmacyUserExists = await dbContext.Users.AnyAsync(u => u.PharmacyName == registerModel.PharmacyName);
 
-            if (isEmailPresent || pharmacyUserExists)
+            var isPasswordValid = await this.IsRegisterPasswordValid(registerModel.Password);
+
+            if (isEmailPresent || pharmacyUserExists || !isPasswordValid)
             {
                 ModelError? modelError;
                 if (isEmailPresent)
@@ -110,7 +112,9 @@
             bool userExistsByEgn = await dbContext.Users.AnyAsync(u => u.Egn == registerModel.Egn);
             bool userExistsByUni = await dbContext.Users.AnyAsync(u => u.UinNumber == registerModel.UinNumber);
 
-            if (isEmailPresent || userExistsByEgn || userExistsByUni)
+            var isPasswordValid = await this.IsRegisterPasswordValid(registerModel.Password);
+
+            if (isEmailPresent || userExistsByEgn || userExistsByUni || !isPasswordValid)
             {
                 ModelError? modelError;
 
@@ -194,7 +198,9 @@
         {
             bool userExistsByEgn = await dbContext.Users.AnyAsync(u => u.Egn == registerModel.Egn);
 
-            if (userExistsByEgn)
+            var isPasswordValid = await this.IsRegisterPasswordValid(registerModel.Password);
+
+            if (userExistsByEgn || !isPasswordValid)
             {
                 ModelError? modelError;
 
@@ -257,9 +263,11 @@
             var userExistsByEgn = await dbContext.Users.AnyAsync(u => u.Egn == registerModel.Egn);
             var userExistsByUINNumber = await dbContext.Users.AnyAsync(u => u.UinNumber == registerModel.UinNumber);
 
+            var isPasswordValid = await this.IsRegisterPasswordValid(registerModel.Password);
+
             ModelError modelError;
 
-            if (userExistsByEgn || userExistsByUINNumber)
+            if (userExistsByEgn || userExistsByUINNumber || !isPasswordValid)
             {
 
                 if (userExistsByEgn)
@@ -324,6 +332,32 @@
                 ModelErrors.Add(modelError);
 
                 return false;
+            }
+
+            return true;
+        }
+
+        private async Task<bool> IsRegisterPasswordValid(string password)
+        {
+            foreach (var validation in userManager.PasswordValidators)
+            {
+                var result = await validation.ValidateAsync(this.userManager, null!, password);
+
+                if (!result.Succeeded)
+                {
+                    foreach (var error in result.Errors)
+                    {
+                        ModelError modelError = new()
+                        {
+                            ErrorPropName = "Password",
+                            ErrorMessage = error.Description
+                        };
+
+                        ModelErrors.Add(modelError);
+                    }
+
+                    return false;
+                }
             }
 
             return true;
