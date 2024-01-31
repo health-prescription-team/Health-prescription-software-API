@@ -6,6 +6,7 @@
     using Microsoft.AspNetCore.SignalR;
 
     using static Common.Roles.RoleConstants;
+    using static Common.EntityValidationErrorMessages.Chat;
 
     [Authorize(Roles = $"{GP}, {Patient}")]
     public class ChatHub : Hub
@@ -24,7 +25,8 @@
         {
             try
             {
-                if (!await chatValidation.IsEngValid(recipientEgn))
+                if (!await chatValidation.IsEngValid(recipientEgn) ||
+                    !chatValidation.IsMsgLengthValid(message))
                 {
                     var errorMessage = chatValidation.ModelErrors.First();
 
@@ -45,8 +47,7 @@
             }
             catch (Exception)
             {
-                // This exception is thrown to the client. Front end job to handle it.
-                throw new HubException("Server encountered an unexpected error. Please try again later.");
+                throw new HubException(ServerErrorMessage);
             }
         }
     }

@@ -55,5 +55,11 @@
 			public const int MinAge = 0;
 			public const int MaxAge = 200;
 		}
+
+		public static class Chat
+		{
+			public const int MsgMinLength = 1;
+			public const int MsgMaxLength = 500;
+		}
 	}
 }

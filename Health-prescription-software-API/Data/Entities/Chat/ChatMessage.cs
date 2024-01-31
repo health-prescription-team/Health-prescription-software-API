@@ -5,13 +5,15 @@
     using System.ComponentModel.DataAnnotations;
     using System.ComponentModel.DataAnnotations.Schema;
 
+    using static Common.EntityValidationConstants.Chat;
+
     public class ChatMessage
     {
         [Key]
         public Guid Id { get; set; }
 
         [Required]
-        [StringLength(500, MinimumLength = 1)]
+        [StringLength(MsgMaxLength, MinimumLength = MsgMinLength)]
         public string Message { get; set; } = null!;
 
         [Column(TypeName = "Timestamp")]
