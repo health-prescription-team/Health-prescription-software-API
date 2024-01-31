@@ -34,6 +34,7 @@ public static class ServiceRegistration
         services.AddSwaggerGen();
 
         RegisterScopedServices(services);
+      
     }
 
     private static void AddCors(IServiceCollection services)
@@ -110,5 +111,11 @@ public static class ServiceRegistration
         services.AddScoped<IValidationPrescription, ValidationPrescription>();
         services.AddScoped<IChatService, ChatService>();
         services.AddScoped<IChatValidation, ChatValidation>();
+
+        services.AddScoped<SeedData>();
     }
+
+   
+
+
 }
