@@ -1,20 +1,7 @@
-using Health_prescription_software_API.Contracts;
-using Health_prescription_software_API.Contracts.Validations;
-using Health_prescription_software_API.Data;
-using Health_prescription_software_API.Data.Entities.User;
-using Health_prescription_software_API.Hubs;
-using Health_prescription_software_API.Services;
-using Health_prescription_software_API.Services.ValidationServices;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.AspNetCore.Identity;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.IdentityModel.Tokens;
-using System.Text;
 
+using Health_prescription_software_API.Hubs;
 var builder = WebApplication.CreateBuilder(args);
 
-builder.Services.AddControllers();
-builder.Services.AddSignalR();
 
 builder.Services.AddCors(options =>
 {
@@ -65,34 +52,8 @@ builder.Services
             IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"]!))
         };
 
-        options.Events = new JwtBearerEvents
-        {
-            OnMessageReceived = context =>
-            {
-                var accessToken = context.Request.Query["access_token"];
 
-                var path = context.HttpContext.Request.Path;
-                if (!string.IsNullOrEmpty(accessToken) &&
-                    (path.StartsWithSegments("/chatHub")))
-                {
-                    context.Token = accessToken;
-                }
-                return Task.CompletedTask;
-            }
-        };
-    });
 
-builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
-
-builder.Services.AddScoped<IMedicineService, MedicineService>();
-builder.Services.AddScoped<IAuthenticationService, AuthenticationService>();
-builder.Services.AddScoped<IValidationMedicine, ValidationMedicine>();
-builder.Services.AddScoped<IValidationAuthentication, ValidationAuthentication>();
-builder.Services.AddScoped<IPrescriptionService, PrescriptionService>();
-builder.Services.AddScoped<IValidationPrescription, ValidationPrescription>();
-builder.Services.AddScoped<IChatService, ChatService>();
-builder.Services.AddScoped<IChatValidation, ChatValidation>();
 
 var app = builder.Build();
 
@@ -102,9 +63,9 @@ app.UseSwaggerUI();
 app.UseHttpsRedirection();
 app.UseRouting();
 app.UseCors("CORSPolicy");
-app.UseAuthentication();
 
-app.UseAuthorization();
+app.UseAuthentication();   
+app.UseAuthorization();    
 
 app.MapControllers();
 app.MapHub<ChatHub>("/chatHub");
